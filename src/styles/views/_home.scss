@@ -1,0 +1,256 @@
+@use '../abstracts' as *;
+
+.home {
+  &__quick-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-2;
+    padding: 0 $spacing-4;
+  }
+
+  &__action-btn {
+    @include card-base;
+    @include flex-col($spacing-1, flex-start);
+    padding: $spacing-3 $spacing-4;
+    cursor: pointer;
+    transition: background $transition-fast;
+    text-align: left;
+
+    &:active {
+      background: $color-bg-secondary;
+    }
+
+    i {
+      font-size: $icon-xl;
+    }
+
+    span {
+      font-size: $font-size-base;
+      font-weight: $font-weight-medium;
+      color: $color-text-primary;
+    }
+
+    small {
+      @include font-mono($font-size-xs);
+      color: $color-text-secondary;
+    }
+  }
+
+  &__empty {
+    @include font-mono($font-size-sm);
+    color: $color-text-tertiary;
+    padding: $spacing-4 $spacing-5;
+    text-align: center;
+  }
+
+  &__venc-btn {
+    @include flex-col($spacing-1, center);
+    width: calc(100% - #{$spacing-4 * 2});
+    margin: $spacing-3 $spacing-4 $spacing-2;
+    padding: $spacing-4;
+    border-radius: $radius-md;
+    background: $color-expiry-bg;
+    border: $border-width solid $color-expiry-border;
+    color: $color-expiry-text;
+    font-size: $font-size-base;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+    transition: background $transition-fast;
+
+    &:active {
+      background: $color-bg-secondary;
+    }
+
+    i {
+      font-size: $icon-lg;
+      color: $color-expiry;
+    }
+
+    small {
+      @include font-mono($font-size-xs);
+      font-weight: $font-weight-regular;
+      opacity: 0.85;
+    }
+  }
+
+  // ─── Alert items ───────────────────────────────────────────────────────────
+
+  &__alert-item {
+    @include flex-row($spacing-3, center);
+    padding: $spacing-4 $spacing-5;
+    margin: 0 $spacing-5 $spacing-2;
+    border-radius: $radius-xl;
+    cursor: pointer;
+    transition: filter $transition-fast;
+
+    &:active {
+      filter: brightness(0.9);
+    }
+
+    &--out {
+      background: $color-danger-bg;
+      border: $border-width solid $color-danger-border;
+    }
+
+    &--low {
+      background: $color-warning-bg;
+      border: $border-width solid $color-warning-border;
+    }
+
+    &--expiry {
+      background: $color-expiry-bg;
+      border: $border-width solid $color-expiry-border;
+    }
+  }
+
+  &__alert-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: $radius-full;
+    flex-shrink: 0;
+
+    &--out {
+      background: $color-danger;
+    }
+
+    &--low {
+      background: $color-warning;
+    }
+
+    &--expiry {
+      background: $color-expiry;
+    }
+  }
+
+  &__alert-info {
+    @include flex-col($spacing-1);
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__alert-type {
+    font-size: $font-size-base;
+    font-weight: $font-weight-medium;
+    color: $color-text-primary;
+  }
+
+  &__alert-name {
+    @include font-mono($font-size-xs);
+    color: $color-text-secondary;
+    @include truncate;
+  }
+
+  &__alert-right {
+    @include flex-col($spacing-1, flex-end);
+    flex-shrink: 0;
+  }
+
+  &__alert-count {
+    @include font-display($font-size-2xl, $font-weight-bold);
+    line-height: $line-height-tight;
+    text-align: right;
+
+    &--zero {
+      color: $color-text-tertiary;
+    }
+  }
+
+  &__alert-item--out &__alert-count {
+    color: $color-danger-text;
+  }
+
+  &__alert-item--low &__alert-count {
+    color: $color-warning-text;
+  }
+
+  &__alert-item--expiry &__alert-count {
+    color: $color-expiry-text;
+  }
+
+  &__alert-ok {
+    @include font-mono($font-size-xs);
+    color: $color-text-tertiary;
+  }
+
+  // ─── Product search ────────────────────────────────────────────────────────
+
+  &__search-dropdown {
+    flex-shrink: 0;
+    background: $color-bg-primary;
+    border-bottom: $border;
+  }
+
+  &__search-results {
+    list-style: none;
+    background: $color-bg-secondary;
+    border-top: $border;
+    overflow: hidden;
+    max-height: 220px;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $color-border-strong;
+      border-radius: $radius-full;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+  }
+
+  &__search-result {
+    @include flex-row($spacing-2, center, space-between);
+    padding: $spacing-3 $spacing-4;
+    cursor: pointer;
+    border-bottom: $border;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:active {
+      background: $color-bg-primary;
+    }
+
+    &__name {
+      font-size: $font-size-base;
+      font-weight: $font-weight-medium;
+      color: $color-text-primary;
+      @include truncate;
+      flex: 1;
+    }
+
+    &__meta {
+      @include font-mono($font-size-xs);
+      color: $color-text-secondary;
+      flex-shrink: 0;
+      margin-left: $spacing-2;
+    }
+  }
+
+  &__search-empty {
+    @include font-mono($font-size-sm);
+    color: $color-text-tertiary;
+    text-align: center;
+    padding: $spacing-4 $spacing-4;
+  }
+
+  // ─── CTA ───────────────────────────────────────────────────────────────────
+
+  &__cta {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: $spacing-3;
+    padding: $spacing-2 $spacing-5 0;
+
+    .btn {
+      flex: 1;
+      width: auto;
+    }
+  }
+}

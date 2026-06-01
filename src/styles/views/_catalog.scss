@@ -1,0 +1,985 @@
+@use '../abstracts' as *;
+
+.catalog {
+  &__cat-sep {
+    @include flex-between;
+    padding   : $spacing-2 $spacing-3 $spacing-1 $spacing-5;
+    background: $color-bg-tertiary;
+    min-height: 32px;
+
+    &--migrating {
+      background: rgba(83, 74, 183, 0.08);
+    }
+
+    &--no-actions {
+      padding-right: $spacing-5;
+    }
+  }
+
+  &__cat-label {
+    @include font-mono($font-size-xs, $font-weight-medium);
+    letter-spacing: $letter-spacing-widest;
+    text-transform: uppercase;
+    color         : $color-text-tertiary;
+    flex-shrink   : 1;
+    min-width     : 0;
+    @include truncate;
+  }
+
+  &__cat-dots {
+    flex            : 1;
+    min-width       : $spacing-3;
+    height          : 1px;
+    margin          : 0 $spacing-3;
+    align-self      : center;
+    margin-bottom   : 1px;
+    background-image: repeating-linear-gradient(to right,
+        rgba(255, 220, 190, 0.18) 0,
+        rgba(255, 220, 190, 0.18) 2px,
+        transparent 2px,
+        transparent 7px);
+  }
+
+  &__cat-gear-btn {
+    @include flex-center;
+    width        : 28px;
+    height       : 28px;
+    border-radius: $radius-sm;
+    background   : transparent;
+    border       : none;
+    color        : $color-text-tertiary;
+    cursor       : pointer;
+    flex-shrink  : 0;
+    margin-left  : $spacing-2;
+    transition   : background $transition-fast, color $transition-fast;
+
+    i {
+      font-size : $icon-sm;
+      transition: transform 0.25s ease;
+    }
+
+    &:active {
+      background: $color-bg-secondary;
+      color     : $color-text-secondary;
+    }
+
+    &--active {
+      color     : $color-primary-900;
+      background: $color-primary-50;
+    }
+
+    &--open {
+      i {
+        transform: rotate(90deg);
+      }
+    }
+  }
+
+  &__cat-edit-input {
+    flex          : 1;
+    min-width     : 0;
+    height        : 26px;
+    border-radius : $radius-sm;
+    border        : 1px solid $color-primary;
+    background    : $color-bg-primary;
+    color         : $color-text-primary;
+    padding       : 0 $spacing-2;
+    font-family   : $font-mono;
+    font-size     : $font-size-xs;
+    font-weight   : $font-weight-medium;
+    letter-spacing: $letter-spacing-widest;
+    text-transform: uppercase;
+    outline       : none;
+  }
+
+  &__cat-edit-error {
+    position     : absolute;
+    left         : $spacing-5;
+    top          : 100%;
+    z-index      : 10;
+    font-size    : $font-size-xs;
+    color        : $color-danger-text;
+    background   : $color-danger-bg;
+    padding      : 2px $spacing-2;
+    border-radius: $radius-sm;
+    white-space  : nowrap;
+  }
+
+    // The cat-sep needs relative so the error tooltip positions correctly
+  &__cat-sep {
+    position: relative;
+  }
+
+  &__cat-empty {
+    @include flex-center;
+    margin       : $spacing-4 $spacing-5;
+    padding      : $spacing-7 $spacing-5;
+    border       : $border-width dashed $color-border-strong;
+    border-radius: $radius-lg;
+    color        : $color-text-tertiary;
+    @include font-mono($font-size-sm);
+    min-height: 54px;
+    text-align: center;
+  }
+
+  &__migrate-bar {
+    @include flex-between;
+    padding    : $spacing-3 $spacing-5;
+    background : $color-bg-secondary;
+    border-top : $border-strong;
+    flex-shrink: 0;
+    gap        : $spacing-3;
+  }
+
+  &__migrate-count {
+    @include font-mono($font-size-sm, $font-weight-medium);
+    color: $color-text-secondary;
+  }
+
+  &__migrate-actions {
+    @include flex-row($spacing-2);
+  }
+
+  &__migrate-dest-list {
+    @include flex-col;
+    border       : $border;
+    border-radius: $radius-xl;
+    overflow     : hidden;
+    width: 100%;
+  }
+
+  &__migrate-dest-item {
+    @include flex-between;
+    width      : 100%;
+    padding    : $spacing-4;
+    background : $color-bg-primary;
+    border     : none;
+    font-family: $font-body;
+    font-size  : $font-size-base;
+    color      : $color-text-primary;
+    cursor     : pointer;
+    text-align : left;
+    transition : background $transition-fast;
+
+    &+& {
+      border-top: $border;
+    }
+
+    i {
+      font-size  : $icon-sm;
+      color      : $color-primary-900;
+      flex-shrink: 0;
+    }
+
+    &:active {
+      background: $color-bg-secondary;
+    }
+
+    &--selected {
+      background: $color-primary-50;
+      color     : $color-primary-900;
+    }
+  }
+
+  &__count-row {
+    @include flex-between;
+    padding: $spacing-4 $spacing-5 $spacing-2;
+  }
+
+  &__count {
+    @include font-mono($font-size-sm);
+    color: $color-text-secondary;
+  }
+
+  &__new-btn-row {
+    @include flex-row($spacing-2, center, flex-end);
+    padding: $spacing-4 $spacing-5 $spacing-2;
+  }
+}
+
+  // ─── SELECTABLE BRAND ROW (migrate mode) ─────────────────────────────────────
+.brand-row {
+  &--selectable {
+    cursor: pointer;
+
+    .brand-row__name {
+      white-space       : normal;
+      overflow          : visible;
+      text-overflow     : unset;
+      display           : -webkit-box;
+      line-clamp        : 2;
+      -webkit-box-orient: vertical;
+      overflow          : hidden;
+    }
+  }
+
+  &--selected {
+    background  : $color-primary-50;
+    border-color: $color-primary-200;
+
+    .brand-row__check i {
+      color: $color-primary-900;
+    }
+  }
+
+  &__check {
+    @include flex-center;
+    width      : 24px;
+    flex-shrink: 0;
+
+    i {
+      font-size : $icon-md;
+      color     : $color-border-strong;
+      transition: color $transition-fast;
+    }
+  }
+}
+
+  // ─── TABS ─────────────────────────────────────────────────────────────────────
+.catalog-tabs {
+  @include flex-row;
+  background   : $color-bg-primary;
+  border-bottom: $border;
+  flex-shrink  : 0;
+
+  &__tab {
+    @include flex-row($spacing-1, center, center);
+    flex         : 1;
+    height       : 40px;
+    font-size    : $font-size-base;
+    font-weight  : $font-weight-medium;
+    color        : $color-text-secondary;
+    border-bottom: 2px solid transparent;
+    transition   : color $transition-fast, border-color $transition-fast;
+
+    &--active {
+      color              : $color-text-primary;
+      border-bottom-color: $color-primary;
+    }
+  }
+
+  &__count {
+    @include font-mono($font-size-xs, $font-weight-medium);
+    background   : rgba(255, 220, 190, 0.1);
+    border-radius: $radius-full;
+    padding      : 1px $spacing-2;
+    color        : $color-text-secondary;
+
+    .catalog-tabs__tab--active & {
+      background: $color-danger-bg;
+      color     : $color-danger-text;
+    }
+  }
+}
+
+  // ─── BATCH PANEL ──────────────────────────────────────────────────────────────
+.batch-panel {
+  display       : flex;
+  flex-direction: column;
+  height        : 100%;
+}
+
+  // ─── BATCH FOLDERS ────────────────────────────────────────────────────────────
+.batch-folder-list {
+  @include flex-col;
+}
+
+.batch-folder {
+  @include flex-col;
+  width        : 100%;
+  border-bottom: $border;
+
+  &--link {
+    cursor    : pointer;
+    transition: background $transition-fast;
+
+    &:active {
+      background: $color-bg-secondary;
+    }
+  }
+
+  &__main {
+    @include flex-row($spacing-3);
+    width  : 100%;
+    padding: $spacing-3 $spacing-5;
+  }
+
+  &__icon {
+    width        : $product-icon-size;
+    height       : $product-icon-size;
+    border-radius: $radius-lg;
+    background   : $color-expiry-bg;
+    @include flex-center;
+    flex-shrink: 0;
+
+    i {
+      font-size: $icon-md;
+      color    : $color-expiry-text;
+    }
+  }
+
+  &__body {
+    @include flex-col;
+    flex     : 1;
+    min-width: 0;
+  }
+
+  &__number {
+    font-size  : $font-size-base;
+    font-weight: $font-weight-medium;
+    color      : $color-text-primary;
+    @include truncate;
+  }
+
+  &__meta {
+    @include font-mono($font-size-sm);
+    color     : $color-text-secondary;
+    margin-top: 2px;
+  }
+
+  &__right {
+    @include flex-row($spacing-2, center);
+    flex-shrink: 0;
+  }
+
+  &__divider {
+    height    : $border-width;
+    background: $color-border;
+  }
+
+  &__actions {
+    @include flex-row($spacing-2, center, stretch);
+    padding: $spacing-3 $spacing-5;
+    width  : 100%;
+  }
+
+  &__action-btn {
+    @include flex-row($spacing-1, center, center);
+    flex         : 1;
+    height       : $btn-height-sm;
+    border-radius: $radius-md;
+    font-family  : $font-body;
+    font-size    : $font-size-sm;
+    font-weight  : $font-weight-medium;
+    color        : $color-text-secondary;
+    background   : $color-bg-secondary;
+    border       : none;
+    cursor       : pointer;
+    transition   : background $transition-fast;
+
+    i {
+      font-size: $icon-sm;
+    }
+
+    &:active {
+      background: $color-bg-tertiary;
+    }
+
+    &--danger {
+      color     : $color-danger-text;
+      background: $color-danger-bg;
+
+      &:active {
+        background: $color-primary-100;
+      }
+    }
+  }
+}
+
+  // ─── BATCH EMPTY STATE ────────────────────────────────────────────────────────
+.batch-empty {
+  @include flex-col($spacing-2, center, center);
+  flex      : 1;
+  padding   : $spacing-5;
+  text-align: center;
+  height    : 100%;
+
+  i {
+    font-size: $icon-3xl;
+    color    : $color-border-strong;
+  }
+
+  p {
+    font-size  : $font-size-base;
+    font-weight: $font-weight-medium;
+    color      : $color-text-secondary;
+  }
+
+  span {
+    @include font-mono($font-size-sm);
+    color      : $color-text-tertiary;
+    line-height: $line-height-normal;
+    max-width  : 240px;
+  }
+}
+
+  // ─── BATCH DETAIL ─────────────────────────────────────────────────────────────
+.batch-detail {
+  &__header {
+    @include flex-row($spacing-3);
+    @include card-base;
+    margin : $spacing-4 $spacing-5;
+    padding: $spacing-4;
+  }
+
+  &__icon {
+    width        : $product-icon-size;
+    height       : $product-icon-size;
+    border-radius: $radius-lg;
+    background   : $color-expiry-bg;
+    @include flex-center;
+    flex-shrink: 0;
+
+    i {
+      font-size: $icon-md;
+      color    : $color-expiry-text;
+    }
+  }
+
+  &__info {
+    @include flex-col;
+    flex     : 1;
+    min-width: 0;
+  }
+
+  &__number {
+    font-size  : $font-size-base;
+    font-weight: $font-weight-medium;
+    color      : $color-text-primary;
+    @include truncate;
+  }
+
+  &__meta {
+    @include font-mono($font-size-sm);
+    color     : $color-text-secondary;
+    margin-top: 2px;
+  }
+
+  &__actions {
+    @include flex-row($spacing-2);
+    padding: 0 $spacing-5 $spacing-4;
+  }
+
+  &__action-btn {
+    @include flex-row($spacing-1, center, center);
+    flex         : 1;
+    height       : $btn-height-sm;
+    border-radius: $radius-md;
+    font-family  : $font-body;
+    font-size    : $font-size-sm;
+    font-weight  : $font-weight-medium;
+    color        : $color-text-secondary;
+    background   : $color-bg-secondary;
+    border       : none;
+    cursor       : pointer;
+    transition   : background $transition-fast;
+
+    i {
+      font-size: $icon-sm;
+    }
+
+    &:active {
+      background: $color-bg-tertiary;
+    }
+
+    &--danger {
+      color     : $color-danger-text;
+      background: $color-danger-bg;
+
+      &:active {
+        background: $color-primary-100;
+      }
+    }
+  }
+}
+
+  // ─── BATCH ITEM LIST ──────────────────────────────────────────────────────────
+.batch-item-list {
+  @include flex-col;
+}
+
+.batch-item-row {
+  @include flex-row($spacing-3);
+  width        : 100%;
+  padding      : $spacing-3 $spacing-5;
+  border-bottom: $border;
+
+  &__icon {
+    width        : $product-icon-size;
+    height       : $product-icon-size;
+    border-radius: $radius-lg;
+    @include flex-center;
+    flex-shrink: 0;
+
+    i {
+      font-size: $icon-md;
+    }
+  }
+
+  &__body {
+    @include flex-col;
+    flex     : 1;
+    min-width: 0;
+  }
+
+  &__name {
+    font-size  : $font-size-base;
+    font-weight: $font-weight-medium;
+    color      : $color-text-primary;
+    @include truncate;
+  }
+
+  &__sku {
+    @include font-mono($font-size-xs);
+    color     : $color-text-secondary;
+    margin-top: 2px;
+  }
+
+  &__stock {
+    @include font-mono($font-size-sm, $font-weight-medium);
+    color      : $color-text-primary;
+    flex-shrink: 0;
+  }
+
+  &__delete-btn {
+    @include icon-btn;
+    flex-shrink: 0;
+    color      : $color-text-tertiary;
+    background : transparent;
+    border     : none;
+
+    &:active {
+      color     : $color-danger;
+      background: $color-danger-bg;
+    }
+  }
+}
+
+  // ─── CAT ACCORDION (ProductCatalog) ──────────────────────────────────────────
+.cat-accordion {
+  border-radius: $radius-md;
+  border       : $border-strong;
+  overflow     : hidden;
+  margin       : 0 $spacing-5 $spacing-3;
+
+  &+& {
+    margin-top: $spacing-1;
+  }
+
+  &__header {
+    @include flex-row($spacing-2, center, space-between);
+    width     : 100%;
+    height    : 40px;
+    padding   : 0 $spacing-3;
+    background: $color-bg-secondary;
+    border    : none;
+    cursor    : pointer;
+    gap       : $spacing-2;
+
+    &:active {
+      background: $color-cream-100;
+    }
+  }
+
+  &__title {
+    @include font-mono($font-size-xs, $font-weight-medium);
+    letter-spacing: $letter-spacing-widest;
+    text-transform: uppercase;
+    color         : $color-text-primary;
+    white-space   : nowrap;
+    flex-shrink   : 0;
+  }
+
+  &__dots {
+    flex            : 1;
+    height          : 1px;
+    min-width       : $spacing-3;
+    background-image: repeating-linear-gradient(to right,
+        rgba(255, 220, 190, 0.18) 0,
+        rgba(255, 220, 190, 0.18) 2px,
+        transparent 2px,
+        transparent 7px);
+  }
+
+  &__count {
+    @include font-mono($font-size-xs, $font-weight-medium);
+    background   : rgba(165, 180, 252, 0.1);
+    border-radius: $radius-full;
+    padding      : 2px $spacing-2;
+    color        : $color-text-secondary;
+    flex-shrink  : 0;
+  }
+
+    // gear del CatalogCatSep en variant icon-only
+  .catalog__cat-gear-btn {
+    flex-shrink: 0;
+  }
+
+  &__chevron {
+    font-size  : $icon-sm;
+    color      : $color-text-secondary;
+    flex-shrink: 0;
+    transition : transform $transition-normal;
+  }
+
+  &__body {
+    overflow  : hidden;
+    max-height: 0;
+    background: $color-bg-primary;
+    border-top: $border-width solid $color-border;
+    transition: max-height 0.25s ease;
+  }
+
+  &--open {
+    .cat-accordion__chevron {
+      transform: rotate(180deg);
+    }
+
+    .cat-accordion__body {
+      max-height: 9999px;
+      transition: max-height 0.35s ease;
+    }
+  }
+}
+
+.cat-sep-backdrop {
+  position: fixed;
+  inset   : 0;
+  z-index : $z-overlay - 1;
+}
+
+.cat-sep-menu {
+  position: fixed;
+  z-index : $z-overlay;
+  @include flex-col($spacing-3, flex-end);
+
+  &__item {
+    @include flex-center;
+  }
+
+  &__btn {
+    @include flex-row($spacing-3, center, flex-start);
+    border-radius: $radius-full;
+    background   : $color-bg-secondary;
+    border       : $border-strong;
+    padding      : $spacing-2 $spacing-6 $spacing-2 $spacing-4;
+    cursor       : pointer;
+    box-shadow   : $shadow-md;
+    white-space  : nowrap;
+    min-width    : 160px;
+    transition   : background $transition-fast;
+
+    i {
+      font-size  : $icon-md;
+      color      : $color-accent;
+      flex-shrink: 0;
+    }
+
+    span {
+      font-family: $font-body;
+      font-size  : $font-size-sm;
+      font-weight: $font-weight-medium;
+      color      : $color-text-primary;
+    }
+
+    &:active {
+      background: $color-bg-tertiary;
+    }
+
+    &--active {
+
+      i,
+      span {
+        color: $color-primary-900;
+      }
+    }
+
+    &--danger {
+
+      i,
+      span {
+        color: $color-danger-text;
+      }
+    }
+  }
+}
+
+.cat-sep-menu-enter-active,
+.cat-sep-menu-leave-active {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.cat-sep-menu-enter-from,
+.cat-sep-menu-leave-to {
+  opacity  : 0;
+  transform: translateY(-$spacing-2);
+}
+
+.cat-sep-rename-overlay {
+  position: fixed;
+  z-index : $z-overlay;
+  @include flex-col($spacing-1);
+
+  &__input {
+    min-width: 200px;
+  }
+}
+
+  // ─── CATALOG ACTION BAR ───────────────────────────────────────────────────────
+.catalog-action-bar {
+  @include flex-row($spacing-2, center, stretch);
+  padding    : $spacing-3 $spacing-5 $spacing-2;
+  flex-shrink: 0;
+
+  &__btn {
+    @include flex-row($spacing-1, center, center);
+    flex         : 1;
+    height       : $btn-height-sm;
+    border-radius: $radius-md;
+    font-family  : $font-body;
+    font-size    : $font-size-sm;
+    font-weight  : $font-weight-medium;
+    color        : $color-text-secondary;
+    background   : $color-bg-secondary;
+    border       : none;
+    cursor       : pointer;
+    transition   : background $transition-fast, color $transition-fast;
+    white-space  : nowrap;
+    min-width    : 0;
+
+    i {
+      font-size  : $icon-sm;
+      flex-shrink: 0;
+    }
+
+    span {
+      @include truncate;
+    }
+
+    &:active {
+      background: $color-bg-tertiary;
+    }
+
+    &--settings {
+      color     : $color-text-secondary;
+      background: $color-bg-secondary;
+
+      i {
+        color: $color-text-tertiary;
+      }
+
+      &:active {
+        background: $color-bg-tertiary;
+      }
+
+      &.catalog-action-bar__btn--active {
+        background: $color-primary-50;
+        color     : $color-primary-900;
+
+        i {
+          color: $color-primary-900;
+        }
+      }
+    }
+  }
+}
+
+  // ─── AJUSTES SHEET ────────────────────────────────────────────────────────────
+.sheet {
+  &--tall {
+    max-height    : 85vh;
+    display       : flex;
+    flex-direction: column;
+  }
+
+  &__body {
+    &--scroll {
+      overflow-y: auto;
+      flex      : 1;
+      padding   : 0 $spacing-5 $spacing-4;
+
+        // Thin scrollbar
+      scrollbar-width: thin;
+      scrollbar-color: $color-border-strong transparent;
+    }
+  }
+}
+
+.ajustes {
+  &__section-label {
+    @include flex-row($spacing-2, center);
+    @include font-mono($font-size-xs, $font-weight-medium);
+    letter-spacing: $letter-spacing-widest;
+    text-transform: uppercase;
+    color         : $color-text-tertiary;
+    padding       : $spacing-4 0 $spacing-2;
+    margin        : 0 0 $spacing-2;
+    width         : 100%;
+    border-bottom : $border;
+
+    i {
+      font-size: $icon-sm;
+    }
+
+    &--mt {
+      width      : 100%;
+      padding-top: $spacing-5;
+    }
+  }
+
+  &__list {
+    @include flex-col;
+    border-radius: $radius-xl;
+    overflow     : scroll-y;
+    width        : 100%;
+  }
+
+  &__empty {
+    @include flex-center;
+    padding: $spacing-5;
+    @include font-mono($font-size-sm);
+    color: $color-text-tertiary;
+  }
+
+  &__item {
+    @include flex-row($spacing-3, center);
+    padding      : $spacing-3 $spacing-4;
+    background   : $color-bg-tertiary;
+    min-height   : 48px;
+    position     : relative;
+    width        : 100%;
+    margin-bottom: $spacing-1;
+    border-radius: $radius-md;
+
+    &+& {
+      border-top: $border;
+    }
+  }
+
+  &__item-icon {
+    width        : 30px;
+    height       : 30px;
+    border-radius: $radius-md;
+    @include flex-center;
+    flex-shrink: 0;
+
+    i {
+      font-size: $icon-sm;
+    }
+
+    &--cat {
+      background: rgba(165, 180, 252, 0.1);
+
+      i {
+        color: $color-primary-900;
+      }
+    }
+  }
+
+  &__item-info {
+    @include flex-col;
+    flex     : 1;
+    min-width: 0;
+  }
+
+  &__item-name {
+    font-size  : $font-size-base;
+    font-weight: $font-weight-medium;
+    color      : $color-text-primary;
+    @include truncate;
+  }
+
+  &__item-meta {
+    @include font-mono($font-size-xs);
+    color     : $color-text-tertiary;
+    margin-top: 1px;
+  }
+
+  &__item-actions {
+    @include flex-row($spacing-1, center);
+    flex-shrink: 0;
+  }
+
+  &__action-btn {
+    @include icon-btn;
+    background: transparent;
+    border    : none;
+    color     : $color-text-tertiary;
+    transition: background $transition-fast, color $transition-fast;
+
+    i {
+      font-size: $icon-sm;
+    }
+
+    &:active {
+      background: $color-bg-secondary;
+      color     : $color-text-secondary;
+    }
+
+    &--danger {
+      &:active {
+        background: $color-danger-bg;
+        color     : $color-danger-text;
+      }
+    }
+  }
+
+  &__confirm-btn {
+    @include icon-btn;
+    background   : $color-primary-50;
+    border       : none;
+    color        : $color-primary-900;
+    border-radius: $radius-sm;
+
+    i {
+      font-size: $icon-sm;
+    }
+
+    &:active {
+      background: $color-primary-100;
+    }
+  }
+
+  &__cancel-btn {
+    @include icon-btn;
+    background   : $color-bg-secondary;
+    border       : none;
+    color        : $color-text-secondary;
+    border-radius: $radius-sm;
+
+    i {
+      font-size: $icon-sm;
+    }
+
+    &:active {
+      background: $color-bg-tertiary;
+    }
+  }
+
+  &__edit-input {
+    flex         : 1;
+    min-width    : 0;
+    height       : 32px;
+    border-radius: $radius-sm;
+    border       : 1px solid $color-primary;
+    background   : $color-bg-primary;
+    color        : $color-text-primary;
+    padding      : 0 $spacing-3;
+    font-family  : $font-body;
+    font-size    : $font-size-base;
+    outline      : none;
+  }
+
+  &__edit-error {
+    position     : absolute;
+    left         : $spacing-4;
+    bottom       : 2px;
+    z-index      : 10;
+    font-size    : $font-size-xs;
+    color        : $color-danger-text;
+    background   : $color-danger-bg;
+    padding      : 1px $spacing-2;
+    border-radius: $radius-sm;
+    white-space  : nowrap;
+  }
+}

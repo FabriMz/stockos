@@ -1,0 +1,153 @@
+@use '../abstracts' as *;
+
+.bottom-nav {
+  @include flex-row;
+  background : $color-bg-primary;
+  border-top : $border;
+  padding    : $spacing-2 0 $spacing-2 + 2px;
+  flex-shrink: 0;
+  z-index    : $z-nav;
+
+  &__tab {
+    flex: 1;
+    @include flex-col(2px, center, center);
+    @include tap-target;
+    background: transparent;
+    border    : none;
+    cursor    : pointer;
+    padding   : $spacing-1 0;
+
+    i {
+      font-size : $icon-lg;
+      color     : $color-text-tertiary;
+      transition: color $transition-fast;
+    }
+
+    span {
+      font-family: $font-body;
+      font-size  : $font-size-2xs;
+      color      : $color-text-tertiary;
+      transition : color $transition-fast;
+    }
+
+    &--active {
+
+      i,
+      span {
+        color: $color-primary;
+      }
+
+      span {
+        font-weight: $font-weight-medium;
+      }
+    }
+  }
+
+  &__fab {
+    flex           : 1;
+    display        : flex;
+    align-items    : center;
+    justify-content: center;
+    background     : transparent;
+    border         : none;
+    cursor         : pointer;
+    padding        : $spacing-1 0;
+
+    i {
+      display        : flex;
+      align-items    : center;
+      justify-content: center;
+      width          : 42px;
+      height         : 42px;
+      border-radius  : $radius-full;
+      background     : $color-primary;
+      color          : #fff;
+      font-size      : $icon-xl;
+      box-shadow     : $shadow-md;
+      transition     : background $transition-fast, box-shadow $transition-fast, transform 0.2s ease;
+    }
+
+    &:active i {
+      background: $color-primary-700;
+      box-shadow: $shadow-sm;
+    }
+
+    &--open i {
+      transform: rotate(45deg);
+    }
+  }
+
+  &__dot {
+    width        : $spacing-1;
+    height       : $spacing-1;
+    border-radius: $radius-full;
+    background   : $color-danger;
+    margin-top   : -2px;
+  }
+}
+
+  // ─── FAB SPEED-DIAL ────────────────────────────────────────────────────────────
+.fab-backdrop {
+  position  : fixed;
+  inset     : 0;
+  z-index   : $z-overlay - 1;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.fab-menu {
+  position      : fixed;
+  bottom        : 72px;
+  left          : 50%;
+  transform     : translateX(-50%);
+  z-index       : $z-overlay;
+  display       : flex;
+  flex-direction: column;
+  align-items   : flex-end;
+  gap           : $spacing-3;
+
+  &__item {
+    @include flex-center;
+  }
+
+  &__btn {
+    @include flex-row($spacing-3, center, flex-start);
+    border-radius: $radius-full;
+    background   : $color-bg-secondary;
+    border       : $border;
+    padding      : $spacing-2 $spacing-6 $spacing-2 $spacing-4;
+    cursor       : pointer;
+    box-shadow   : $shadow-md;
+    white-space  : nowrap;
+    min-width    : 160px;
+    transition   : background $transition-fast;
+
+    i {
+      font-size  : $icon-md;
+      color      : $color-accent;
+      flex-shrink: 0;
+    }
+
+    span {
+      font-family: $font-body;
+      font-size  : $font-size-sm;
+      font-weight: $font-weight-medium;
+      color      : $color-text-primary;
+    }
+
+    &:active {
+      background: $color-bg-tertiary;
+    }
+  }
+}
+
+  // ─── FAB SPEED-DIAL TRANSITION ─────────────────────────────────────────────────
+.fab-menu-enter-active,
+.fab-menu-leave-active {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.fab-menu-enter-from,
+.fab-menu-leave-to {
+  opacity  : 0;
+  transform: translateX(-50%) translateY($spacing-4);
+}

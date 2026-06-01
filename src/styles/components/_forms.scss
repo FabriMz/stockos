@@ -1,0 +1,176 @@
+@use '../abstracts' as *;
+
+.form-section {
+  @include flex-col($spacing-3);
+  padding: 0 $spacing-5;
+  gap: $spacing-5;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-2;
+}
+
+.form-group {
+  @include flex-col($spacing-1);
+  width:100%;
+
+  &--full {
+    grid-column: 1 / -1;
+  }
+}
+
+.form-label {
+  @include font-mono($font-size-sm, $font-weight-medium);
+  color: $color-text-secondary;
+  margin-bottom: $spacing-1;
+}
+
+.form-input {
+  @include input-base;
+}
+
+.form-select {
+  @include input-base;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2390542f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right $spacing-3 center;
+  padding-right: $spacing-7;
+  cursor: pointer;
+}
+
+.form-hint {
+  @include font-mono($font-size-xs);
+  color: $color-text-tertiary;
+  text-align: right;
+  display: block;
+  width: 100%;
+
+  &--error {
+    color: $color-danger-text;
+  }
+}
+
+// ─── VENCIMIENTO BLOCK ────────────────────────────────────────────────────────
+.expiry-block {
+  @include card-base;
+  @include flex-col($spacing-2);
+  margin: 0 $spacing-5;
+  padding: $spacing-4;
+
+  &__head {
+    @include flex-row($spacing-2);
+
+    i {
+      font-size: $icon-md;
+      color: $color-warning;
+    }
+
+    span {
+      font-size: $font-size-base;
+      font-weight: $font-weight-medium;
+      color: $color-text-primary;
+    }
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-2;
+  }
+
+  &__hint {
+    @include font-mono($font-size-xs);
+    color: $color-text-tertiary;
+  }
+
+  &__alert {
+    @include flex-row($spacing-2, flex-start);
+    background: $color-warning-bg;
+    border: $border-width solid $color-warning-border;
+    border-radius: $radius-md;
+    padding: $spacing-2 $spacing-3;
+
+    i {
+      font-size: $icon-sm;
+      color: $color-warning;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    p {
+      font-size: $font-size-sm;
+      color: $color-warning-text;
+      line-height: $line-height-snug;
+    }
+  }
+}
+
+// ─── STOCK ADJUSTER ──────────────────────────────────────────────────────────
+.stock-adjuster {
+  @include card-base;
+  @include flex-col($spacing-2);
+  margin: 0 $spacing-5;
+  padding: $spacing-4;
+
+  &__header {
+    @include flex-between;
+  }
+
+  &__label {
+    font-size: $font-size-base;
+    color: $color-text-secondary;
+    margin-right: $spacing-2;
+  }
+
+  &__value {
+    @include font-mono($font-size-md, $font-weight-medium);
+    color: $color-text-primary;
+  }
+
+  &__hint {
+    @include font-mono($font-size-xs);
+    color: $color-text-tertiary;
+  }
+
+  &__controls {
+    @include flex-row($spacing-2);
+  }
+
+  &__btn {
+    @include flex-center;
+    width: 34px;
+    height: 34px;
+    border-radius: $radius-md;
+    border: $border;
+    background: $color-bg-primary;
+    font-size: $font-size-xl;
+    color: $color-text-primary;
+    cursor: pointer;
+    font-family: $font-mono;
+    transition: background $transition-fast;
+    flex-shrink: 0;
+
+    &:active {
+      background: $color-bg-secondary;
+    }
+  }
+
+  &__input {
+    flex: 1;
+    height: 34px;
+    border-radius: $radius-md;
+    border: $border;
+    background: $color-bg-primary;
+    @include font-mono($font-size-lg, $font-weight-medium);
+    color: $color-text-primary;
+    text-align: center;
+    outline: none;
+
+    &:focus {
+      border-color: $color-primary;
+    }
+  }
+}

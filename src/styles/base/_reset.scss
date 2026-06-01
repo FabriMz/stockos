@@ -1,0 +1,64 @@
+@use '../abstracts' as *;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: $font-body;
+  font-size: $font-size-base;
+  color: $color-text-primary;
+  background: $color-bg-tertiary;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+  font-family: $font-body;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+}
+
+input,
+select,
+textarea {
+  font-family: $font-body;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+// ─── PHONE SHELL (solo en desarrollo) ────────────────────────────────────────
+.phone-shell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  background: $color-cream-300;
+
+  &__frame {
+    width: 360px;
+    height: auto;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: $shadow-lg, 0 0 0 2px $color-copper-700;
+    position: relative;
+    flex-shrink: 0;
+  }
+}

@@ -1,0 +1,46 @@
+@use '../abstracts' as *;
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-2;
+  padding: 0 $spacing-4;
+}
+
+.stat-card {
+  @include card-base;
+  padding: $spacing-3 $spacing-4;
+
+  &__label {
+    @include font-mono($font-size-xs);
+    color: $color-text-secondary;
+  }
+
+  &__value {
+    @include font-display($font-size-3xl);
+    color: $color-text-primary;
+    line-height: $line-height-tight;
+    margin-top: 2px;
+
+    &--danger { color: $color-danger; }
+    &--sm     { font-size: $font-size-2xl; }
+  }
+
+  &__sub {
+    font-size: $font-size-xs;
+    color: $color-text-secondary;
+    margin-top: 2px;
+  }
+
+  &__bar {
+    height: 2px;
+    border-radius: $radius-full;
+    margin-top: $spacing-2;
+
+    &--blue    { background: #378ADD; }
+    &--success { background: $color-success; }
+    &--warning { background: $color-warning; }
+    &--danger  { background: $color-danger; }
+    &--primary { background: $color-primary; }
+  }
+}

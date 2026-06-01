@@ -1,0 +1,47 @@
+@use '../abstracts' as *;
+
+// ─── TOAST UNDO ───────────────────────────────────────────────────────────────
+.toast {
+  position: absolute;
+  bottom: calc(#{$bottomnav-height} + #{$spacing-4});
+  left: $spacing-5;
+  right: $spacing-5;
+  @include flex-row($spacing-3, center, space-between);
+  background: $color-text-primary;
+  color: $color-bg-primary;
+  border-radius: $radius-xl;
+  padding: $spacing-3 $spacing-5;
+  z-index: $z-overlay;
+  box-shadow: $shadow-lg;
+
+  &__msg {
+    font-size: $font-size-base;
+    font-weight: $font-weight-medium;
+  }
+
+  &__undo {
+    @include font-mono($font-size-sm, $font-weight-medium);
+    color: $color-bg-primary;
+    background: transparent;
+    border: $border-width solid rgba(35, 30, 25, 0.3);
+    border-radius: $radius-md;
+    padding: $spacing-1 $spacing-3;
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:active {
+      background: rgba(35, 30, 25, 0.1);
+    }
+  }
+}
+
+.toast-enter-active,
+.toast-leave-active {
+  transition: opacity $transition-normal, transform $transition-normal;
+}
+
+.toast-enter-from,
+.toast-leave-to {
+  opacity: 0;
+  transform: translateY($spacing-4);
+}

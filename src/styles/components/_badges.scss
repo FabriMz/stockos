@@ -1,0 +1,35 @@
+@use '../abstracts' as *;
+
+.badge {
+  @include badge-base;
+
+  &--ok {
+    background: $color-success-bg;
+    color: $color-success-text;
+    border: $border-width solid $color-success-border;
+  }
+
+  &--low {
+    background: $color-warning-bg;
+    color: $color-warning-text;
+    border: $border-width solid $color-warning-border;
+  }
+
+  &--out {
+    background: $color-danger-bg;
+    color: $color-danger-text;
+    border: $border-width solid $color-danger-border;
+  }
+
+  &--expiry {
+    background: $color-expiry-bg;
+    color: $color-expiry-text;
+    border: $border-width solid $color-expiry-border;
+  }
+
+  &--venc {
+    background: $color-expiry-bg;
+    color     : $color-expiry-text;
+    border    : $border-width solid $color-expiry-border;
+  }
+}

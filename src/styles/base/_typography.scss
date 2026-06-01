@@ -1,0 +1,38 @@
+@use '../abstracts' as *;
+
+.font-display { font-family: $font-display; }
+.font-body    { font-family: $font-body; }
+.font-mono    { font-family: $font-mono; }
+
+.text-xs   { font-size: $font-size-xs; }
+.text-sm   { font-size: $font-size-sm; }
+.text-base { font-size: $font-size-base; }
+.text-md   { font-size: $font-size-md; }
+.text-lg   { font-size: $font-size-lg; }
+.text-xl   { font-size: $font-size-xl; }
+.text-2xl  { font-size: $font-size-2xl; }
+.text-3xl  { font-size: $font-size-3xl; }
+
+.fw-regular  { font-weight: $font-weight-regular; }
+.fw-medium   { font-weight: $font-weight-medium; }
+.fw-semibold { font-weight: $font-weight-semibold; }
+.fw-bold     { font-weight: $font-weight-bold; }
+
+.text-primary   { color: $color-text-primary; }
+.text-secondary { color: $color-text-secondary; }
+.text-tertiary  { color: $color-text-tertiary; }
+.text-brand     { color: $color-primary; }
+.text-danger    { color: $color-danger; }
+.text-warning   { color: $color-warning; }
+.text-success   { color: $color-success; }
+
+.section-label {
+  @include font-label;
+  padding: 0 0 $spacing-2;
+  margin: $spacing-8 $spacing-5 $spacing-5; 
+  border-bottom: $border;
+}
+
+.truncate {
+  @include truncate;
+}

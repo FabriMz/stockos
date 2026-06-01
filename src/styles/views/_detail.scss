@@ -1,0 +1,137 @@
+@use '../abstracts' as *;
+
+.detail {
+  &__header {
+    @include card-base;
+    margin: $spacing-4 $spacing-5 0;
+    padding: $spacing-5;
+    text-align: center;
+  }
+
+  &__icon {
+    width: $spacing-9 + 18px;
+    height: $spacing-9 + 18px;
+    border-radius: $radius-2xl;
+    @include flex-center;
+    margin: 0 auto $spacing-2;
+    overflow: hidden;
+
+    i { font-size: $icon-3xl; }
+
+    &-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  &__name {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-medium;
+    color: $color-text-primary;
+    line-height: $line-height-snug;
+    margin-bottom: $spacing-1;
+  }
+
+  &__sku {
+    @include font-mono($font-size-sm);
+    color: $color-text-secondary;
+    margin-bottom: $spacing-2;
+  }
+
+  &__badge-wrap {
+    @include flex-center;
+    margin-bottom: $spacing-5;
+  }
+
+  &__row {
+    @include flex-between;
+    padding: $spacing-2 0;
+    border-top: $border;
+  }
+
+  &__row-label {
+    font-size: $font-size-base;
+    color: $color-text-secondary;
+  }
+
+  &__row-value {
+    @include font-mono($font-size-base, $font-weight-medium);
+    color: $color-text-primary;
+
+    &--warn {
+      color: $color-warning;
+    }
+  }
+
+  &__section {
+    @include card-base;
+    margin: $spacing-2 $spacing-5 0;
+    padding: $spacing-4;
+  }
+
+  &__section-title {
+    @include font-mono($font-size-xs, $font-weight-medium);
+    letter-spacing: $letter-spacing-wider;
+    text-transform: uppercase;
+    color: $color-text-secondary;
+    margin-bottom: $spacing-3;
+  }
+
+  &__prices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-2;
+
+    &--secondary {
+      margin-top: $spacing-2;
+    }
+  }
+
+  &__price-col {
+    text-align: center;
+    padding: $spacing-3;
+    border-radius: $radius-md;
+    background: $color-bg-secondary;
+  }
+
+  &__currency-col {
+    cursor: pointer;
+    transition: filter $transition-fast;
+
+    &:active {
+      filter: brightness(0.85);
+    }
+  }
+
+  &__price-label {
+    @include font-mono($font-size-xs);
+    color: $color-text-secondary;
+    margin-bottom: $spacing-1;
+  }
+
+  &__price-value {
+    @include font-mono($font-size-xl, $font-weight-medium);
+    color: $color-text-primary;
+
+    &--success {
+      color: $color-success;
+    }
+  }
+
+  &__reorder-hint {
+    @include font-mono($font-size-sm);
+    color: $color-text-secondary;
+    margin-top: $spacing-2;
+  }
+
+  &__actions {
+    @include flex-row($spacing-3);
+    margin: $spacing-4 $spacing-5;
+
+    .btn {
+      flex: 1;
+      height: $btn-height-md;
+    }
+  }
+}

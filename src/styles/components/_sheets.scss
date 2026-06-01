@@ -1,0 +1,240 @@
+@use '../abstracts' as *;
+
+.sheet-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: flex-end;
+}
+
+.sheet {
+  width: 100%;
+  max-height: 85dvh;
+  background: $color-bg-secondary;
+  border-radius: $radius-3xl $radius-3xl 0 0;
+  border-top: $border-strong;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  &__handle {
+    width: 32px;
+    height: 3px;
+    background: $color-border-strong;
+    border-radius: $radius-full;
+    margin: $spacing-3 auto $spacing-2;
+    flex-shrink: 0;
+  }
+
+  &__header {
+    padding: $spacing-2 $spacing-5 $spacing-4;
+    flex-shrink: 0;
+  }
+
+  &__title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-medium;
+    color: $color-text-primary;
+  }
+
+  &__sub {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    margin-top: $spacing-2;
+  }
+
+  &__preview {
+    @include flex-row($spacing-3);
+    @include card-base;
+    margin: 0 $spacing-5 $spacing-4;
+    padding: $spacing-3 $spacing-4;
+
+    &-icon {
+      width: $avatar-size-md;
+      height: $avatar-size-md;
+      border-radius: $radius-md;
+      @include flex-center;
+      flex-shrink: 0;
+
+      i { font-size: $icon-sm; }
+    }
+
+    &-name {
+      font-size: $font-size-base;
+      font-weight: $font-weight-medium;
+      color: $color-text-primary;
+      @include truncate;
+    }
+
+    &-sku {
+      @include font-mono($font-size-xs);
+      color: $color-text-secondary;
+      margin-top: 2px;
+    }
+  }
+
+  &__body {
+    @include flex-col($spacing-3);
+    // padding-right reducido 3px para compensar el thumb del scrollbar y que el contenido quede simétrico
+    padding: 0 calc(#{$spacing-5} - 3px) $spacing-4 $spacing-5;
+    overflow-y: auto;
+    flex: 1 1 auto;
+    min-height: 0;
+
+    // Custom scrollbar
+    scrollbar-width: thin;
+    scrollbar-color: $color-primary-200 transparent;
+
+    &::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $color-primary-200;
+      border-radius: $radius-full;
+
+      &:hover {
+        background: $color-primary-100;
+      }
+    }
+  }
+
+  &__section-label {
+    @include font-mono($font-size-xs, $font-weight-medium);
+    letter-spacing: $letter-spacing-widest;
+    text-transform: uppercase;
+    color: $color-text-tertiary;
+    margin-bottom: $spacing-1;
+  }
+
+  &__batch-list {
+    @include flex-col($spacing-1);
+    max-height: 196px;
+    overflow-y: auto;
+  }
+
+  &__batch-option {
+    @include flex-row($spacing-3, center, space-between);
+    width: 100%;
+    padding: $spacing-3 $spacing-4;
+    border-radius: $radius-md;
+    border: $border;
+    background: $color-bg-primary;
+    cursor: pointer;
+    transition: background $transition-fast, border-color $transition-fast;
+    text-align: left;
+
+    &:active {
+      background: $color-bg-tertiary;
+    }
+
+    &--active {
+      border-color: $color-primary-200;
+      background: $color-primary-50;
+    }
+
+    &--new {
+      .sheet__batch-option-name {
+        color: $color-text-secondary;
+      }
+
+      &.sheet__batch-option--active .sheet__batch-option-name {
+        color: $color-text-primary;
+      }
+    }
+
+    &-body {
+      @include flex-col($spacing-0);
+      min-width: 0;
+
+      &--row {
+        @include flex-row($spacing-2, center);
+
+        i {
+          font-size: $icon-sm;
+          color: $color-text-tertiary;
+          flex-shrink: 0;
+        }
+      }
+    }
+
+    &-name {
+      font-size: $font-size-base;
+      font-weight: $font-weight-medium;
+      color: $color-text-primary;
+      @include truncate;
+    }
+
+    &-meta {
+      @include font-mono($font-size-xs);
+      color: $color-text-secondary;
+      margin-top: 2px;
+    }
+  }
+}
+
+// ─── Multi-category entry (ProductCatalog new-cat sheet) ─────────────────────
+.new-cat-row {
+  @include flex-row($spacing-2);
+  width: 100%;
+
+  .form-input {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__remove {
+    @include flex-center;
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: $radius-md;
+    border: $border;
+    background: transparent;
+    color: $color-text-tertiary;
+    cursor: pointer;
+    transition: color $transition-fast, border-color $transition-fast;
+
+    i { font-size: $icon-sm; }
+
+    &:active {
+      color: $color-danger-text;
+      border-color: $color-danger-border;
+    }
+  }
+}
+
+.new-cat-add-btn {
+  width: 100%;
+  justify-content: flex-start;
+  color: $color-text-secondary;
+  padding-left: 0;
+
+  &:active {
+    color: $color-text-primary;
+  }
+}
+
+.sheet-enter-active,
+.sheet-leave-active {
+  transition: opacity $transition-normal;
+
+  .sheet {
+    transition: transform $transition-normal;
+  }
+}
+
+.sheet-enter-from,
+.sheet-leave-to {
+  opacity: 0;
+
+  .sheet {
+    transform: translateY(100%);
+  }
+}

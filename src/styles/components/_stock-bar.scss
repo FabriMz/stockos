@@ -1,0 +1,33 @@
+@use '../abstracts' as *;
+
+.stock-bar {
+  width: $stock-bar-width;
+  height: $stock-bar-height;
+  border-radius: $radius-full;
+  background: $color-bg-tertiary;
+  overflow: hidden;
+  margin-left: auto;
+  margin-bottom: $spacing-1;
+
+  &--full {
+    width: 100%;
+    height: $spacing-1 + 1px;
+  }
+
+  &__fill {
+    height: 100%;
+    border-radius: $radius-full;
+    transition: width $transition-normal;
+
+    &--ok      { background: $color-success; }
+    &--low     { background: $color-warning; }
+    &--out     { background: $color-danger; }
+  }
+}
+
+.stock-nums {
+  @include flex-between;
+  @include font-mono($font-size-xs);
+  color: $color-text-tertiary;
+  margin-top: $spacing-1;
+}

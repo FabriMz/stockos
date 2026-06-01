@@ -1,0 +1,249 @@
+@use '../abstracts' as *;
+
+.topbar {
+  background: $color-bg-primary;
+  border-bottom: $border;
+  flex-shrink: 0;
+
+  &--simple {
+    @include flex-between;
+    height: $topbar-height;
+    padding: 0 $spacing-5;
+  }
+
+  &__inner {
+    padding: $spacing-4 $spacing-5 $spacing-3;
+  }
+
+  &__row {
+    @include flex-between;
+    margin-bottom: $spacing-3;
+  }
+
+  &__logo {
+    @include font-display($font-size-2xl, $font-weight-bold);
+    color: $color-text-primary;
+    line-height: 1;
+
+    &-dot {
+      color: $color-primary;
+    }
+  }
+
+  &__subtitle {
+    @include font-mono($font-size-xs);
+    color: $color-text-tertiary;
+    margin: $spacing-1 0 0;
+  }
+
+  &__fx {
+    @include font-mono($font-size-xs);
+    color: $color-text-secondary;
+    margin: $spacing-1 0 0;
+
+    &-src {
+      color: $color-text-tertiary;
+      margin-left: $spacing-1;
+    }
+  }
+
+  &__title {
+    @include font-display($font-size-2xl, $font-weight-bold);
+    color: $color-text-primary;
+    letter-spacing: $letter-spacing-tight;
+  }
+
+  &__actions {
+    @include flex-row($spacing-1);
+  }
+
+  &--breadcrumb {
+    @include flex-col($spacing-1);
+    padding: $spacing-3 $spacing-5;
+  }
+
+  &__breadcrumb-row {
+    @include flex-between;
+  }
+
+  &__breadcrumbs {
+    @include flex-row($spacing-1);
+    overflow-x             : auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width        : none;
+    padding-bottom         : $spacing-1;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  &__crumb {
+    font-family: $font-body;
+    font-size  : $font-size-xs;
+    font-weight: $font-weight-medium;
+    color      : $color-text-secondary;
+    white-space: nowrap;
+    background : transparent;
+    border     : none;
+    padding    : 0;
+    cursor     : pointer;
+    transition : color $transition-fast;
+
+    &:active {
+      color: $color-text-primary;
+    }
+  }
+
+  &__crumb-sep {
+    font-size  : 10px;
+    color      : $color-text-tertiary;
+    flex-shrink: 0;
+  }
+
+  &__back {
+    @include flex-row($spacing-1);
+    @include tap-target;
+    padding: 0 $spacing-3 0 $spacing-2;
+    border-radius: $radius-md;
+    background: $color-bg-secondary;
+    font-size: $font-size-base;
+    font-weight: $font-weight-medium;
+    color: $color-text-primary;
+    min-height: $btn-height-sm;
+    height: auto;
+    align-self: center;
+    transition: background $transition-fast;
+
+    &:active {
+      background: $color-cream-200;
+    }
+
+    i {
+      font-size: $icon-xs;
+      color: $color-text-secondary;
+    }
+  }
+
+  &__search {
+    @include flex-row($spacing-2);
+    background: $color-bg-tertiary;
+    border-radius: $radius-md;
+    padding: $spacing-6 $spacing-4;
+    height: 34px;
+    width: 100%;
+
+    i {
+      font-size: $icon-xs + 1;
+      color: $color-text-tertiary;
+      flex-shrink: 0;
+    }
+
+    input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      font-family: $font-body;
+      font-size: $font-size-base;
+      color: $color-text-primary;
+      outline: none;
+      appearance: none;
+
+      &::placeholder {
+        color: $color-text-tertiary;
+      }
+
+      &::-webkit-search-cancel-button {
+        display: none;
+      }
+    }
+  }
+
+  &__avatar {
+    width: $avatar-size-sm + 2px;
+    height: $avatar-size-sm + 2px;
+    border-radius: $radius-full;
+    background: $color-primary-100;
+    @include flex-center;
+    @include font-mono($font-size-xs, $font-weight-semibold);
+    color: $color-primary-900;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  &__notification-dot {
+    position: absolute;
+    top: $spacing-1 + 1px;
+    right: $spacing-1 + 1px;
+    width: 6px;
+    height: 6px;
+    border-radius: $radius-full;
+    background: $color-danger;
+    border: 1.5px solid $color-bg-primary;
+  }
+
+  &__currency {
+    @include font-mono($font-size-xs, $font-weight-medium);
+    color: $color-primary;
+    background: $color-primary-50;
+    border: $border-width solid $color-primary-100;
+    border-radius: $radius-sm;
+    padding: 1px $spacing-2;
+    cursor: pointer;
+    margin-left: $spacing-2;
+    transition: background $transition-fast;
+    vertical-align: middle;
+
+    &:active {
+      background: $color-primary-100;
+    }
+  }
+
+  &__search-clear {
+    @include flex-center;
+    width: 20px;
+    height: 20px;
+    border-radius: $radius-sm;
+    background: transparent;
+    border: none;
+    color: $color-text-tertiary;
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 0;
+
+    i {
+      font-size: $icon-xs;
+    }
+  }
+}
+
+.icon-btn {
+  @include icon-btn;
+  position: relative;
+
+  &--active-danger {
+    color: $color-danger;
+    background: $color-danger-bg;
+  }
+}
+
+.btn-new {
+  @include flex-row($spacing-1);
+  padding: 0 $spacing-4;
+  height: $btn-height-sm;
+  border-radius: $radius-md;
+  background: $color-primary;
+  color: $color-text-on-primary;
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  transition: background $transition-fast;
+
+  &:active {
+    background: $color-primary-700;
+  }
+
+  i {
+    font-size: $icon-sm + 1;
+  }
+}

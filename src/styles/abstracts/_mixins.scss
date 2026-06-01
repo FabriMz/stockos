@@ -1,0 +1,181 @@
+@use 'sass:math';
+@use 'variables' as *;
+
+// ─── LAYOUT ──────────────────────────────────────────────────────────────────
+@mixin flex-row($gap: 0, $align: center, $justify: flex-start) {
+  display: flex;
+  flex-direction: row;
+  align-items: $align;
+  justify-content: $justify;
+  @if $gap != 0 { gap: $gap; }
+}
+
+@mixin flex-col($gap: 0, $align: flex-start, $justify: flex-start) {
+  display: flex;
+  flex-direction: column;
+  align-items: $align;
+  justify-content: $justify;
+  @if $gap != 0 { gap: $gap; }
+}
+
+@mixin flex-list {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+// ─── TIPOGRAFÍA ──────────────────────────────────────────────────────────────
+@mixin font-display($size: $font-size-2xl, $weight: $font-weight-bold) {
+  font-family: $font-display;
+  font-size: $size;
+  font-weight: $weight;
+  letter-spacing: $letter-spacing-wide;
+}
+
+@mixin font-mono($size: $font-size-base, $weight: $font-weight-regular) {
+  font-family: $font-mono;
+  font-size: $size;
+  font-weight: $weight;
+}
+
+@mixin font-label {
+  font-family: $font-mono;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  letter-spacing: $letter-spacing-widest;
+  text-transform: uppercase;
+  color: $color-text-tertiary;
+}
+
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// ─── COMPONENTES ─────────────────────────────────────────────────────────────
+@mixin tap-target {
+  min-height: $tap-target;
+  min-width: $tap-target;
+}
+
+@mixin icon-btn {
+  @include flex-center;
+  width: $icon-btn-size;
+  height: $icon-btn-size;
+  border-radius: $radius-md;
+  border: none;
+  background: transparent;
+  color: $color-text-secondary;
+  cursor: pointer;
+  transition: background $transition-fast;
+
+  &:active {
+    background: $color-bg-secondary;
+  }
+
+  i {
+    font-size: $icon-md;
+  }
+}
+
+@mixin card-base {
+  background: $color-bg-primary;
+  border: $border;
+  border-radius: $radius-xl;
+}
+
+@mixin section-label {
+  @include font-label;
+  padding: $spacing-4 $spacing-5 $spacing-2;
+}
+
+@mixin screen-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+  background: $color-bg-tertiary;
+}
+
+@mixin scroll-content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $color-border-strong;
+    border-radius: $radius-full;
+  }
+}
+
+// ─── ESTADO / STRIPE DE COLOR ────────────────────────────────────────────────
+@mixin color-stripe($color) {
+  width: $stripe-width;
+  border-radius: math.div($stripe-width, 2);
+  align-self: stretch;
+  min-height: $spacing-10;
+  flex-shrink: 0;
+  background: $color;
+}
+
+// ─── BADGE BASE ──────────────────────────────────────────────────────────────
+@mixin badge-base {
+  @include flex-row($spacing-1);
+  @include font-mono($font-size-xs, $font-weight-medium);
+  display: inline-flex;
+  padding: 2px $spacing-2;
+  border-radius: $radius-full;
+  white-space: nowrap;
+  line-height: 1.6;
+
+  i {
+    font-size: $icon-xs;
+  }
+}
+
+// ─── FORMULARIO ──────────────────────────────────────────────────────────────
+@mixin input-base {
+  width: 100%;
+  height: $input-height;
+  border-radius: $radius-md;
+  border: $border;
+  background: $color-bg-primary;
+  font-family: $font-body;
+  font-size: $font-size-base;
+  color: $color-text-primary;
+  color-scheme: dark;
+  padding: 0 $spacing-4;
+  outline: none;
+  transition: border-color $transition-fast;
+
+  &:focus {
+    border-color: $color-primary;
+  }
+
+  &::placeholder {
+    color: $color-text-tertiary;
+  }
+
+  &[readonly] {
+    background: $color-bg-secondary;
+    color: $color-text-secondary;
+  }
+}

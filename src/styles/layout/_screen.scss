@@ -1,0 +1,17 @@
+@use '../abstracts' as *;
+
+.screen {
+  @include screen-layout;
+  position: relative;
+}
+
+.scroll-content {
+  @include scroll-content;
+}
+
+.spacer {
+  &--xs  { height: $spacing-2; }
+  &--sm  { height: $spacing-4; }
+  &--md  { height: $spacing-6; }
+  &--lg  { height: $spacing-8; }
+}

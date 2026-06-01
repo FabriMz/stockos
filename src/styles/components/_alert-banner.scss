@@ -1,0 +1,36 @@
+@use '../abstracts' as *;
+
+.alert-banner {
+  @include flex-row($spacing-4);
+  margin: $spacing-4 $spacing-5 0;
+  border-radius: $radius-xl;
+  padding: $spacing-4;
+  background: $color-danger-bg;
+  border: $border-width solid $color-danger-border;
+
+  &__icon {
+    width: $brand-icon-size;
+    height: $brand-icon-size;
+    border-radius: $radius-lg;
+    @include flex-center;
+    flex-shrink: 0;
+    background: rgba(121, 17, 50, 0.10);
+
+    i {
+      font-size: $icon-xl;
+      color: $color-danger;
+    }
+  }
+
+  &__title {
+    @include font-display($font-size-lg, $font-weight-bold);
+    color: $color-danger-text;
+  }
+
+  &__sub {
+    @include font-mono($font-size-sm);
+    color: $color-danger-text;
+    opacity: 0.75;
+    margin-top: 2px;
+  }
+}

@@ -1,0 +1,134 @@
+@use '../abstracts' as *;
+
+.form-view {
+  &__preview {
+    @include flex-col($spacing-2, center, center);
+    @include card-base;
+    margin: $spacing-4 $spacing-5 0;
+    padding: $spacing-5;
+    text-align: center;
+
+    &-icon {
+      width: $spacing-9 + 18px;
+      height: $spacing-9 + 18px;
+      border-radius: $radius-2xl;
+      @include flex-center;
+      margin-bottom: $spacing-1;
+      overflow: hidden;
+
+      i { font-size: $icon-3xl; }
+    }
+
+    &-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    &-name {
+      font-size: $font-size-lg;
+      font-weight: $font-weight-medium;
+      color: $color-text-primary;
+      line-height: $line-height-snug;
+    }
+
+    &-sku {
+      @include font-mono($font-size-sm);
+      color: $color-text-secondary;
+    }
+  }
+
+  &__delete {
+    @include flex-row($spacing-2);
+    background: $color-danger-bg;
+    border: $border-width solid $color-danger-border;
+    border-radius: $radius-lg;
+    margin: 0 $spacing-5;
+    padding: $spacing-3 $spacing-4;
+    cursor: pointer;
+    transition: background $transition-fast;
+
+    &:active {
+      background: $color-primary-100;
+    }
+
+    i {
+      font-size: $icon-md;
+      color: $color-danger;
+    }
+
+    span {
+      font-size: $font-size-base;
+      font-weight: $font-weight-medium;
+      color: $color-danger-text;
+    }
+  }
+}
+
+// ─── DESCUENTO PERSONALIZADO ─────────────────────────────────────────────────
+.discount-custom {
+  position: relative;
+  width: 100%;
+
+  &__input {
+    width: 100%;
+    padding-right: $spacing-9; // reserve space for the inner button
+  }
+
+  &__reset {
+    @include flex-center;
+    position: absolute;
+    right: $spacing-2;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 26px;
+    height: 26px;
+    border-radius: $radius-sm;
+    border: none;
+    background: transparent;
+    color: $color-text-tertiary;
+    cursor: pointer;
+    transition: color $transition-fast, background $transition-fast;
+
+    &:hover {
+      color: $color-text-secondary;
+      background: $color-bg-tertiary;
+    }
+
+    &:active {
+      background: $color-bg-secondary;
+    }
+
+    i {
+      font-size: $icon-sm;
+    }
+  }
+}
+
+// ─── CONFIRMAR ELIMINAR ───────────────────────────────────────────────────────
+.form-view__delete-confirm {
+  @include card-base;
+  @include flex-col($spacing-3);
+  margin: 0 $spacing-5;
+  padding: $spacing-4;
+  border-color: $color-danger-border;
+  background: $color-danger-bg;
+
+  &__msg {
+    font-size: $font-size-base;
+    font-weight: $font-weight-medium;
+    color: $color-danger-text;
+  }
+
+  &__btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-2;
+    width: 100%;
+  }
+}
+
+// ─── INPUTS FULL-WIDTH EN FORMULARIOS ────────────────────────────────────────
+.form-section .form-group {
+  width: 100%;
+}

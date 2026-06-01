@@ -1,0 +1,11 @@
+node_modules
+dist
+dist-ssr
+*.local
+.env
+.env.*
+.tmp.driveupload
+.tmp.drivedownload
+
+# Binary assets — no trackear imágenes en git
+public/products/

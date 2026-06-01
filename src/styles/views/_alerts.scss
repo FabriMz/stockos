@@ -1,0 +1,131 @@
+@use '../abstracts' as *;
+
+.alert-search {
+  @include flex-row($spacing-2);
+  background: $color-bg-secondary;
+  border-radius: $radius-md;
+  padding: 0 $spacing-4;
+  height: 34px;
+  margin: $spacing-5 $spacing-4;
+
+  i {
+    font-size: $icon-md;
+    color: $color-text-tertiary;
+    flex-shrink: 0;
+  }
+
+  input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    background: transparent;
+    font-size: $font-size-base;
+    color: $color-text-primary;
+    outline: none;
+    appearance: none;
+
+    &::placeholder {
+      color: $color-text-tertiary;
+    }
+
+    &::-webkit-search-cancel-button {
+      display: none;
+    }
+  }
+
+  &__clear {
+    @include tap-target;
+    padding: 0;
+    color: $color-text-tertiary;
+    flex-shrink: 0;
+
+    i {
+      font-size: $icon-md;
+    }
+  }
+}
+
+.alerts {
+  &__brand-list {
+    @include flex-list;
+  }
+
+  &__folder-list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+    padding: 0 $spacing-4;
+  }
+}
+
+// Permite quiebre de línea en nombres largos dentro de acordeones de alertas
+.brand-row {
+  &__info--wrap {
+    overflow: visible;
+
+    .brand-row__name {
+      white-space  : normal;
+      overflow     : visible;
+      text-overflow: unset;
+    }
+  }
+}
+
+.alert-folder {
+  display: flex;
+  align-items: center;
+  background: $color-bg-primary;
+  border: $border-strong;
+  border-radius: $radius-xl;
+  overflow: hidden;
+  cursor: pointer;
+  transition: background $transition-fast;
+
+  &:active {
+    background: $color-bg-secondary;
+  }
+
+  &__stripe {
+    width: $stripe-width;
+    align-self: stretch;
+    flex-shrink: 0;
+  }
+
+  &__icon {
+    width: $brand-icon-size;
+    height: $brand-icon-size;
+    border-radius: $radius-md;
+    @include flex-center;
+    flex-shrink: 0;
+    margin: $spacing-4 0 $spacing-4 $spacing-4;
+
+    i {
+      font-size: $icon-lg;
+    }
+  }
+
+  &__info {
+    flex: 1;
+    min-width: 0;
+    padding: $spacing-4 $spacing-3;
+  }
+
+  &__name {
+    font-size: $font-size-base;
+    font-weight: $font-weight-medium;
+    color: $color-text-primary;
+  }
+
+  &__meta {
+    @include font-mono($font-size-xs);
+    color: $color-text-tertiary;
+    margin-top: 2px;
+  }
+
+  &__chevron {
+    font-size: $icon-md;
+    color: $color-text-tertiary;
+    margin-right: $spacing-4;
+    flex-shrink: 0;
+  }
+}

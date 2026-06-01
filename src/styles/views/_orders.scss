@@ -1,0 +1,79 @@
+@use '../abstracts' as *;
+
+.orders {
+  &__list {
+    @include flex-list;
+
+    .order-row--interactive {
+      cursor: pointer;
+      transition: background $transition-fast;
+
+      &:active {
+        background: $color-bg-secondary;
+      }
+    }
+  }
+
+  &__empty {
+    @include font-mono($font-size-sm);
+    color: $color-text-tertiary;
+    text-align: center;
+    padding: $spacing-8 $spacing-5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+
+  &__color-picker {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-2;
+  }
+
+  &__color-option {
+    @include flex-row($spacing-3);
+    cursor: pointer;
+    padding: $spacing-3 $spacing-4;
+    border-radius: $radius-lg;
+    border: $border-width-md solid $color-border;
+    background: $color-bg-primary;
+    transition: border-color $transition-fast, background $transition-fast;
+
+    input[type='radio'] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+
+      &:checked + .orders__color-dot {
+        box-shadow: 0 0 0 2px $color-bg-primary, 0 0 0 3.5px $color-border-strong;
+      }
+    }
+
+    &:has(input:checked) {
+      border-color: $color-border-strong;
+      background: $color-bg-secondary;
+
+      .orders__color-label {
+        color: $color-text-primary;
+        font-weight: $font-weight-semibold;
+      }
+    }
+  }
+
+  &__color-dot {
+    display: block;
+    width: 14px;
+    height: 14px;
+    border-radius: $radius-full;
+    flex-shrink: 0;
+    transition: box-shadow $transition-fast;
+  }
+
+  &__color-label {
+    @include font-mono($font-size-sm);
+    color: $color-text-secondary;
+    transition: color $transition-fast;
+  }
+}
