@@ -53,7 +53,7 @@
         class="catalog-action-bar__btn catalog-action-bar__btn--settings"
         :class="{ 'catalog-action-bar__btn--active': showAjustesSheet }"
         aria-label="Ajustes del catálogo"
-        @click="showAjustesSheet = true"
+        @click="openAjustesSheet()"
       >
         <i class="ti ti-settings" aria-hidden="true"></i>
         <span>Ajustes</span>
@@ -733,8 +733,10 @@
 <script setup>
 import { ref, computed, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useProductsStore }       from '../stores/products.js'
+import { useProductsStore }        from '../stores/products.js'
 import { useBrandCategoriesStore } from '../stores/brandCategories.js'
+import { useAjustesSheet }         from '../composables/useAjustesSheet.js'
+import { formatExpiry, expiryBadgeClass, expiryBadgeLabel } from '../utils/alerts.js'
 import TopBar        from '../components/layout/TopBar.vue'
 import BottomNav     from '../components/layout/BottomNav.vue'
 import BrandRow      from '../components/ui/BrandRow.vue'
@@ -857,121 +859,28 @@ function handleRenameCat(id, newName) {
 
 // ─── AJUSTES SHEET ────────────────────────────────────────────────────────────
 
-const showAjustesSheet      = ref(false)
-const ajustesEditingCatId   = ref(null)
-const ajustesEditingBrandId = ref(null)
-const ajustesEditValue      = ref('')
-const ajustesEditError      = ref('')
-const ajustesInputRefs      = ref({})
-const ajustesSearchQuery    = ref('')
-
-const filteredAjustesCategories = computed(() => {
-  const q = ajustesSearchQuery.value.trim().toLowerCase()
-  if (!q) return catStore.sortedCategories
-  return catStore.sortedCategories.filter(cat => {
-    if (cat.name.toLowerCase().includes(q)) return true
-    return cat.brandIds.some(bid => {
-      const brand = getBrand(bid)
-      return brand?.name.toLowerCase().includes(q)
-    })
-  })
+const {
+  showAjustesSheet,
+  openAjustesSheet,
+  closeAjustesSheet,
+  ajustesSearchQuery,
+  filteredAjustesCategories,
+  filteredAjustesBrands,
+  ajustesEditingCatId,
+  ajustesEditingBrandId,
+  ajustesEditValue,
+  ajustesEditError,
+  ajustesInputRefs,
+  startAjustesCatEdit,
+  confirmAjustesCatRename,
+  handleAjustesDeleteCat,
+  startAjustesBrandEdit,
+  confirmAjustesBrandRename,
+  handleAjustesDeleteBrand,
+  cancelAjustesEdit,
+} = useAjustesSheet(store, catStore, {
+  onDeleteCat: (id) => { if (migratingCatId.value === id) cancelMigrate() },
 })
-
-const filteredAjustesBrands = computed(() => {
-  const q = ajustesSearchQuery.value.trim().toLowerCase()
-  if (!q) return store.sortedBrands
-  return store.sortedBrands.filter(brand => brand.name.toLowerCase().includes(q))
-})
-
-function closeAjustesSheet() {
-  showAjustesSheet.value      = false
-  ajustesEditingCatId.value   = null
-  ajustesEditingBrandId.value = null
-  ajustesEditValue.value      = ''
-  ajustesEditError.value      = ''
-}
-
-// Category edit in ajustes
-function startAjustesCatEdit(cat) {
-  ajustesEditingBrandId.value = null
-  ajustesEditingCatId.value   = cat.id
-  ajustesEditValue.value      = cat.name
-  ajustesEditError.value      = ''
-  nextTick(() => ajustesInputRefs.value[cat.id]?.focus())
-}
-
-function confirmAjustesCatRename(id) {
-  const val = ajustesEditValue.value.trim()
-  if (!val) {
-    ajustesEditError.value = 'El nombre no puede quedar vacío'
-    return
-  }
-  const cat = catStore.categories.find(c => c.id === id)
-  if (!cat) return
-  if (val === cat.name) { cancelAjustesEdit(); return }
-  const err = catStore.renameCategory(id, val)
-  if (err) {
-    ajustesEditError.value = err
-    return
-  }
-  ajustesEditingCatId.value = null
-  ajustesEditError.value    = ''
-}
-
-function handleAjustesDeleteCat(id) {
-  if (migratingCatId.value === id) cancelMigrate()
-  catStore.markDeleteCat(id)
-  ajustesEditingCatId.value = null
-}
-
-// Brand edit in ajustes
-function startAjustesBrandEdit(brand) {
-  ajustesEditingCatId.value   = null
-  ajustesEditingBrandId.value = brand.id
-  ajustesEditValue.value      = brand.name
-  ajustesEditError.value      = ''
-  nextTick(() => ajustesInputRefs.value[brand.id]?.focus())
-}
-
-function confirmAjustesBrandRename(id) {
-  const val = ajustesEditValue.value.trim()
-  if (!val) {
-    ajustesEditError.value = 'El nombre no puede quedar vacío'
-    return
-  }
-  const brand = store.brands.find(b => b.id === id)
-  if (!brand) return
-  if (val === brand.name) { cancelAjustesEdit(); return }
-  if (store.brands.some(b => b.id !== id && b.name === val)) {
-    ajustesEditError.value = 'Ya existe una marca con ese nombre'
-    return
-  }
-  store.editBrandName(id, val)
-  ajustesEditingBrandId.value = null
-  ajustesEditError.value      = ''
-}
-
-function handleAjustesDeleteBrand(id) {
-  // markDeleteBrand already migrates products to 'Sin marca'
-  store.markDeleteBrand(id)
-  ajustesEditingBrandId.value = null
-  // Also remove brand from its category
-  const cat = catStore.getCategoryForBrand(id)
-  if (cat) {
-    catStore.categories.find(c => c.id === cat.id)
-      ?.brandIds.splice(
-        catStore.categories.find(c => c.id === cat.id).brandIds.indexOf(id),
-        1
-      )
-  }
-}
-
-function cancelAjustesEdit() {
-  ajustesEditingCatId.value   = null
-  ajustesEditingBrandId.value = null
-  ajustesEditValue.value      = ''
-  ajustesEditError.value      = ''
-}
 
 // ─── MIGRATE STATE ────────────────────────────────────────────────────────────
 
@@ -1169,33 +1078,5 @@ const brandStripe   = bid => {
   if (hasLowStock(bid))   return '#90542f'
   if (hasExpiry(bid))     return '#534AB7'
   return ''
-}
-
-function formatExpiry(yyyymm) {
-  if (!yyyymm) return ''
-  const [year, month] = yyyymm.split('-')
-  return `${month}/${year}`
-}
-
-function expiryBadgeClass(yyyymm) {
-  if (!yyyymm) return 'badge--ok'
-  const expiry   = new Date(`${yyyymm}-01`)
-  const now      = new Date()
-  const diffDays = (expiry - now) / (1000 * 60 * 60 * 24)
-  if (diffDays < 0)   return 'badge--out'
-  if (diffDays < 60)  return 'badge--expiry'
-  if (diffDays < 180) return 'badge--low'
-  return 'badge--ok'
-}
-
-function expiryBadgeLabel(yyyymm) {
-  if (!yyyymm) return 'S/F'
-  const expiry   = new Date(`${yyyymm}-01`)
-  const now      = new Date()
-  const diffDays = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24))
-  if (diffDays < 0)   return 'Vencido'
-  if (diffDays < 60)  return `${diffDays}d`
-  if (diffDays < 180) return 'Próximo'
-  return 'OK'
 }
 </script>

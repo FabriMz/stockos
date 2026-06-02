@@ -122,6 +122,7 @@
 import { ref, computed, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useProductsStore } from '../../stores/products.js'
+import { formatExpiry, expiryBadgeClass, expiryBadgeLabel } from '../../utils/alerts.js'
 
 const props = defineProps({
   modelValue: { type: Boolean, default: false },
@@ -172,34 +173,6 @@ watch(() => props.modelValue, open => {
       : '_new'
   }
 })
-
-function formatExpiry(yyyymm) {
-  if (!yyyymm) return ''
-  const [year, month] = yyyymm.split('-')
-  return `${month}/${year}`
-}
-
-function expiryBadgeClass(yyyymm) {
-  if (!yyyymm) return 'badge--ok'
-  const expiry   = new Date(`${yyyymm}-01`)
-  const now      = new Date()
-  const diffDays = (expiry - now) / (1000 * 60 * 60 * 24)
-  if (diffDays < 0)   return 'badge--out'
-  if (diffDays < 60)  return 'badge--expiry'
-  if (diffDays < 180) return 'badge--low'
-  return 'badge--ok'
-}
-
-function expiryBadgeLabel(yyyymm) {
-  if (!yyyymm) return 'S/F'
-  const expiry   = new Date(`${yyyymm}-01`)
-  const now      = new Date()
-  const diffDays = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24))
-  if (diffDays < 0)   return 'Vencido'
-  if (diffDays < 60)  return `${diffDays}d`
-  if (diffDays < 180) return 'Próximo'
-  return 'OK'
-}
 
 const sheetTitle = computed(() => {
   if (isEditMode.value)  return 'Editar lote'

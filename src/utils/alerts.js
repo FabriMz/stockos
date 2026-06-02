@@ -51,3 +51,46 @@ export function matchesBrandSearch(brand, q, productsInBrand) {
   if (brand.name.toLowerCase().includes(s)) return true
   return productsInBrand.some(p => matchesProductSearch(p, s))
 }
+
+/**
+ * Formatea un string YYYY-MM a MM/YYYY.
+ * @param {string} yyyymm
+ * @returns {string}
+ */
+export function formatExpiry(yyyymm) {
+  if (!yyyymm) return ''
+  const [year, month] = yyyymm.split('-')
+  return `${month}/${year}`
+}
+
+/**
+ * Devuelve la clase CSS de badge según los días hasta el vencimiento.
+ * @param {string} yyyymm
+ * @returns {'badge--ok' | 'badge--expiry' | 'badge--low' | 'badge--out'}
+ */
+export function expiryBadgeClass(yyyymm) {
+  if (!yyyymm) return 'badge--ok'
+  const expiry   = new Date(`${yyyymm}-01`)
+  const now      = new Date()
+  const diffDays = (expiry - now) / (1000 * 60 * 60 * 24)
+  if (diffDays < 0)   return 'badge--out'
+  if (diffDays < 60)  return 'badge--expiry'
+  if (diffDays < 180) return 'badge--low'
+  return 'badge--ok'
+}
+
+/**
+ * Devuelve el texto del badge de vencimiento.
+ * @param {string} yyyymm
+ * @returns {string}
+ */
+export function expiryBadgeLabel(yyyymm) {
+  if (!yyyymm) return 'S/F'
+  const expiry   = new Date(`${yyyymm}-01`)
+  const now      = new Date()
+  const diffDays = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24))
+  if (diffDays < 0)   return 'Vencido'
+  if (diffDays < 60)  return `${diffDays}d`
+  if (diffDays < 180) return 'Próximo'
+  return 'OK'
+}

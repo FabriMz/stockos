@@ -203,16 +203,6 @@ export const useProductsStore = defineStore('products', () => {
     })
   }
 
-  function editCategory(oldName, newName) {
-    const name = newName.trim()
-    if (!name || name === oldName) return
-    if (catsStore.categories.value.includes(name)) return
-    catsStore.editCategory(oldName, name)
-    products.value.forEach(p => {
-      if (p.category === oldName) p.category = name
-    })
-  }
-
   const sortedBrands = computed(() =>
     [...brands.value].sort((a, b) => a.name.localeCompare(b.name, 'es'))
   )
@@ -496,7 +486,6 @@ export const useProductsStore = defineStore('products', () => {
     // Categorías (fachada — mismos refs reactivos que useCategoriesStore)
     categories, sortedCategories,
     addCategory:           catsStore.addCategory,
-    editCategory,
     deleteCategory:        catsStore.deleteCategory,
     pendingDeleteCategory,
     markDeleteCategory,

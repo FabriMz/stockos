@@ -53,6 +53,7 @@ import { computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useProductsStore }        from '../stores/products.js'
 import { useBrandCategoriesStore } from '../stores/brandCategories.js'
+import { formatExpiry, expiryBadgeClass, expiryBadgeLabel } from '../utils/alerts.js'
 import TopBar        from '../components/layout/TopBar.vue'
 import BottomNav     from '../components/layout/BottomNav.vue'
 import BrandRow      from '../components/ui/BrandRow.vue'
@@ -102,33 +103,5 @@ function handleDeleteCat(id) {
 
 function handleRenameCat(id, newName) {
   catStore.renameCategory(id, newName)
-}
-
-function formatExpiry(yyyymm) {
-  if (!yyyymm) return ''
-  const [year, month] = yyyymm.split('-')
-  return `${month}/${year}`
-}
-
-function expiryBadgeClass(yyyymm) {
-  if (!yyyymm) return 'badge--ok'
-  const expiry   = new Date(`${yyyymm}-01`)
-  const now      = new Date()
-  const diffDays = (expiry - now) / (1000 * 60 * 60 * 24)
-  if (diffDays < 0)   return 'badge--out'
-  if (diffDays < 60)  return 'badge--expiry'
-  if (diffDays < 180) return 'badge--low'
-  return 'badge--ok'
-}
-
-function expiryBadgeLabel(yyyymm) {
-  if (!yyyymm) return 'S/F'
-  const expiry   = new Date(`${yyyymm}-01`)
-  const now      = new Date()
-  const diffDays = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24))
-  if (diffDays < 0)   return 'Vencido'
-  if (diffDays < 60)  return `${diffDays}d`
-  if (diffDays < 180) return 'Próximo'
-  return 'OK'
 }
 </script>
