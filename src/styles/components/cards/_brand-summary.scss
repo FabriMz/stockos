@@ -1,0 +1,33 @@
+@use '../../abstracts' as *;
+
+// ─── BRAND SUMMARY (mini header dentro de una vista de marca) ─────────────────
+.brand-summary {
+  @include flex-row($spacing-3);
+  @include card-base;
+  margin : $spacing-4 $spacing-5 $spacing-4;
+  padding: $spacing-4;
+
+  &__icon {
+    width        : $brand-icon-size;
+    height       : $brand-icon-size;
+    border-radius: $radius-lg;
+    @include flex-center;
+    flex-shrink: 0;
+
+    i {
+      font-size: $icon-md;
+    }
+  }
+
+  &__name {
+    font-size  : $font-size-base;
+    font-weight: $font-weight-medium;
+    color      : $color-text-primary;
+  }
+
+  &__meta {
+    @include font-mono($font-size-sm);
+    color     : $color-text-secondary;
+    margin-top: 2px;
+  }
+}

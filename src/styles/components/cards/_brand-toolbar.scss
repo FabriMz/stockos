@@ -1,0 +1,51 @@
+@use '../../abstracts' as *;
+
+// ─── BRAND TOOLBAR (expandir / colapsar / ajustes) ────────────────────────────
+.brand-toolbar {
+  display: flex;
+  gap    : $spacing-2;
+  margin : 0 $spacing-5 $spacing-4;
+
+  &__btn {
+    @include flex-row($spacing-2, center, center);
+    flex         : 1;
+    min-width    : 0;
+    height       : $btn-height-sm;
+    border-radius: $radius-md;
+    background   : $color-bg-secondary;
+    border       : $border-strong;
+    cursor       : pointer;
+    padding      : 0 $spacing-2;
+    transition   : background $transition-fast;
+
+    i {
+      font-size  : $icon-sm;
+      color      : $color-text-secondary;
+      flex-shrink: 0;
+    }
+
+    span {
+      font-family  : $font-body;
+      font-size    : $font-size-sm;
+      font-weight  : $font-weight-medium;
+      color        : $color-text-secondary;
+      white-space  : nowrap;
+      overflow     : hidden;
+      text-overflow: ellipsis;
+    }
+
+    &:active {
+      background: $color-bg-tertiary;
+    }
+
+    &--active {
+      background  : $color-primary-50;
+      border-color: $color-primary-200;
+
+      i,
+      span {
+        color: $color-primary-900;
+      }
+    }
+  }
+}

@@ -1,0 +1,40 @@
+@use '../../abstracts' as *;
+
+// ─── ORDER ROW ────────────────────────────────────────────────────────────────
+.order-row {
+  @include flex-row($spacing-4);
+  width        : 100%;
+  background   : $color-bg-primary;
+  border-bottom: $border;
+  padding      : $spacing-4 $spacing-5;
+
+  &__dot {
+    width        : $spacing-2;
+    height       : $spacing-2;
+    border-radius: $radius-full;
+    flex-shrink  : 0;
+  }
+
+  &__info {
+    flex     : 1;
+    min-width: 0;
+  }
+
+  &__name {
+    font-size  : $font-size-base;
+    font-weight: $font-weight-medium;
+    color      : $color-text-primary;
+  }
+
+  &__sub {
+    @include font-mono($font-size-sm);
+    color     : $color-text-secondary;
+    margin-top: 2px;
+  }
+
+  &__amount {
+    @include font-mono($font-size-base, $font-weight-medium);
+    color      : $color-text-primary;
+    flex-shrink: 0;
+  }
+}
