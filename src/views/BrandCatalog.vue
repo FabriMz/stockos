@@ -465,12 +465,12 @@
               Se eliminarán {{ selectedFolderItemCount === 1 ? 'el producto' : `los ${selectedFolderItemCount} productos` }} dentro de "{{ selectedFolder?.batchNumber }}". Podés deshacer la acción.
             </div>
           </div>
-          <div class="btn-group">
+          <div class="btn-group btn-group--row">
+            <button class="btn btn--secondary" @click="showDeleteConfirm = false">Cancelar</button>
             <button class="btn btn--danger" @click="handleDeleteFolder">
               <i class="ti ti-trash" aria-hidden="true"></i>
               Sí, eliminar lote
             </button>
-            <button class="btn btn--secondary" @click="showDeleteConfirm = false">Cancelar</button>
           </div>
         </div>
       </div>

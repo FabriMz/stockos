@@ -11,7 +11,7 @@
   color: $color-bg-primary;
   border-radius: $radius-xl;
   padding: $spacing-3 $spacing-5;
-  z-index: $z-overlay;
+  z-index: $z-toast;
   box-shadow: $shadow-lg;
 
   &__msg {
