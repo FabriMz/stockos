@@ -26,11 +26,11 @@ export function resolveAlertBack(query, product) {
 
   const alert = query.alert
 
-  if (alert === 'sin-stock' || alert === 'stock-bajo') {
+  if (alert === 'out-of-stock' || alert === 'low-stock') {
     const brandId = query.brand || product?.bid
     return {
       to:    brandId ? `/alerts/${alert}/${brandId}` : `/alerts/${alert}`,
-      label: product?.brand ?? (alert === 'sin-stock' ? 'Sin Stock' : 'Stock Bajo'),
+      label: product?.brand ?? (alert === 'out-of-stock' ? 'Sin Stock' : 'Stock Bajo'),
     }
   }
 

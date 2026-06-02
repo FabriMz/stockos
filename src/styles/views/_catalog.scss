@@ -805,7 +805,7 @@
   }
 }
 
-.ajustes {
+.settings-sheet {
   &__section-label {
     @include flex-row($spacing-2, center);
     @include font-mono($font-size-xs, $font-weight-medium);

@@ -72,14 +72,14 @@ export const useOrdersStore = defineStore('orders', () => {
   const activeOrders = computed(() => orders.value.filter(p => p.active))
   const orderHistory = computed(() => orders.value.filter(p => !p.active))
 
-  function addOrder(datos) {
+  function addOrder(data) {
     const newId = orders.value.length ? Math.max(...orders.value.map(p => p.id)) + 1 : 1
-    orders.value.unshift({ ...datos, id: newId })
+    orders.value.unshift({ ...data, id: newId })
   }
 
-  function editOrder(id, datos) {
+  function editOrder(id, data) {
     const idx = orders.value.findIndex(p => p.id === Number(id))
-    if (idx !== -1) orders.value[idx] = { ...orders.value[idx], ...datos }
+    if (idx !== -1) orders.value[idx] = { ...orders.value[idx], ...data }
   }
 
   const pendingDeleteOrder = ref(null)

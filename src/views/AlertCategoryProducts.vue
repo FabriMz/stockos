@@ -151,9 +151,9 @@ const catOpen  = useProductCatOpenStore()
 const searchQuery = ref('')
 
 const TYPE_CONFIG = {
-  'sin-stock': {
+  'out-of-stock': {
     title     : 'Sin Stock',
-    basePath  : '/alerts/sin-stock',
+    basePath  : '/alerts/out-of-stock',
     stripe    : '#791132',
     badgeClass: 'badge badge--out',
     badgeIcon : 'ti-ban',
@@ -161,9 +161,9 @@ const TYPE_CONFIG = {
     showStock : false,
     filter    : store.isOutOfStock,
   },
-  'stock-bajo': {
+  'low-stock': {
     title     : 'Stock Bajo',
-    basePath  : '/alerts/stock-bajo',
+    basePath  : '/alerts/low-stock',
     stripe    : '#90542f',
     badgeClass: 'badge badge--low',
     badgeIcon : 'ti-alert-circle',
@@ -173,7 +173,7 @@ const TYPE_CONFIG = {
   },
 }
 
-const config = computed(() => TYPE_CONFIG[route.meta.alertType] ?? TYPE_CONFIG['sin-stock'])
+const config = computed(() => TYPE_CONFIG[route.meta.alertType] ?? TYPE_CONFIG['out-of-stock'])
 const brand  = computed(() => store.getBrand(route.params.brandId))
 
 // Todos los productos de la marca que pasan el filtro de alerta

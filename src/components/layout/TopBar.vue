@@ -49,7 +49,7 @@
     </div>
   </div>
 
-  <!-- Topbar simple con título (alerts, pedidos, ajustes) -->
+  <!-- Simple topbar with title (alerts, orders, settings) -->
   <div v-else-if="variant === 'title'" class="topbar topbar--simple">
     <div class="topbar__title">{{ title }}</div>
     <div class="topbar__actions">

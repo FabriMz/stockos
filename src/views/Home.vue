@@ -73,8 +73,8 @@
         role="button"
         tabindex="0"
         aria-label="Ver alertas sin stock"
-        @click="$router.push('/alerts/sin-stock')"
-        @keydown.enter="$router.push('/alerts/sin-stock')"
+        @click="$router.push('/alerts/out-of-stock')"
+        @keydown.enter="$router.push('/alerts/out-of-stock')"
       >
         <span class="home__alert-dot home__alert-dot--out" aria-hidden="true"></span>
         <div class="home__alert-info">
@@ -98,8 +98,8 @@
         role="button"
         tabindex="0"
         aria-label="Ver alertas de stock bajo"
-        @click="$router.push('/alerts/stock-bajo')"
-        @keydown.enter="$router.push('/alerts/stock-bajo')"
+        @click="$router.push('/alerts/low-stock')"
+        @keydown.enter="$router.push('/alerts/low-stock')"
       >
         <span class="home__alert-dot home__alert-dot--low" aria-hidden="true"></span>
         <div class="home__alert-info">

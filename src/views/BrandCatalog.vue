@@ -51,9 +51,9 @@
       </button>
       <button
         class="catalog-action-bar__btn catalog-action-bar__btn--settings"
-        :class="{ 'catalog-action-bar__btn--active': showAjustesSheet }"
+        :class="{ 'catalog-action-bar__btn--active': showSettingsSheet }"
         aria-label="Ajustes del catálogo"
-        @click="openAjustesSheet()"
+        @click="openSettingsSheet()"
       >
         <i class="ti ti-settings" aria-hidden="true"></i>
         <span>Ajustes</span>
@@ -553,11 +553,11 @@
     <!-- ─── AJUSTES SHEET ─────────────────────────────────────────────── -->
     <Transition name="sheet">
       <div
-        v-if="showAjustesSheet"
+        v-if="showSettingsSheet"
         class="sheet-overlay"
         role="dialog"
         aria-label="Ajustes del catálogo"
-        @click.self="closeAjustesSheet"
+        @click.self="closeSettingsSheet"
       >
         <div class="sheet sheet--tall">
           <div class="sheet__handle" aria-hidden="true"></div>
@@ -568,21 +568,21 @@
 
           <div class="sheet__body sheet__body--scroll">
 
-            <div class="topbar__search ajustes__search">
+            <div class="topbar__search settings-sheet__search">
               <i class="ti ti-search" aria-hidden="true"></i>
               <input
-                id="ajustes-search"
-                name="ajustes-search"
+                id="settings-search"
+                name="settings-search"
                 type="search"
-                v-model="ajustesSearchQuery"
+                v-model="settingsSearchQuery"
                 placeholder="Buscar marcas y categorías…"
                 aria-label="Buscar marcas y categorías"
               />
               <button
-                v-if="ajustesSearchQuery"
+                v-if="settingsSearchQuery"
                 class="topbar__search-clear"
                 type="button"
-                @click="ajustesSearchQuery = ''"
+                @click="settingsSearchQuery = ''"
                 aria-label="Limpiar búsqueda"
               >
                 <i class="ti ti-x" aria-hidden="true"></i>
@@ -590,130 +590,130 @@
             </div>
 
             <!-- SECTION: Grupos (brand categories) -->
-            <p class="ajustes__section-label">
+            <p class="settings-sheet__section-label">
               <i class="ti ti-folder" aria-hidden="true"></i>
               Categorías de marcas
             </p>
-            <div class="ajustes__list" role="list">
+            <div class="settings-sheet__list" role="list">
               <div
-                v-for="cat in filteredAjustesCategories"
+                v-for="cat in filteredSettingsCategories"
                 :key="cat.id"
-                class="ajustes__item"
+                class="settings-sheet__item"
                 role="listitem"
               >
-                <template v-if="ajustesEditingCatId === cat.id">
+                <template v-if="settingsEditingCatId === cat.id">
                   <input
-                    :id="`ajustes-cat-${cat.id}`"
-                    class="ajustes__edit-input"
-                    v-model="ajustesEditValue"
+                    :id="`settings-cat-${cat.id}`"
+                    class="settings-sheet__edit-input"
+                    v-model="settingsEditValue"
                     autocomplete="off"
-                    :ref="el => { if (el) ajustesInputRefs[cat.id] = el }"
-                    @keydown.enter.prevent="confirmAjustesCatRename(cat.id)"
-                    @keydown.escape="cancelAjustesEdit"
+                    :ref="el => { if (el) settingsInputRefs[cat.id] = el }"
+                    @keydown.enter.prevent="confirmSettingsCatRename(cat.id)"
+                    @keydown.escape="cancelSettingsEdit"
                   />
-                  <span v-if="ajustesEditError" class="ajustes__edit-error" role="alert">{{ ajustesEditError }}</span>
-                  <div class="ajustes__item-actions">
-                    <button class="ajustes__confirm-btn" aria-label="Confirmar" @click="confirmAjustesCatRename(cat.id)">
+                  <span v-if="settingsEditError" class="settings-sheet__edit-error" role="alert">{{ settingsEditError }}</span>
+                  <div class="settings-sheet__item-actions">
+                    <button class="settings-sheet__confirm-btn" aria-label="Confirmar" @click="confirmSettingsCatRename(cat.id)">
                       <i class="ti ti-check" aria-hidden="true"></i>
                     </button>
-                    <button class="ajustes__cancel-btn" aria-label="Cancelar" @click="cancelAjustesEdit">
+                    <button class="settings-sheet__cancel-btn" aria-label="Cancelar" @click="cancelSettingsEdit">
                       <i class="ti ti-x" aria-hidden="true"></i>
                     </button>
                   </div>
                 </template>
                 <template v-else>
-                  <div class="ajustes__item-icon ajustes__item-icon--cat">
+                  <div class="settings-sheet__item-icon settings-sheet__item-icon--cat">
                     <i class="ti ti-folder" aria-hidden="true"></i>
                   </div>
-                  <div class="ajustes__item-info">
-                    <span class="ajustes__item-name">{{ cat.name }}</span>
-                    <span class="ajustes__item-meta">{{ cat.brandIds.length }} marca{{ cat.brandIds.length !== 1 ? 's' : '' }}</span>
+                  <div class="settings-sheet__item-info">
+                    <span class="settings-sheet__item-name">{{ cat.name }}</span>
+                    <span class="settings-sheet__item-meta">{{ cat.brandIds.length }} marca{{ cat.brandIds.length !== 1 ? 's' : '' }}</span>
                   </div>
-                  <div class="ajustes__item-actions">
+                  <div class="settings-sheet__item-actions">
                     <button
-                      class="ajustes__action-btn"
+                      class="settings-sheet__action-btn"
                       :aria-label="`Renombrar ${cat.name}`"
-                      @click="startAjustesCatEdit(cat)"
+                      @click="startSettingsCatEdit(cat)"
                     >
                       <i class="ti ti-pencil" aria-hidden="true"></i>
                     </button>
                     <button
-                      class="ajustes__action-btn ajustes__action-btn--danger"
+                      class="settings-sheet__action-btn settings-sheet__action-btn--danger"
                       :aria-label="`Eliminar ${cat.name}`"
-                      @click="handleAjustesDeleteCat(cat.id)"
+                      @click="handleSettingsDeleteCat(cat.id)"
                     >
                       <i class="ti ti-trash" aria-hidden="true"></i>
                     </button>
                   </div>
                 </template>
               </div>
-              <div v-if="filteredAjustesCategories.length === 0" class="ajustes__empty">
+              <div v-if="filteredSettingsCategories.length === 0" class="settings-sheet__empty">
                 No se encontraron categorías
               </div>
             </div>
 
             <!-- SECTION: Marcas -->
-            <p class="ajustes__section-label ajustes__section-label--mt">
+            <p class="settings-sheet__section-label settings-sheet__section-label--mt">
               <i class="ti ti-building-store" aria-hidden="true"></i>
               Marcas
             </p>
-            <div class="ajustes__list" role="list">
+            <div class="settings-sheet__list" role="list">
               <div
-                v-for="brand in filteredAjustesBrands"
+                v-for="brand in filteredSettingsBrands"
                 :key="brand.id"
-                class="ajustes__item"
+                class="settings-sheet__item"
                 role="listitem"
               >
-                <template v-if="ajustesEditingBrandId === brand.id">
+                <template v-if="settingsEditingBrandId === brand.id">
                   <input
-                    :id="`ajustes-brand-${brand.id}`"
-                    class="ajustes__edit-input"
-                    v-model="ajustesEditValue"
+                    :id="`settings-brand-${brand.id}`"
+                    class="settings-sheet__edit-input"
+                    v-model="settingsEditValue"
                     autocomplete="off"
-                    :ref="el => { if (el) ajustesInputRefs[brand.id] = el }"
-                    @keydown.enter.prevent="confirmAjustesBrandRename(brand.id)"
-                    @keydown.escape="cancelAjustesEdit"
+                    :ref="el => { if (el) settingsInputRefs[brand.id] = el }"
+                    @keydown.enter.prevent="confirmSettingsBrandRename(brand.id)"
+                    @keydown.escape="cancelSettingsEdit"
                   />
-                  <span v-if="ajustesEditError" class="ajustes__edit-error" role="alert">{{ ajustesEditError }}</span>
-                  <div class="ajustes__item-actions">
-                    <button class="ajustes__confirm-btn" aria-label="Confirmar" @click="confirmAjustesBrandRename(brand.id)">
+                  <span v-if="settingsEditError" class="settings-sheet__edit-error" role="alert">{{ settingsEditError }}</span>
+                  <div class="settings-sheet__item-actions">
+                    <button class="settings-sheet__confirm-btn" aria-label="Confirmar" @click="confirmSettingsBrandRename(brand.id)">
                       <i class="ti ti-check" aria-hidden="true"></i>
                     </button>
-                    <button class="ajustes__cancel-btn" aria-label="Cancelar" @click="cancelAjustesEdit">
+                    <button class="settings-sheet__cancel-btn" aria-label="Cancelar" @click="cancelSettingsEdit">
                       <i class="ti ti-x" aria-hidden="true"></i>
                     </button>
                   </div>
                 </template>
                 <template v-else>
                   <div
-                    class="ajustes__item-icon"
+                    class="settings-sheet__item-icon"
                     :style="{ background: brand.bg }"
                   >
                     <i :class="`ti ${brand.ic}`" :style="{ color: brand.col }" aria-hidden="true"></i>
                   </div>
-                  <div class="ajustes__item-info">
-                    <span class="ajustes__item-name">{{ brand.name }}</span>
-                    <span class="ajustes__item-meta">{{ getByBrand(brand.id).length }} productos</span>
+                  <div class="settings-sheet__item-info">
+                    <span class="settings-sheet__item-name">{{ brand.name }}</span>
+                    <span class="settings-sheet__item-meta">{{ getByBrand(brand.id).length }} productos</span>
                   </div>
-                  <div class="ajustes__item-actions">
+                  <div class="settings-sheet__item-actions">
                     <button
-                      class="ajustes__action-btn"
+                      class="settings-sheet__action-btn"
                       :aria-label="`Renombrar ${brand.name}`"
-                      @click="startAjustesBrandEdit(brand)"
+                      @click="startSettingsBrandEdit(brand)"
                     >
                       <i class="ti ti-pencil" aria-hidden="true"></i>
                     </button>
                     <button
-                      class="ajustes__action-btn ajustes__action-btn--danger"
+                      class="settings-sheet__action-btn settings-sheet__action-btn--danger"
                       :aria-label="`Eliminar ${brand.name}`"
-                      @click="handleAjustesDeleteBrand(brand.id)"
+                      @click="handleSettingsDeleteBrand(brand.id)"
                     >
                       <i class="ti ti-trash" aria-hidden="true"></i>
                     </button>
                   </div>
                 </template>
               </div>
-              <div v-if="filteredAjustesBrands.length === 0" class="ajustes__empty">
+              <div v-if="filteredSettingsBrands.length === 0" class="settings-sheet__empty">
                 No se encontraron marcas
               </div>
             </div>
@@ -721,7 +721,7 @@
           </div>
 
           <div class="btn-group">
-            <button class="btn btn--secondary" @click="closeAjustesSheet">Cerrar</button>
+            <button class="btn btn--secondary" @click="closeSettingsSheet">Cerrar</button>
           </div>
         </div>
       </div>
@@ -735,7 +735,7 @@ import { ref, computed, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useProductsStore }        from '../stores/products.js'
 import { useBrandCategoriesStore } from '../stores/brandCategories.js'
-import { useAjustesSheet }         from '../composables/useAjustesSheet.js'
+import { useSettingsSheet }         from '../composables/useSettingsSheet.js'
 import { formatExpiry, expiryBadgeClass, expiryBadgeLabel } from '../utils/alerts.js'
 import TopBar        from '../components/layout/TopBar.vue'
 import BottomNav     from '../components/layout/BottomNav.vue'
@@ -860,25 +860,25 @@ function handleRenameCat(id, newName) {
 // ─── AJUSTES SHEET ────────────────────────────────────────────────────────────
 
 const {
-  showAjustesSheet,
-  openAjustesSheet,
-  closeAjustesSheet,
-  ajustesSearchQuery,
-  filteredAjustesCategories,
-  filteredAjustesBrands,
-  ajustesEditingCatId,
-  ajustesEditingBrandId,
-  ajustesEditValue,
-  ajustesEditError,
-  ajustesInputRefs,
-  startAjustesCatEdit,
-  confirmAjustesCatRename,
-  handleAjustesDeleteCat,
-  startAjustesBrandEdit,
-  confirmAjustesBrandRename,
-  handleAjustesDeleteBrand,
-  cancelAjustesEdit,
-} = useAjustesSheet(store, catStore, {
+  showSettingsSheet,
+  openSettingsSheet,
+  closeSettingsSheet,
+  settingsSearchQuery,
+  filteredSettingsCategories,
+  filteredSettingsBrands,
+  settingsEditingCatId,
+  settingsEditingBrandId,
+  settingsEditValue,
+  settingsEditError,
+  settingsInputRefs,
+  startSettingsCatEdit,
+  confirmSettingsCatRename,
+  handleSettingsDeleteCat,
+  startSettingsBrandEdit,
+  confirmSettingsBrandRename,
+  handleSettingsDeleteBrand,
+  cancelSettingsEdit,
+} = useSettingsSheet(store, catStore, {
   onDeleteCat: (id) => { if (migratingCatId.value === id) cancelMigrate() },
 })
 
