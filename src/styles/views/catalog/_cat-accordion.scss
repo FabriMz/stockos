@@ -1,0 +1,171 @@
+@use '../../abstracts' as *;
+
+// ─── CAT ACCORDION (ProductCatalog) ───────────────────────────────────────────
+.cat-accordion {
+  border-radius: $radius-md;
+  border       : $border-strong;
+  overflow     : hidden;
+  margin       : 0 $spacing-5 $spacing-3;
+
+  & + & {
+    margin-top: $spacing-1;
+  }
+
+  &__header {
+    @include flex-row($spacing-2, center, space-between);
+    width     : 100%;
+    height    : 40px;
+    padding   : 0 $spacing-3;
+    background: $color-bg-secondary;
+    border    : none;
+    cursor    : pointer;
+    gap       : $spacing-2;
+
+    &:active {
+      background: $color-cream-100;
+    }
+  }
+
+  &__title {
+    @include font-mono($font-size-xs, $font-weight-medium);
+    letter-spacing: $letter-spacing-widest;
+    text-transform: uppercase;
+    color         : $color-text-primary;
+    white-space   : nowrap;
+    flex-shrink   : 0;
+  }
+
+  &__dots {
+    flex            : 1;
+    height          : 1px;
+    min-width       : $spacing-3;
+    background-image: repeating-linear-gradient(
+      to right,
+      rgba(255, 220, 190, 0.18) 0,
+      rgba(255, 220, 190, 0.18) 2px,
+      transparent 2px,
+      transparent 7px
+    );
+  }
+
+  &__count {
+    @include font-mono($font-size-xs, $font-weight-medium);
+    background   : rgba(165, 180, 252, 0.1);
+    border-radius: $radius-full;
+    padding      : 2px $spacing-2;
+    color        : $color-text-secondary;
+    flex-shrink  : 0;
+  }
+
+  // gear del CatalogCatSep en variant icon-only
+  .catalog__cat-gear-btn {
+    flex-shrink: 0;
+  }
+
+  &__chevron {
+    font-size  : $icon-sm;
+    color      : $color-text-secondary;
+    flex-shrink: 0;
+    transition : transform $transition-normal;
+  }
+
+  &__body {
+    overflow  : hidden;
+    max-height: 0;
+    background: $color-bg-primary;
+    border-top: $border-width solid $color-border;
+    transition: max-height 0.25s ease;
+  }
+
+  &--open {
+    .cat-accordion__chevron {
+      transform: rotate(180deg);
+    }
+
+    .cat-accordion__body {
+      max-height: 9999px;
+      transition: max-height 0.35s ease;
+    }
+  }
+}
+
+.cat-sep-backdrop {
+  position: fixed;
+  inset   : 0;
+  z-index : $z-overlay - 1;
+}
+
+.cat-sep-menu {
+  position: fixed;
+  z-index : $z-overlay;
+  @include flex-col($spacing-3, flex-end);
+
+  &__item {
+    @include flex-center;
+  }
+
+  &__btn {
+    @include flex-row($spacing-3, center, flex-start);
+    border-radius: $radius-full;
+    background   : $color-bg-secondary;
+    border       : $border-strong;
+    padding      : $spacing-2 $spacing-6 $spacing-2 $spacing-4;
+    cursor       : pointer;
+    box-shadow   : $shadow-md;
+    white-space  : nowrap;
+    min-width    : 160px;
+    transition   : background $transition-fast;
+
+    i {
+      font-size  : $icon-md;
+      color      : $color-accent;
+      flex-shrink: 0;
+    }
+
+    span {
+      font-family: $font-body;
+      font-size  : $font-size-sm;
+      font-weight: $font-weight-medium;
+      color      : $color-text-primary;
+    }
+
+    &:active {
+      background: $color-bg-tertiary;
+    }
+
+    &--active {
+      i,
+      span {
+        color: $color-primary-900;
+      }
+    }
+
+    &--danger {
+      i,
+      span {
+        color: $color-danger-text;
+      }
+    }
+  }
+}
+
+.cat-sep-menu-enter-active,
+.cat-sep-menu-leave-active {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.cat-sep-menu-enter-from,
+.cat-sep-menu-leave-to {
+  opacity  : 0;
+  transform: translateY(-$spacing-2);
+}
+
+.cat-sep-rename-overlay {
+  position: fixed;
+  z-index : $z-overlay;
+  @include flex-col($spacing-1);
+
+  &__input {
+    min-width: 200px;
+  }
+}

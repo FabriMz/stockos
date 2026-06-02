@@ -1,0 +1,142 @@
+@use '../../abstracts' as *;
+
+// ─── BATCH PANEL ──────────────────────────────────────────────────────────────
+.batch-panel {
+  display       : flex;
+  flex-direction: column;
+  height        : 100%;
+}
+
+// ─── BATCH FOLDERS ────────────────────────────────────────────────────────────
+.batch-folder-list {
+  @include flex-col;
+}
+
+.batch-folder {
+  @include flex-col;
+  width        : 100%;
+  border-bottom: $border;
+
+  &--link {
+    cursor    : pointer;
+    transition: background $transition-fast;
+
+    &:active {
+      background: $color-bg-secondary;
+    }
+  }
+
+  &__main {
+    @include flex-row($spacing-3);
+    width  : 100%;
+    padding: $spacing-3 $spacing-5;
+  }
+
+  &__icon {
+    width        : $product-icon-size;
+    height       : $product-icon-size;
+    border-radius: $radius-lg;
+    background   : $color-expiry-bg;
+    @include flex-center;
+    flex-shrink: 0;
+
+    i {
+      font-size: $icon-md;
+      color    : $color-expiry-text;
+    }
+  }
+
+  &__body {
+    @include flex-col;
+    flex     : 1;
+    min-width: 0;
+  }
+
+  &__number {
+    font-size  : $font-size-base;
+    font-weight: $font-weight-medium;
+    color      : $color-text-primary;
+    @include truncate;
+  }
+
+  &__meta {
+    @include font-mono($font-size-sm);
+    color     : $color-text-secondary;
+    margin-top: 2px;
+  }
+
+  &__right {
+    @include flex-row($spacing-2, center);
+    flex-shrink: 0;
+  }
+
+  &__divider {
+    height    : $border-width;
+    background: $color-border;
+  }
+
+  &__actions {
+    @include flex-row($spacing-2, center, stretch);
+    padding: $spacing-3 $spacing-5;
+    width  : 100%;
+  }
+
+  &__action-btn {
+    @include flex-row($spacing-1, center, center);
+    flex         : 1;
+    height       : $btn-height-sm;
+    border-radius: $radius-md;
+    font-family  : $font-body;
+    font-size    : $font-size-sm;
+    font-weight  : $font-weight-medium;
+    color        : $color-text-secondary;
+    background   : $color-bg-secondary;
+    border       : none;
+    cursor       : pointer;
+    transition   : background $transition-fast;
+
+    i {
+      font-size: $icon-sm;
+    }
+
+    &:active {
+      background: $color-bg-tertiary;
+    }
+
+    &--danger {
+      color     : $color-danger-text;
+      background: $color-danger-bg;
+
+      &:active {
+        background: $color-primary-100;
+      }
+    }
+  }
+}
+
+// ─── BATCH EMPTY STATE ────────────────────────────────────────────────────────
+.batch-empty {
+  @include flex-col($spacing-2, center, center);
+  flex      : 1;
+  padding   : $spacing-5;
+  text-align: center;
+  height    : 100%;
+
+  i {
+    font-size: $icon-3xl;
+    color    : $color-border-strong;
+  }
+
+  p {
+    font-size  : $font-size-base;
+    font-weight: $font-weight-medium;
+    color      : $color-text-secondary;
+  }
+
+  span {
+    @include font-mono($font-size-sm);
+    color      : $color-text-tertiary;
+    line-height: $line-height-normal;
+    max-width  : 240px;
+  }
+}

@@ -1,0 +1,38 @@
+@use '../../abstracts' as *;
+
+// ─── TABS ─────────────────────────────────────────────────────────────────────
+.catalog-tabs {
+  @include flex-row;
+  background   : $color-bg-primary;
+  border-bottom: $border;
+  flex-shrink  : 0;
+
+  &__tab {
+    @include flex-row($spacing-1, center, center);
+    flex         : 1;
+    height       : 40px;
+    font-size    : $font-size-base;
+    font-weight  : $font-weight-medium;
+    color        : $color-text-secondary;
+    border-bottom: 2px solid transparent;
+    transition   : color $transition-fast, border-color $transition-fast;
+
+    &--active {
+      color              : $color-text-primary;
+      border-bottom-color: $color-primary;
+    }
+  }
+
+  &__count {
+    @include font-mono($font-size-xs, $font-weight-medium);
+    background   : rgba(255, 220, 190, 0.1);
+    border-radius: $radius-full;
+    padding      : 1px $spacing-2;
+    color        : $color-text-secondary;
+
+    .catalog-tabs__tab--active & {
+      background: $color-danger-bg;
+      color     : $color-danger-text;
+    }
+  }
+}

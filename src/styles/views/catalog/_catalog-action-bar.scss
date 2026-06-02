@@ -1,0 +1,60 @@
+@use '../../abstracts' as *;
+
+// ─── CATALOG ACTION BAR ───────────────────────────────────────────────────────
+.catalog-action-bar {
+  @include flex-row($spacing-2, center, stretch);
+  padding    : $spacing-3 $spacing-5 $spacing-2;
+  flex-shrink: 0;
+
+  &__btn {
+    @include flex-row($spacing-1, center, center);
+    flex         : 1;
+    height       : $btn-height-sm;
+    border-radius: $radius-md;
+    font-family  : $font-body;
+    font-size    : $font-size-sm;
+    font-weight  : $font-weight-medium;
+    color        : $color-text-secondary;
+    background   : $color-bg-secondary;
+    border       : none;
+    cursor       : pointer;
+    transition   : background $transition-fast, color $transition-fast;
+    white-space  : nowrap;
+    min-width    : 0;
+
+    i {
+      font-size  : $icon-sm;
+      flex-shrink: 0;
+    }
+
+    span {
+      @include truncate;
+    }
+
+    &:active {
+      background: $color-bg-tertiary;
+    }
+
+    &--settings {
+      color     : $color-text-secondary;
+      background: $color-bg-secondary;
+
+      i {
+        color: $color-text-tertiary;
+      }
+
+      &:active {
+        background: $color-bg-tertiary;
+      }
+
+      &.catalog-action-bar__btn--active {
+        background: $color-primary-50;
+        color     : $color-primary-900;
+
+        i {
+          color: $color-primary-900;
+        }
+      }
+    }
+  }
+}

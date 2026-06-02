@@ -1,0 +1,196 @@
+@use '../../abstracts' as *;
+
+.catalog {
+  &__cat-sep {
+    @include flex-between;
+    padding   : $spacing-2 $spacing-3 $spacing-1 $spacing-5;
+    background: $color-bg-tertiary;
+    min-height: 32px;
+    position  : relative;
+
+    &--migrating {
+      background: rgba(83, 74, 183, 0.08);
+    }
+
+    &--no-actions {
+      padding-right: $spacing-5;
+    }
+  }
+
+  &__cat-label {
+    @include font-mono($font-size-xs, $font-weight-medium);
+    letter-spacing: $letter-spacing-widest;
+    text-transform: uppercase;
+    color         : $color-text-tertiary;
+    flex-shrink   : 1;
+    min-width     : 0;
+    @include truncate;
+  }
+
+  &__cat-dots {
+    flex            : 1;
+    min-width       : $spacing-3;
+    height          : 1px;
+    margin          : 0 $spacing-3;
+    align-self      : center;
+    margin-bottom   : 1px;
+    background-image: repeating-linear-gradient(
+      to right,
+      rgba(255, 220, 190, 0.18) 0,
+      rgba(255, 220, 190, 0.18) 2px,
+      transparent 2px,
+      transparent 7px
+    );
+  }
+
+  &__cat-gear-btn {
+    @include flex-center;
+    width        : 28px;
+    height       : 28px;
+    border-radius: $radius-sm;
+    background   : transparent;
+    border       : none;
+    color        : $color-text-tertiary;
+    cursor       : pointer;
+    flex-shrink  : 0;
+    margin-left  : $spacing-2;
+    transition   : background $transition-fast, color $transition-fast;
+
+    i {
+      font-size : $icon-sm;
+      transition: transform 0.25s ease;
+    }
+
+    &:active {
+      background: $color-bg-secondary;
+      color     : $color-text-secondary;
+    }
+
+    &--active {
+      color     : $color-primary-900;
+      background: $color-primary-50;
+    }
+
+    &--open {
+      i {
+        transform: rotate(90deg);
+      }
+    }
+  }
+
+  &__cat-edit-input {
+    flex          : 1;
+    min-width     : 0;
+    height        : 26px;
+    border-radius : $radius-sm;
+    border        : 1px solid $color-primary;
+    background    : $color-bg-primary;
+    color         : $color-text-primary;
+    padding       : 0 $spacing-2;
+    font-family   : $font-mono;
+    font-size     : $font-size-xs;
+    font-weight   : $font-weight-medium;
+    letter-spacing: $letter-spacing-widest;
+    text-transform: uppercase;
+    outline       : none;
+  }
+
+  &__cat-edit-error {
+    position     : absolute;
+    left         : $spacing-5;
+    top          : 100%;
+    z-index      : 10;
+    font-size    : $font-size-xs;
+    color        : $color-danger-text;
+    background   : $color-danger-bg;
+    padding      : 2px $spacing-2;
+    border-radius: $radius-sm;
+    white-space  : nowrap;
+  }
+
+  &__cat-empty {
+    @include flex-center;
+    margin       : $spacing-4 $spacing-5;
+    padding      : $spacing-7 $spacing-5;
+    border       : $border-width dashed $color-border-strong;
+    border-radius: $radius-lg;
+    color        : $color-text-tertiary;
+    @include font-mono($font-size-sm);
+    min-height: 54px;
+    text-align: center;
+  }
+
+  &__migrate-bar {
+    @include flex-between;
+    padding    : $spacing-3 $spacing-5;
+    background : $color-bg-secondary;
+    border-top : $border-strong;
+    flex-shrink: 0;
+    gap        : $spacing-3;
+  }
+
+  &__migrate-count {
+    @include font-mono($font-size-sm, $font-weight-medium);
+    color: $color-text-secondary;
+  }
+
+  &__migrate-actions {
+    @include flex-row($spacing-2);
+  }
+
+  &__migrate-dest-list {
+    @include flex-col;
+    border       : $border;
+    border-radius: $radius-xl;
+    overflow     : hidden;
+    width        : 100%;
+  }
+
+  &__migrate-dest-item {
+    @include flex-between;
+    width      : 100%;
+    padding    : $spacing-4;
+    background : $color-bg-primary;
+    border     : none;
+    font-family: $font-body;
+    font-size  : $font-size-base;
+    color      : $color-text-primary;
+    cursor     : pointer;
+    text-align : left;
+    transition : background $transition-fast;
+
+    & + & {
+      border-top: $border;
+    }
+
+    i {
+      font-size  : $icon-sm;
+      color      : $color-primary-900;
+      flex-shrink: 0;
+    }
+
+    &:active {
+      background: $color-bg-secondary;
+    }
+
+    &--selected {
+      background: $color-primary-50;
+      color     : $color-primary-900;
+    }
+  }
+
+  &__count-row {
+    @include flex-between;
+    padding: $spacing-4 $spacing-5 $spacing-2;
+  }
+
+  &__count {
+    @include font-mono($font-size-sm);
+    color: $color-text-secondary;
+  }
+
+  &__new-btn-row {
+    @include flex-row($spacing-2, center, flex-end);
+    padding: $spacing-4 $spacing-5 $spacing-2;
+  }
+}

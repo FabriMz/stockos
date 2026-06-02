@@ -1,0 +1,39 @@
+@use '../../abstracts' as *;
+
+// ─── SELECTABLE BRAND ROW (migrate mode) ──────────────────────────────────────
+.brand-row {
+  &--selectable {
+    cursor: pointer;
+
+    .brand-row__name {
+      white-space       : normal;
+      overflow          : visible;
+      text-overflow     : unset;
+      display           : -webkit-box;
+      line-clamp        : 2;
+      -webkit-box-orient: vertical;
+      overflow          : hidden;
+    }
+  }
+
+  &--selected {
+    background  : $color-primary-50;
+    border-color: $color-primary-200;
+
+    .brand-row__check i {
+      color: $color-primary-900;
+    }
+  }
+
+  &__check {
+    @include flex-center;
+    width      : 24px;
+    flex-shrink: 0;
+
+    i {
+      font-size : $icon-md;
+      color     : $color-border-strong;
+      transition: color $transition-fast;
+    }
+  }
+}
