@@ -10,6 +10,7 @@
 // ─── BATCH FOLDERS ────────────────────────────────────────────────────────────
 .batch-folder-list {
   @include flex-col;
+  margin-bottom: $spacing-3;
 }
 
 .batch-folder {
@@ -139,4 +140,128 @@
     line-height: $line-height-normal;
     max-width  : 240px;
   }
+}
+// ─── BATCH GROUP SEPARATOR ────────────────────────────────────────────────────
+.batch-group-sep {
+  @include flex-between;
+  margin   : $spacing-3 $spacing-5 $spacing-2;
+  background: $color-bg-tertiary;
+  min-height: 32px;
+  position  : relative;
+
+  &__label {
+    @include font-mono($font-size-xs, $font-weight-medium);
+    letter-spacing: $letter-spacing-widest;
+    text-transform: uppercase;
+    color         : $color-text-tertiary;
+    flex-shrink   : 1;
+    min-width     : 0;
+    @include truncate;
+  }
+
+  &__dots {
+    flex            : 1;
+    min-width       : $spacing-3;
+    height          : 1px;
+    margin          : 0 $spacing-3;
+    align-self      : center;
+    margin-bottom   : 1px;
+    background-image: repeating-linear-gradient(
+      to right,
+      rgba(255, 220, 190, 0.18) 0,
+      rgba(255, 220, 190, 0.18) 2px,
+      transparent 2px,
+      transparent 7px
+    );
+  }
+
+  &__sort-btn {
+    @include flex-center;
+    width        : 28px;
+    height       : 28px;
+    border-radius: $radius-sm;
+    background   : transparent;
+    border       : none;
+    color        : $color-text-tertiary;
+    cursor       : pointer;
+    flex-shrink  : 0;
+    transition   : background $transition-fast, color $transition-fast;
+
+    i {
+      font-size : $icon-sm;
+      transition: transform 0.25s ease;
+    }
+
+    &:active {
+      background: $color-bg-secondary;
+      color     : $color-text-secondary;
+    }
+
+    &--open {
+      color     : $color-primary-900;
+      background: $color-primary-50;
+
+      i {
+        transform: rotate(90deg);
+      }
+    }
+  }
+}
+
+// ─── BATCH SORT POPOVER ───────────────────────────────────────────────────────
+.batch-sort-popover {
+  position     : absolute;
+  top          : calc(100% - $spacing-1);
+  right        : $spacing-5;
+  z-index      : 100;
+  background   : $color-bg-secondary;
+  border       : $border-strong;
+  border-radius: $radius-md;
+  overflow     : hidden;
+  min-width    : 130px;
+  box-shadow   : 0 4px 16px rgba(0, 0, 0, 0.4);
+
+  &__item {
+    @include flex-row($spacing-2, center);
+    width      : 100%;
+    padding    : $spacing-3 $spacing-4;
+    font-family: $font-body;
+    font-size  : $font-size-sm;
+    font-weight: $font-weight-medium;
+    color      : $color-text-secondary;
+    background : transparent;
+    border     : none;
+    cursor     : pointer;
+    transition : background $transition-fast, color $transition-fast;
+    text-align : left;
+
+    i {
+      font-size  : $icon-sm;
+      flex-shrink: 0;
+    }
+
+    & + & {
+      border-top: $border;
+    }
+
+    &:active {
+      background: $color-bg-tertiary;
+    }
+
+    &--active {
+      color     : $color-primary-900;
+      background: $color-primary-50;
+    }
+  }
+}
+
+// ─── FADE TRANSITION (popover) ────────────────────────────────────────────────
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity $transition-fast;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }

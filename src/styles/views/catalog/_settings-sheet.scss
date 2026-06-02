@@ -90,6 +90,14 @@
         color: $color-primary-900;
       }
     }
+
+    &--batch {
+      background: $color-expiry-bg;
+
+      i {
+        color: $color-expiry-text;
+      }
+    }
   }
 
   &__item-info {

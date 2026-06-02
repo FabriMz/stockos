@@ -60,7 +60,29 @@
       </button>
     </div>
 
-    <div class="scroll-content">
+    <!-- Catalog action bar (batches tab only, no search) -->
+    <div
+      v-if="activeTab === 'batches' && !searchQuery.trim()"
+      class="catalog-action-bar"
+      role="toolbar"
+      aria-label="Acciones de lotes"
+    >
+      <button class="catalog-action-bar__btn" aria-label="Nuevo lote" @click="showCreateSheet = true">
+        <i class="ti ti-folder-plus" aria-hidden="true"></i>
+        <span>Lotes</span>
+      </button>
+      <button
+        class="catalog-action-bar__btn catalog-action-bar__btn--settings"
+        :class="{ 'catalog-action-bar__btn--active': showBatchSettingsSheet }"
+        aria-label="Ajustes de lotes"
+        @click="openBatchSettingsSheet"
+      >
+        <i class="ti ti-settings" aria-hidden="true"></i>
+        <span>Ajustes</span>
+      </button>
+    </div>
+
+    <div class="scroll-content" @click="closeSortPopovers">
 
       <template v-if="searchQuery.trim()">
         <template v-if="activeTab === 'batches'">
@@ -282,9 +304,52 @@
         </div>
 
         <template v-else>
+          <template v-for="group in sortedBatchGroups" :key="group.label">
+            <div class="batch-group-sep">
+              <span class="batch-group-sep__label">{{ group.label }}</span>
+              <span class="batch-group-sep__dots" aria-hidden="true"></span>
+              <button
+                class="batch-group-sep__sort-btn"
+                :class="{ 'batch-group-sep__sort-btn--open': openSortPopover === group.key }"
+                :aria-label="`Ordenar ${group.label}`"
+                :aria-expanded="openSortPopover === group.key"
+                @click.stop="toggleSortPopover(group.key)"
+              >
+                <i class="ti ti-settings" aria-hidden="true"></i>
+              </button>
+              <Transition name="fade">
+                <div
+                  v-if="openSortPopover === group.key"
+                  class="batch-sort-popover"
+                  role="menu"
+                  :aria-label="`Orden de ${group.label}`"
+                >
+                  <button
+                    class="batch-sort-popover__item"
+                    :class="{ 'batch-sort-popover__item--active': batchSortDirs[group.key] === 'asc' }"
+                    role="menuitemradio"
+                    :aria-checked="batchSortDirs[group.key] === 'asc'"
+                    @click.stop="setSortDir(group.key, 'asc')"
+                  >
+                    <i class="ti ti-sort-ascending-letters" aria-hidden="true"></i>
+                    A → Z
+                  </button>
+                  <button
+                    class="batch-sort-popover__item"
+                    :class="{ 'batch-sort-popover__item--active': batchSortDirs[group.key] === 'desc' }"
+                    role="menuitemradio"
+                    :aria-checked="batchSortDirs[group.key] === 'desc'"
+                    @click.stop="setSortDir(group.key, 'desc')"
+                  >
+                    <i class="ti ti-sort-descending-letters" aria-hidden="true"></i>
+                    Z → A
+                  </button>
+                </div>
+              </Transition>
+            </div>
           <div class="batch-folder-list">
             <div
-              v-for="folder in allBatchFolders"
+              v-for="folder in group.folders"
               :key="folder.batchNumber"
               class="batch-folder"
             >
@@ -333,6 +398,7 @@
               </div>
             </div>
           </div>
+          </template>
         </template>
       </div>
 
@@ -727,6 +793,117 @@
       </div>
     </Transition>
 
+    <!-- ─── AJUSTES DE LOTES SHEET ──────────────────────────────── -->
+    <Transition name="sheet">
+      <div
+        v-if="showBatchSettingsSheet"
+        class="sheet-overlay"
+        role="dialog"
+        aria-label="Ajustes de lotes"
+        @click.self="closeBatchSettingsSheet"
+      >
+        <div class="sheet sheet--tall">
+          <div class="sheet__handle" aria-hidden="true"></div>
+          <div class="sheet__header">
+            <div class="sheet__title">Ajustes</div>
+            <div class="sheet__sub">Renombra o elimina lotes</div>
+          </div>
+
+          <div class="sheet__body sheet__body--scroll">
+
+            <div class="topbar__search settings-sheet__search">
+              <i class="ti ti-search" aria-hidden="true"></i>
+              <input
+                id="batch-settings-search"
+                name="batch-settings-search"
+                type="search"
+                v-model="batchSettingsSearchQuery"
+                placeholder="Buscar lotes…"
+                aria-label="Buscar lotes"
+              />
+              <button
+                v-if="batchSettingsSearchQuery"
+                class="topbar__search-clear"
+                type="button"
+                @click="batchSettingsSearchQuery = ''"
+                aria-label="Limpiar búsqueda"
+              >
+                <i class="ti ti-x" aria-hidden="true"></i>
+              </button>
+            </div>
+
+            <p class="settings-sheet__section-label">
+              <i class="ti ti-folder" aria-hidden="true"></i>
+              Lotes
+            </p>
+            <div class="settings-sheet__list" role="list">
+              <div
+                v-for="folder in filteredBatchSettingsFolders"
+                :key="folder.batchNumber"
+                class="settings-sheet__item"
+                role="listitem"
+              >
+                <template v-if="batchSettingsEditingId === folder.batchNumber">
+                  <input
+                    :id="`settings-batch-${folder.batchNumber}`"
+                    :name="`settings-batch-${folder.batchNumber}`"
+                    class="settings-sheet__edit-input"
+                    v-model="batchSettingsEditValue"
+                    autocomplete="off"
+                    :ref="el => { if (el) batchSettingsInputRefs[folder.batchNumber] = el }"
+                    @keydown.enter.prevent="confirmBatchSettingsRename(folder.batchNumber)"
+                    @keydown.escape="cancelBatchSettingsEdit"
+                  />
+                  <span v-if="batchSettingsEditError" class="settings-sheet__edit-error" role="alert">{{ batchSettingsEditError }}</span>
+                  <div class="settings-sheet__item-actions">
+                    <button class="settings-sheet__confirm-btn" aria-label="Confirmar" @click="confirmBatchSettingsRename(folder.batchNumber)">
+                      <i class="ti ti-check" aria-hidden="true"></i>
+                    </button>
+                    <button class="settings-sheet__cancel-btn" aria-label="Cancelar" @click="cancelBatchSettingsEdit">
+                      <i class="ti ti-x" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                </template>
+                <template v-else>
+                  <div class="settings-sheet__item-icon settings-sheet__item-icon--batch">
+                    <i class="ti ti-folder" aria-hidden="true"></i>
+                  </div>
+                  <div class="settings-sheet__item-info">
+                    <span class="settings-sheet__item-name">{{ folder.batchNumber }}</span>
+                    <span class="settings-sheet__item-meta">{{ folderItemCount(folder) }} {{ folderItemCount(folder) === 1 ? 'producto' : 'productos' }}</span>
+                  </div>
+                  <div class="settings-sheet__item-actions">
+                    <button
+                      class="settings-sheet__action-btn"
+                      :aria-label="`Renombrar ${folder.batchNumber}`"
+                      @click="startBatchSettingsEdit(folder)"
+                    >
+                      <i class="ti ti-pencil" aria-hidden="true"></i>
+                    </button>
+                    <button
+                      class="settings-sheet__action-btn settings-sheet__action-btn--danger"
+                      :aria-label="`Eliminar ${folder.batchNumber}`"
+                      @click="handleBatchSettingsDelete(folder.batchNumber)"
+                    >
+                      <i class="ti ti-trash" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                </template>
+              </div>
+              <div v-if="filteredBatchSettingsFolders.length === 0" class="settings-sheet__empty">
+                No se encontraron lotes
+              </div>
+            </div>
+
+          </div>
+
+          <div class="btn-group">
+            <button class="btn btn--secondary" @click="closeBatchSettingsSheet">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
   </div>
 </template>
 
@@ -994,7 +1171,49 @@ function folderItemCount(folder) {
 
 // ─── COMPUTED ─────────────────────────────────────────────────────────────────
 
+// ─── BATCH SORT ───────────────────────────────────────────────────────────────
+
+const batchSortDirs     = ref({ numeric: 'asc', alphabetic: 'asc' })
+const openSortPopover   = ref(null)
+
+function naturalSort(a, b) {
+  return a.localeCompare(b, 'es', { numeric: true, sensitivity: 'base' })
+}
+
+function isNumericFirst(str) {
+  return /^[0-9]/.test(str)
+}
+
+function toggleSortPopover(key) {
+  openSortPopover.value = openSortPopover.value === key ? null : key
+}
+
+function setSortDir(key, dir) {
+  batchSortDirs.value[key] = dir
+  openSortPopover.value    = null
+}
+
+function closeSortPopovers() {
+  openSortPopover.value = null
+}
+
 const allBatchFolders = computed(() => store.getAllBatchFolders())
+
+const sortedBatchGroups = computed(() => {
+  const folders    = allBatchFolders.value
+  const numeric    = folders.filter(f =>  isNumericFirst(f.batchNumber))
+  const alphabetic = folders.filter(f => !isNumericFirst(f.batchNumber))
+
+  const makeSortFn = key => (a, b) => {
+    const cmp = naturalSort(a.batchNumber, b.batchNumber)
+    return batchSortDirs.value[key] === 'asc' ? cmp : -cmp
+  }
+
+  return [
+    { key: 'numeric',    label: 'Numéricos',   folders: [...numeric].sort(makeSortFn('numeric')) },
+    { key: 'alphabetic', label: 'Alfabéticos', folders: [...alphabetic].sort(makeSortFn('alphabetic')) },
+  ].filter(g => g.folders.length > 0)
+})
 
 const totalBatchFolders = computed(() => allBatchFolders.value.length)
 
@@ -1078,5 +1297,67 @@ const brandStripe   = bid => {
   if (hasLowStock(bid))   return '#90542f'
   if (hasExpiry(bid))     return '#534AB7'
   return ''
+}
+
+// ─── AJUSTES DE LOTES SHEET ──────────────────────────────────────────────
+
+const showBatchSettingsSheet   = ref(false)
+const batchSettingsSearchQuery = ref('')
+const batchSettingsEditingId   = ref(null)
+const batchSettingsEditValue   = ref('')
+const batchSettingsEditError   = ref('')
+const batchSettingsInputRefs   = ref({})
+
+const filteredBatchSettingsFolders = computed(() => {
+  const q = batchSettingsSearchQuery.value.trim().toLowerCase()
+  const ordered = sortedBatchGroups.value.flatMap(g => g.folders)
+  if (!q) return ordered
+  return ordered.filter(f => f.batchNumber.toLowerCase().includes(q))
+})
+
+function openBatchSettingsSheet() {
+  showBatchSettingsSheet.value = true
+}
+
+function closeBatchSettingsSheet() {
+  showBatchSettingsSheet.value  = false
+  batchSettingsSearchQuery.value = ''
+  cancelBatchSettingsEdit()
+}
+
+function startBatchSettingsEdit(folder) {
+  batchSettingsEditingId.value  = folder.batchNumber
+  batchSettingsEditValue.value  = folder.batchNumber
+  batchSettingsEditError.value  = ''
+  nextTick(() => batchSettingsInputRefs.value[folder.batchNumber]?.focus())
+}
+
+function cancelBatchSettingsEdit() {
+  batchSettingsEditingId.value = null
+  batchSettingsEditValue.value = ''
+  batchSettingsEditError.value = ''
+}
+
+function confirmBatchSettingsRename(oldBatchNumber) {
+  const val = batchSettingsEditValue.value.trim()
+  if (!val) {
+    batchSettingsEditError.value = 'El nombre no puede quedar vacío'
+    return
+  }
+  if (val === oldBatchNumber) { cancelBatchSettingsEdit(); return }
+  if (store.batchFoldersMeta.some(f => f.batchNumber === val)) {
+    batchSettingsEditError.value = 'Ya existe un lote con ese nombre'
+    return
+  }
+  const folder = allBatchFolders.value.find(f => f.batchNumber === oldBatchNumber)
+  if (!folder) return
+  store.editBatchFolder(oldBatchNumber, { batchNumber: val, expiry: folder.expiry })
+  cancelBatchSettingsEdit()
+}
+
+function handleBatchSettingsDelete(batchNumber) {
+  if (selectedFolder.value?.batchNumber === batchNumber) selectedFolder.value = null
+  store.markDeleteBatchFolder(batchNumber)
+  batchSettingsEditingId.value = null
 }
 </script>
