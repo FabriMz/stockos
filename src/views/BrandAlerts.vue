@@ -17,20 +17,22 @@
           @keydown.enter="openProduct(p)"
         >
           <div class="brand-row__stripe" :style="{ background: alertStripe(p) }"></div>
-          <div class="brand-row__icon" :style="{ background: p.bg }">
-            <i :class="`ti ${p.ic}`" :style="{ color: p.col }" aria-hidden="true"></i>
-          </div>
-          <div class="brand-row__info">
-            <div class="brand-row__name">{{ p.name }}</div>
-            <div class="brand-row__meta">{{ p.brand }} · {{ p.sku }}</div>
-          </div>
-          <div class="brand-row__right">
+          <div class="brand-row__body">
+            <div class="brand-row__header">
+              <div class="brand-row__icon" :style="{ background: p.bg }">
+                <i :class="`ti ${p.ic}`" :style="{ color: p.col }" aria-hidden="true"></i>
+              </div>
+              <div class="brand-row__info brand-row__info--wrap">
+                <div class="brand-row__name">{{ p.name }}</div>
+                <div class="brand-row__meta">{{ p.brand }} · {{ p.sku }}</div>
+              </div>
+            </div>
+            <div class="brand-row__divider" aria-hidden="true"></div>
             <div class="brand-row__badges">
               <span v-if="store.isOutOfStock(p)"  class="badge badge--out"><i class="ti ti-ban"></i>Sin stock</span>
               <span v-else-if="store.isLowStock(p)" class="badge badge--low"><i class="ti ti-alert-circle"></i>Stock bajo</span>
               <span v-else-if="store.isExpiring(p)" class="badge badge--venc"><i class="ti ti-clock"></i>Por vencer</span>
             </div>
-            <i class="ti ti-chevron-right brand-row__chevron" aria-hidden="true"></i>
           </div>
         </div>
         <p v-if="!filteredAlertProducts.length" class="home__empty">

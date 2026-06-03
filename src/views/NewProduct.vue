@@ -3,7 +3,6 @@
     <TopBar variant="back" :back-label="batchContext ? brand?.name ?? 'Marca' : 'Cancelar'" :back-to="backTo" title="Nuevo producto" />
 
     <div class="scroll-content">
-      <p class="section-label">Identificación</p>
       <div class="form-view__photo-picker">
         <input
           ref="photoInput"
@@ -21,6 +20,7 @@
           <i v-else class="ti ti-camera" aria-hidden="true"></i>
         </label>
       </div>
+      <p class="section-label">Identificación</p>
       <div class="form-section">
         <div class="form-group">
           <label class="form-label" for="np-sku">Código / SKU</label>

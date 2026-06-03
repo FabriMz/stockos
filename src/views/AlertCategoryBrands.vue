@@ -17,18 +17,21 @@
           @keydown.enter="openProduct(p)"
         >
           <div class="brand-row__stripe" :style="{ background: config.stripe }"></div>
-          <div class="brand-row__icon" :style="{ background: p.bg }">
-            <i :class="`ti ${p.ic}`" :style="{ color: p.col }" aria-hidden="true"></i>
-          </div>
-          <div class="brand-row__info">
-            <div class="brand-row__name">{{ p.name }}</div>
-            <div class="brand-row__meta">{{ p.brand }} · {{ p.sku }}</div>
-          </div>
-          <div class="brand-row__right">
+          <div class="brand-row__body">
+            <div class="brand-row__header">
+              <div class="brand-row__icon" :style="{ background: p.bg }">
+                <i :class="`ti ${p.ic}`" :style="{ color: p.col }" aria-hidden="true"></i>
+              </div>
+              <div class="brand-row__info">
+                <div class="brand-row__name">{{ p.name }}</div>
+                <div class="brand-row__meta">{{ p.brand }} · {{ p.sku }}</div>
+              </div>
+              <i class="ti ti-chevron-right brand-row__chevron" aria-hidden="true"></i>
+            </div>
+            <div class="brand-row__divider" aria-hidden="true"></div>
             <div class="brand-row__badges">
               <span :class="config.badgeClass"><i :class="`ti ${config.badgeIcon}`"></i>{{ config.badgeLabel }}</span>
             </div>
-            <i class="ti ti-chevron-right brand-row__chevron" aria-hidden="true"></i>
           </div>
         </div>
         <p v-if="!filteredProducts.length" class="home__empty">
