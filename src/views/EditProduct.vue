@@ -218,17 +218,17 @@
             <span v-if="isBatchContext" class="form-hint">El nro. de lote se edita desde la carpeta del lote</span>
           </div>
         </div>
-        <div class="form-group">
-          <label class="form-label" for="ep-alert-days">Avisar con anticipación</label>
+        <label class="form-label" for="ep-alert-days">Avisar con anticipación</label>
+        <div class="expiry-block__footer">
           <select class="form-select" id="ep-alert-days" name="ep-alert-days" v-model.number="form.alertDays">
             <option :value="30">30 días antes</option>
             <option :value="60">60 días antes</option>
             <option :value="90">90 días antes</option>
           </select>
-        </div>
-        <div v-if="expiryLevel !== 'ok'" :class="`expiry-block__alert expiry-block__alert--${expiryLevel}`" role="alert">
-          <i :class="`ti ${expiryLevelIcon}`" aria-hidden="true"></i>
-          <p>{{ expiryLevelMessage }}</p>
+          <div v-if="expiryLevel !== 'ok'" :class="`expiry-block__alert expiry-block__alert--${expiryLevel}`" role="alert">
+            <i :class="`ti ${expiryLevelIcon}`" aria-hidden="true"></i>
+            <p>{{ expiryLevelMessage }}</p>
+          </div>
         </div>
       </div>
 
@@ -397,9 +397,8 @@ const expiryLevelIcon = computed(() => ({
 const expiryLevelMessage = computed(() => {
   if (!form.expiry) return ''
   const diff = Math.ceil((new Date(form.expiry) - new Date()) / (1000 * 60 * 60 * 24))
-  if (diff < 0)    return `Vencido el ${formatDate(form.expiry)}`
-  if (diff < 30)   return `Vence en ${diff} día${diff === 1 ? '' : 's'} — ${formatDate(form.expiry)}`
-  return `Vence el ${formatDate(form.expiry)} (en ${diff} días)`
+  if (diff < 0)  return `Vencido`
+  return `Vence en ${diff} día${diff === 1 ? '' : 's'}`
 })
 
 const formatDate = iso => {
