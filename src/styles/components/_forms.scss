@@ -11,6 +11,11 @@
   grid-template-columns: 1fr 1fr;
   gap: $spacing-2;
   width: 100%;
+
+  &--half {
+    grid-template-columns: 1fr;
+    width: 50%;
+  }
 }
 
 .form-group {

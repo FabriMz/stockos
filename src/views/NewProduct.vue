@@ -85,39 +85,60 @@
             <input class="form-input" id="np-size" name="np-size" type="text" v-model="form.size" placeholder="Ej. 190gr" />
           </div>
           <div class="form-group">
-            <label class="form-label" for="np-category">Categoría</label>
-            <select
-              v-if="!creatingCategory"
-              class="form-select"
+            <label class="form-label" for="np-udscaja">Uds. por caja</label>
+            <input
+              class="form-input"
+              :class="{ 'form-input--error': errors.unitsPerBox }"
+              id="np-udscaja"
+              name="np-udscaja"
+              type="number"
+              v-model.number="form.unitsPerBox"
+              placeholder="Ej. 12"
+              inputmode="numeric"
+              min="1"
+              :max="MAX_UNITS_BOX"
+              step="1"
+              @blur="validateUnitsPerBox"
+              @input="validateUnitsPerBox"
+            />
+            <span v-if="errors.unitsPerBox" class="form-hint form-hint--error" role="alert">{{ errors.unitsPerBox }}</span>
+          </div>
+        </div>
+        <div class="form-row form-row--half">
+        <div class="form-group">
+          <label class="form-label" for="np-category">Categoría</label>
+          <select
+            v-if="!creatingCategory"
+            class="form-select"
+            id="np-category"
+            name="np-category"
+            :value="form.category === '' ? '__sin_categoria__' : form.category"
+            :disabled="!form.bid"
+            @change="onCategoryChange"
+          >
+            <option value="" disabled>Seleccionar…</option>
+            <option value="__sin_categoria__">Sin categoría</option>
+            <option v-for="c in brandCategories" :key="c" :value="c">{{ c }}</option>
+            <option value="__nueva__">+ Crear categoría…</option>
+          </select>
+          <div v-else class="discount-custom">
+            <input
+              class="form-input discount-custom__input"
               id="np-category"
               name="np-category"
-              :value="form.category === '' ? '__sin_categoria__' : form.category"
-              :disabled="!form.bid"
-              @change="onCategoryChange"
-            >
-              <option value="" disabled>Seleccionar…</option>
-              <option value="__sin_categoria__">Sin categoría</option>
-              <option v-for="c in brandCategories" :key="c" :value="c">{{ c }}</option>
-              <option value="__nueva__">+ Crear categoría…</option>
-            </select>
-            <div v-else class="discount-custom">
-              <input
-                class="form-input discount-custom__input"
-                id="np-category"
-                name="np-category"
-                type="text"
-                v-model="newCategory"
-                placeholder="Nombre de categoría"
-                @keydown.enter="confirmNewCategory"
-                @keydown.escape="cancelNewCategory"
-                ref="newCatInput"
-                aria-label="Nombre de nueva categoría"
-              />
-              <button type="button" class="discount-custom__reset" @click="cancelNewCategory" aria-label="Cancelar nueva categoría">
-                <i class="ti ti-x" aria-hidden="true"></i>
-              </button>
-            </div>
+              type="text"
+              v-model="newCategory"
+              placeholder="Nombre de categoría"
+              @keydown.enter="confirmNewCategory"
+              @keydown.escape="cancelNewCategory"
+              ref="newCatInput"
+              aria-label="Nombre de nueva categoría"
+            />
+            <button type="button" class="discount-custom__reset" @click="cancelNewCategory" aria-label="Cancelar nueva categoría">
+              <i class="ti ti-x" aria-hidden="true"></i>
+            </button>
           </div>
+        </div>
         </div>
       </div>
 
@@ -163,61 +184,42 @@
             <span v-if="errors.price" class="form-hint form-hint--error" role="alert">{{ errors.price }}</span>
           </div>
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="np-discount">Descuento</label>
-            <select
-              v-if="discountMode !== 'custom'"
-              class="form-select"
+        <div class="form-row form-row--half">
+        <div class="form-group">
+          <label class="form-label" for="np-discount">Descuento</label>
+          <select
+            v-if="discountMode !== 'custom'"
+            class="form-select"
+            id="np-discount"
+            name="np-discount"
+            :value="discountSelectValue"
+            @change="onDiscountChange"
+          >
+            <option v-for="d in discountsStore.sortedDiscounts" :key="d" :value="d">{{ d }}%</option>
+            <option value="custom">Personalizado…</option>
+          </select>
+          <div v-else class="discount-custom">
+            <input
+              class="form-input discount-custom__input"
               id="np-discount"
               name="np-discount"
-              :value="discountSelectValue"
-              @change="onDiscountChange"
-            >
-              <option v-for="d in discountsStore.sortedDiscounts" :key="d" :value="d">{{ d }}%</option>
-              <option value="custom">Personalizado…</option>
-            </select>
-            <div v-else class="discount-custom">
-              <input
-                class="form-input discount-custom__input"
-                id="np-discount"
-                name="np-discount"
-                type="number"
-                :value="customDiscountValue"
-                @input="onCustomDiscountInput"
-                @blur="onCustomDiscountBlur"
-                inputmode="decimal"
-                min="1"
-                max="100"
-                step="0.1"
-                placeholder="Ej. 15"
-                aria-label="Descuento personalizado (1-100%)"
-              />
-              <button type="button" class="discount-custom__reset" @click="resetDiscountToPreset" aria-label="Volver a opciones predefinidas">
-                <i class="ti ti-x" aria-hidden="true"></i>
-              </button>
-            </div>
-            <span class="form-hint" v-if="discountMode === 'custom'">Entre 1% y 100%</span>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="np-udscaja">Uds. por caja</label>
-            <input
-              class="form-input"
-              :class="{ 'form-input--error': errors.unitsPerBox }"
-              id="np-udscaja"
-              name="np-udscaja"
               type="number"
-              v-model.number="form.unitsPerBox"
-              placeholder="Ej. 12"
-              inputmode="numeric"
+              :value="customDiscountValue"
+              @input="onCustomDiscountInput"
+              @blur="onCustomDiscountBlur"
+              inputmode="decimal"
               min="1"
-              :max="MAX_UNITS_BOX"
-              step="1"
-              @blur="validateUnitsPerBox"
-              @input="validateUnitsPerBox"
+              max="100"
+              step="0.1"
+              placeholder="Ej. 15"
+              aria-label="Descuento personalizado (1-100%)"
             />
-            <span v-if="errors.unitsPerBox" class="form-hint form-hint--error" role="alert">{{ errors.unitsPerBox }}</span>
+            <button type="button" class="discount-custom__reset" @click="resetDiscountToPreset" aria-label="Volver a opciones predefinidas">
+              <i class="ti ti-x" aria-hidden="true"></i>
+            </button>
           </div>
+          <span class="form-hint" v-if="discountMode === 'custom'">Entre 1% y 100%</span>
+        </div>
         </div>
       </div>
 
