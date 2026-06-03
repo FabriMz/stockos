@@ -42,7 +42,7 @@
   font-family: $font-display;
   font-size: $size;
   font-weight: $weight;
-  letter-spacing: $letter-spacing-wide;
+  letter-spacing: $letter-spacing-tight;
 }
 
 @mixin font-mono($size: $font-size-base, $weight: $font-weight-regular) {
@@ -55,7 +55,7 @@
   font-family: $font-mono;
   font-size: $font-size-xs;
   font-weight: $font-weight-medium;
-  letter-spacing: $letter-spacing-widest;
+  letter-spacing: $letter-spacing-wider;
   text-transform: uppercase;
   color: $color-text-tertiary;
 }

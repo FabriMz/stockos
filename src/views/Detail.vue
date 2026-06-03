@@ -131,7 +131,12 @@ const confirming = ref(false)
 const alertBack = computed(() => resolveAlertBack(route.query, product.value))
 const backTo    = computed(() => alertBack.value?.to ?? `/catalog/${product.value?.bid}`)
 const backLabel = computed(() => alertBack.value?.label ?? product.value?.brand ?? 'Atrás')
-const margen    = computed(() => product.value ? (((product.value.price - product.value.cost) / product.value.price) * 100).toFixed(0) : 0)
+const margen    = computed(() => {
+  if (!product.value) return 0
+  const { price, cost } = product.value
+  if (!price) return '-'
+  return (((price - cost) / price) * 100).toFixed(0)
+})
 const pct       = computed(() => product.value ? store.pct(product.value) : 0)
 
 function goEdit() {

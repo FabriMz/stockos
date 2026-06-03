@@ -23,6 +23,30 @@
         </div>
       </div>
 
+      <!-- Buscador de marcas -->
+      <div class="brand-search">
+        <i class="ti ti-search brand-search__icon" aria-hidden="true"></i>
+        <input
+          id="batch-detail-search"
+          name="batch-detail-search"
+          class="brand-search__input"
+          type="search"
+          v-model="searchQuery"
+          placeholder="Buscar marca..."
+          autocomplete="off"
+          aria-label="Buscar marca en este lote"
+        />
+        <button
+          v-if="searchQuery"
+          class="brand-search__clear"
+          type="button"
+          aria-label="Limpiar búsqueda"
+          @click="searchQuery = ''"
+        >
+          <i class="ti ti-x" aria-hidden="true"></i>
+        </button>
+      </div>
+
       <!-- Action bar -->
       <div class="catalog-action-bar" role="toolbar" aria-label="Acciones del lote">
         <button class="catalog-action-bar__btn" aria-label="Nueva marca" @click="openNewBrandSheet">
@@ -478,6 +502,10 @@ const store  = useProductsStore()
 
 const batchNumber = computed(() => decodeURIComponent(route.params.batchNumber))
 
+// ─── BÚSQUEDA ────────────────────────────────────────────────────────────────
+
+const searchQuery = ref('')
+
 const folder = computed(() =>
   store.getBatchFolder(batchNumber.value)
 )
@@ -519,7 +547,16 @@ const categorizedGroups = computed(() => {
     result.push({ id: null, category: '', groups: uncategorizedGroups })
   }
 
+  // 3. Filtrar por búsqueda (si hay query activo)
+  const q = searchQuery.value.trim().toLowerCase()
+  if (!q) return result
+
   return result
+    .map(catGroup => ({
+      ...catGroup,
+      groups: catGroup.groups.filter(g => g.brand.name.toLowerCase().includes(q)),
+    }))
+    .filter(catGroup => catGroup.groups.length > 0)
 })
 
 watch(folder, (val, oldVal) => {
