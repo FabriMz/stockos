@@ -4,6 +4,23 @@
 
     <div class="scroll-content">
       <p class="section-label">Identificación</p>
+      <div class="form-view__photo-picker">
+        <input
+          ref="photoInput"
+          id="np-photo"
+          name="np-photo"
+          type="file"
+          accept="image/*"
+          capture="environment"
+          class="form-view__photo-input"
+          aria-label="Tomar foto del producto"
+          @change="onPhotoChange"
+        />
+        <label for="np-photo" class="form-view__photo-trigger">
+          <img v-if="form.img" :src="form.img" alt="Foto del producto" class="form-view__photo-img" />
+          <i v-else class="ti ti-camera" aria-hidden="true"></i>
+        </label>
+      </div>
       <div class="form-section">
         <div class="form-group">
           <label class="form-label" for="np-sku">Código / SKU</label>
@@ -220,6 +237,14 @@
             <input class="form-input" id="np-batch" name="np-batch" type="text" v-model="form.batch" placeholder="Ej. L2503" />
           </div>
         </div>
+        <div class="form-group">
+          <label class="form-label" for="np-alert-days">Avisar con anticipación</label>
+          <select class="form-select" id="np-alert-days" name="np-alert-days" v-model.number="form.alertDays">
+            <option :value="30">30 días antes</option>
+            <option :value="60">60 días antes</option>
+            <option :value="90">90 días antes</option>
+          </select>
+        </div>
         <span class="expiry-block__hint">Opcional. Dejá en blanco si no aplica.</span>
       </div>
 
@@ -267,8 +292,19 @@ const form = reactive({
   sku: '', name: '', bid: route.query.bid || '', origin: '', size: '',
   category: '', cost: '', price: '', discount: DEFAULT_PRESET, unitsPerBox: '',
   expiry: '', batch: batchContext ?? '', stock: 0,
-  ic: 'ti-box', bg: '#F0EAE4', col: '#791132', max: 100,
+  ic: 'ti-box', bg: '#F0EAE4', col: '#791132', max: 100, img: '',
+  alertDays: 30,
 })
+
+const photoInput = ref(null)
+
+function onPhotoChange(e) {
+  const file = e.target.files?.[0]
+  if (!file) return
+  const reader = new FileReader()
+  reader.onload = ev => { form.img = ev.target.result }
+  reader.readAsDataURL(file)
+}
 
 const brand  = computed(() => form.bid ? store.getBrand(form.bid) : null)
 const backTo = computed(() =>

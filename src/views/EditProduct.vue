@@ -207,10 +207,6 @@
           <i class="ti ti-calendar-event" aria-hidden="true"></i>
           <span>Fecha de vencimiento</span>
         </div>
-        <div v-if="form.expiry" class="expiry-block__alert" role="alert">
-          <i class="ti ti-alert-triangle" aria-hidden="true"></i>
-          <p>Próximo a vencer: <strong>{{ formatDate(form.expiry) }}</strong></p>
-        </div>
         <div class="expiry-block__row">
           <div class="form-group">
             <label class="form-label" for="ep-expiry">Fecha</label>
@@ -221,6 +217,18 @@
             <input class="form-input" id="ep-batch" name="ep-batch" type="text" v-model="form.batch" placeholder="Ej. L2503" :readonly="isBatchContext" />
             <span v-if="isBatchContext" class="form-hint">El nro. de lote se edita desde la carpeta del lote</span>
           </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="ep-alert-days">Avisar con anticipación</label>
+          <select class="form-select" id="ep-alert-days" name="ep-alert-days" v-model.number="form.alertDays">
+            <option :value="30">30 días antes</option>
+            <option :value="60">60 días antes</option>
+            <option :value="90">90 días antes</option>
+          </select>
+        </div>
+        <div v-if="expiryLevel !== 'ok'" :class="`expiry-block__alert expiry-block__alert--${expiryLevel}`" role="alert">
+          <i :class="`ti ${expiryLevelIcon}`" aria-hidden="true"></i>
+          <p>{{ expiryLevelMessage }}</p>
         </div>
       </div>
 
@@ -275,6 +283,7 @@ const form = reactive({
   cost: 0, price: 0, discount: DEFAULT_PRESET,
   stock: 0, expiry: '', batch: '',
   bid: '', origin: '', category: '',
+  alertDays: 30,
 })
 
 const {
@@ -297,6 +306,7 @@ watch(product, p => {
     cost: p.cost, price: p.price, discount: p.discount || DEFAULT_PRESET,
     stock: p.stock, expiry: p.expiry || '', batch: p.batch || '',
     bid: p.bid || '', origin: p.origin || '', category: p.category || '',
+    alertDays: p.alertDays || 30,
   })
   initFromValue(p.discount)
 }, { immediate: true })
@@ -368,6 +378,29 @@ function cancelNewCategory() {
   creatingCategory.value = false
   newCategory.value = ''
 }
+
+const expiryLevel = computed(() => {
+  if (!form.expiry) return 'ok'
+  const diff = Math.ceil((new Date(form.expiry) - new Date()) / (1000 * 60 * 60 * 24))
+  if (diff < 0)                    return 'critico'
+  if (diff < 30)                   return 'atencion'
+  if (diff < form.alertDays)       return 'aviso'
+  return 'ok'
+})
+
+const expiryLevelIcon = computed(() => ({
+  aviso:    'ti-info-circle',
+  atencion: 'ti-alert-triangle',
+  critico:  'ti-circle-x',
+}[expiryLevel.value] ?? ''))
+
+const expiryLevelMessage = computed(() => {
+  if (!form.expiry) return ''
+  const diff = Math.ceil((new Date(form.expiry) - new Date()) / (1000 * 60 * 60 * 24))
+  if (diff < 0)    return `Vencido el ${formatDate(form.expiry)}`
+  if (diff < 30)   return `Vence en ${diff} día${diff === 1 ? '' : 's'} — ${formatDate(form.expiry)}`
+  return `Vence el ${formatDate(form.expiry)} (en ${diff} días)`
+})
 
 const formatDate = iso => {
   if (!iso) return ''

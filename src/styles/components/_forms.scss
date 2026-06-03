@@ -116,6 +116,30 @@
       color: $color-warning-text;
       line-height: $line-height-snug;
     }
+
+    &--aviso {
+      background: $color-accent-bg;
+      border-color: $color-salmon-100;
+
+      i { color: $color-accent-text; }
+      p { color: $color-accent-text; }
+    }
+
+    &--atencion {
+      background: $color-warning-bg;
+      border-color: $color-warning-border;
+
+      i { color: $color-warning; }
+      p { color: $color-warning-text; }
+    }
+
+    &--critico {
+      background: $color-danger-bg;
+      border-color: $color-danger-border;
+
+      i { color: $color-danger; }
+      p { color: $color-danger-text; }
+    }
   }
 }
 
