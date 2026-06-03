@@ -110,11 +110,41 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label" for="np-cost">Costo IVA inc.</label>
-            <input class="form-input" id="np-cost" name="np-cost" type="number" v-model.number="form.cost" placeholder="0,00" inputmode="decimal" />
+            <input
+              class="form-input"
+              :class="{ 'form-input--error': errors.cost }"
+              id="np-cost"
+              name="np-cost"
+              type="number"
+              v-model.number="form.cost"
+              placeholder="0,00"
+              inputmode="decimal"
+              min="0"
+              :max="MAX_PRICE"
+              step="0.01"
+              @blur="validateCost"
+              @input="validateCost"
+            />
+            <span v-if="errors.cost" class="form-hint form-hint--error" role="alert">{{ errors.cost }}</span>
           </div>
           <div class="form-group">
             <label class="form-label" for="np-price">PVP sugerido</label>
-            <input class="form-input" id="np-price" name="np-price" type="number" v-model.number="form.price" placeholder="0,00" inputmode="decimal" />
+            <input
+              class="form-input"
+              :class="{ 'form-input--error': errors.price }"
+              id="np-price"
+              name="np-price"
+              type="number"
+              v-model.number="form.price"
+              placeholder="0,00"
+              inputmode="decimal"
+              min="0"
+              :max="MAX_PRICE"
+              step="0.01"
+              @blur="validatePrice"
+              @input="validatePrice"
+            />
+            <span v-if="errors.price" class="form-hint form-hint--error" role="alert">{{ errors.price }}</span>
           </div>
         </div>
         <div class="form-row">
@@ -155,7 +185,22 @@
           </div>
           <div class="form-group">
             <label class="form-label" for="np-udscaja">Uds. por caja</label>
-            <input class="form-input" id="np-udscaja" name="np-udscaja" type="number" v-model.number="form.unitsPerBox" placeholder="Ej. 12" inputmode="numeric" min="1" />
+            <input
+              class="form-input"
+              :class="{ 'form-input--error': errors.unitsPerBox }"
+              id="np-udscaja"
+              name="np-udscaja"
+              type="number"
+              v-model.number="form.unitsPerBox"
+              placeholder="Ej. 12"
+              inputmode="numeric"
+              min="1"
+              :max="MAX_UNITS_BOX"
+              step="1"
+              @blur="validateUnitsPerBox"
+              @input="validateUnitsPerBox"
+            />
+            <span v-if="errors.unitsPerBox" class="form-hint form-hint--error" role="alert">{{ errors.unitsPerBox }}</span>
           </div>
         </div>
       </div>
@@ -185,6 +230,9 @@
         label="Unidades en stock"
         hint="Podés actualizar el stock después desde el detalle"
         input-id="np-stock"
+        :max-stock="MAX_STOCK"
+        :error="errors.stock"
+        @validate="validateStock"
       />
 
       <div class="spacer--sm"></div>
@@ -205,6 +253,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useProductsStore }  from '../stores/products.js'
 import { useDiscountsStore, DEFAULT_PRESET } from '../stores/discounts.js'
 import { useDtoSelector }    from '../composables/useDtoSelector.js'
+import { useProductFieldValidation } from '../composables/useProductFieldValidation.js'
 import TopBar        from '../components/layout/TopBar.vue'
 import StockAdjuster from '../components/ui/StockAdjuster.vue'
 
@@ -213,7 +262,6 @@ const route  = useRoute()
 const store  = useProductsStore()
 const discountsStore = useDiscountsStore()
 
-// Contexto de lote: presente cuando se llega desde BatchBrandDetail
 const batchContext = route.query.batchNumber || null
 
 const form = reactive({
@@ -234,6 +282,13 @@ const {
   discountMode, customDiscountValue, discountSelectValue,
   onDiscountChange, onCustomDiscountInput, onCustomDiscountBlur, resetDiscountToPreset,
 } = useDtoSelector(form)
+
+const {
+  errors,
+  validateCost, validatePrice, validateUnitsPerBox, validateStock,
+  validateNumericFields, hasNumericErrors,
+  MAX_STOCK, MAX_UNITS_BOX, MAX_PRICE,
+} = useProductFieldValidation(form)
 
 const creatingCategory = ref(false)
 const newCategory      = ref('')
@@ -307,8 +362,10 @@ function cancelNewCategory() {
 
 const save = () => {
   if (creatingCategory.value) confirmNewCategory()
+  validateNumericFields()
   if (!form.name || !form.bid) return
   if (!batchContext && !form.sku) return
+  if (hasNumericErrors.value) return
   if (batchContext) {
     store.addProductToBatch({ ...form }, batchContext)
     router.push(`/catalog/batch/${encodeURIComponent(batchContext)}/${form.bid}`)

@@ -140,7 +140,21 @@
           </div>
           <div class="form-group">
             <label class="form-label" for="ep-units-per-box">Uds. por caja</label>
-            <input class="form-input" id="ep-units-per-box" name="ep-units-per-box" type="number" v-model.number="form.unitsPerBox" inputmode="numeric" min="1" />
+            <input
+              class="form-input"
+              :class="{ 'form-input--error': errors.unitsPerBox }"
+              id="ep-units-per-box"
+              name="ep-units-per-box"
+              type="number"
+              v-model.number="form.unitsPerBox"
+              inputmode="numeric"
+              min="1"
+              :max="MAX_UNITS_BOX"
+              step="1"
+              @blur="validateUnitsPerBox"
+              @input="validateUnitsPerBox"
+            />
+            <span v-if="errors.unitsPerBox" class="form-hint form-hint--error" role="alert">{{ errors.unitsPerBox }}</span>
           </div>
         </div>
       </div>
@@ -150,11 +164,39 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label" for="ep-cost">Costo IVA inc.</label>
-            <input class="form-input" id="ep-cost" name="ep-cost" type="number" v-model.number="form.cost" inputmode="decimal" />
+            <input
+              class="form-input"
+              :class="{ 'form-input--error': errors.cost }"
+              id="ep-cost"
+              name="ep-cost"
+              type="number"
+              v-model.number="form.cost"
+              inputmode="decimal"
+              min="0"
+              :max="MAX_PRICE"
+              step="0.01"
+              @blur="validateCost"
+              @input="validateCost"
+            />
+            <span v-if="errors.cost" class="form-hint form-hint--error" role="alert">{{ errors.cost }}</span>
           </div>
           <div class="form-group">
             <label class="form-label" for="ep-price">PVP sugerido</label>
-            <input class="form-input" id="ep-price" name="ep-price" type="number" v-model.number="form.price" inputmode="decimal" />
+            <input
+              class="form-input"
+              :class="{ 'form-input--error': errors.price }"
+              id="ep-price"
+              name="ep-price"
+              type="number"
+              v-model.number="form.price"
+              inputmode="decimal"
+              min="0"
+              :max="MAX_PRICE"
+              step="0.01"
+              @blur="validatePrice"
+              @input="validatePrice"
+            />
+            <span v-if="errors.price" class="form-hint form-hint--error" role="alert">{{ errors.price }}</span>
           </div>
         </div>
       </div>
@@ -189,6 +231,9 @@
         :max="product.max"
         :show-bar="true"
         input-id="ep-stock"
+        :max-stock="MAX_STOCK"
+        :error="errors.stock"
+        @validate="validateStock"
       />
 
       <div class="spacer--sm"></div>
@@ -210,6 +255,7 @@ import { useProductsStore }  from '../stores/products.js'
 import { useDiscountsStore, DEFAULT_PRESET } from '../stores/discounts.js'
 import { useDtoSelector }    from '../composables/useDtoSelector.js'
 import { detailPathWithQuery, resolveAlertBack } from '../composables/useAlertNavigation.js'
+import { useProductFieldValidation } from '../composables/useProductFieldValidation.js'
 import TopBar        from '../components/layout/TopBar.vue'
 import StockBadge    from '../components/ui/StockBadge.vue'
 import StockAdjuster from '../components/ui/StockAdjuster.vue'
@@ -236,6 +282,13 @@ const {
   initFromValue,
   onDiscountChange, onCustomDiscountInput, onCustomDiscountBlur, resetDiscountToPreset,
 } = useDtoSelector(form)
+
+const {
+  errors,
+  validateCost, validatePrice, validateUnitsPerBox, validateStock,
+  validateNumericFields, hasNumericErrors,
+  MAX_STOCK, MAX_UNITS_BOX, MAX_PRICE,
+} = useProductFieldValidation(form)
 
 watch(product, p => {
   if (!p) return
@@ -325,6 +378,8 @@ const formatDate = iso => {
 const save = () => {
   if (creatingCategory.value) confirmNewCategory()
   if (creatingBrand.value) confirmNewBrand()
+  validateNumericFields()
+  if (hasNumericErrors.value) return
   store.editProduct(product.value.id, { ...form })
   store.setProductUpdated()
   router.push(detailPathWithQuery(product.value.id, route.query))

@@ -1,5 +1,5 @@
 <template>
-  <div class="stock-adjuster">
+  <div class="stock-adjuster" :class="{ 'stock-adjuster--error': error }">
     <div class="stock-adjuster__header">
       <span class="stock-adjuster__label">{{ label }}</span>
       <span class="stock-adjuster__value">{{ modelValue }} uds.</span>
@@ -30,15 +30,22 @@
         :name="inputId"
         type="number"
         class="stock-adjuster__input"
+        :class="{ 'stock-adjuster__input--error': error }"
         :value="modelValue"
         @input="onInput"
         @change="onInput"
+        @blur="$emit('validate')"
         min="0"
+        :max="maxStock"
+        step="1"
         inputmode="numeric"
         :aria-label="label"
+        :aria-invalid="!!error"
       />
       <button class="stock-adjuster__btn" @click="increment" aria-label="Sumar unidad">+</button>
     </div>
+
+    <span v-if="error" class="stock-adjuster__error" role="alert">{{ error }}</span>
   </div>
 </template>
 
@@ -52,9 +59,11 @@ const props = defineProps({
   max:        { type: Number, default: 0 },
   showBar:    { type: Boolean, default: false },
   inputId:    { type: String, default: 'stock-input' },
+  maxStock:   { type: Number, default: 99_999 },
+  error:      { type: String, default: null },
 })
 
-const emit  = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'validate'])
 
 const pct = computed(() => props.max ? Math.round((props.modelValue / props.max) * 100) : 0)
 
@@ -64,10 +73,23 @@ const fillClass = computed(() => {
   return 'stock-bar__fill--ok'
 })
 
-const increment = () => emit('update:modelValue', props.modelValue + 1)
-const decrement = () => emit('update:modelValue', Math.max(0, props.modelValue - 1))
-const onInput   = e  => {
-  const val = parseInt(e.target.value)
-  if (!isNaN(val) && val >= 0) emit('update:modelValue', val)
+const increment = () => {
+  const next = props.modelValue + 1
+  if (next <= props.maxStock) emit('update:modelValue', next)
+  emit('validate')
+}
+
+const decrement = () => {
+  emit('update:modelValue', Math.max(0, props.modelValue - 1))
+  emit('validate')
+}
+
+const onInput = e => {
+  const raw = e.target.value.replace(/[^0-9]/g, '')
+  if (raw === '') { emit('update:modelValue', 0); return }
+  const val = parseInt(raw, 10)
+  if (!isNaN(val) && val >= 0) {
+    emit('update:modelValue', Math.min(val, props.maxStock))
+  }
 }
 </script>

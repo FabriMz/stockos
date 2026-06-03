@@ -44,9 +44,9 @@
           color="blue"
         />
         <StatCard
-          label="VIGENCIA"
+          label="LISTA"
           :value="catalogExpiryLabel"
-          sub="Dto. 26% / 26+5%"
+          :sub="catalogExpirySub"
           color="success"
           value-class="stat-card__value--sm"
         />
@@ -154,13 +154,15 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useProductsStore } from '../stores/products.js'
-import { matchesProductSearch } from '../utils/alerts.js'
+import { useDiscountsStore } from '../stores/discounts.js'
+import { matchesProductSearch, monthLabel } from '../utils/alerts.js'
 import TopBar         from '../components/layout/TopBar.vue'
 import BottomNav      from '../components/layout/BottomNav.vue'
 import StatCard       from '../components/ui/StatCard.vue'
 
 const router = useRouter()
 const store  = useProductsStore()
+const discountsStore = useDiscountsStore()
 
 const alerts     = computed(() => store.alerts)
 const totalProds = computed(() => store.products.length)
@@ -174,8 +176,14 @@ const expiryCount          = computed(() => store.expiryAlerts.length)
 const expiryBrandsCount    = computed(() => new Set(store.expiryAlerts.map(p => p.bid)).size)
 const catalogExpiryLabel   = computed(() => {
   const [year, month] = String(store.catalogExpiry || '').split('-')
-  if (!year || !month) return '—'
-  return `${month.padStart(2, '0')}/${year.slice(-2)}`
+  if (!year || !month) return 'Sin fecha'
+  return `${monthLabel(Number(month))} ${year}`
+})
+const catalogExpirySub = computed(() => {
+  const [year, month] = String(store.catalogExpiry || '').split('-')
+  if (!year || !month) return 'Configurar en ajustes'
+  const dtos = discountsStore.discounts
+  return dtos.length ? `Dto. ${dtos.map(d => `${d}%`).join(' / ')}` : 'Sin descuentos'
 })
 
 const searchQuery   = ref('')
