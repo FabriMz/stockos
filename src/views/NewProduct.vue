@@ -307,6 +307,7 @@ function cancelNewCategory() {
 }
 
 const save = () => {
+  if (creatingCategory.value) confirmNewCategory()
   if (!form.name || !form.bid) return
   if (!batchContext && !form.sku) return
   if (batchContext) {

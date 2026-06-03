@@ -471,7 +471,7 @@ export const useProductsStore = defineStore('products', () => {
     const n = name.trim()
     if (!n) return false
     if (!brandProductCategories.value[brandId]) {
-      brandProductCategories.value[brandId] = []
+      brandProductCategories.value = { ...brandProductCategories.value, [brandId]: [] }
     }
     if (brandProductCategories.value[brandId].includes(n)) return false
     brandProductCategories.value[brandId].push(n)
@@ -516,7 +516,7 @@ export const useProductsStore = defineStore('products', () => {
     if (!snap) return
     // Restaurar categoría en la lista de la marca
     if (!brandProductCategories.value[snap.brandId]) {
-      brandProductCategories.value[snap.brandId] = []
+      brandProductCategories.value = { ...brandProductCategories.value, [snap.brandId]: [] }
     }
     if (!brandProductCategories.value[snap.brandId].includes(snap.catName)) {
       brandProductCategories.value[snap.brandId].push(snap.catName)

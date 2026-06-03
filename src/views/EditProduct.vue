@@ -196,7 +196,7 @@
     </div>
 
     <div class="btn-group btn-group--row">
-      <button class="btn btn--secondary" @click="$router.push(`/product/${product.id}`)">Descartar cambios</button>
+      <button class="btn btn--secondary" @click="$router.push(detailPathWithQuery(product.id, route.query))">Descartar cambios</button>
       <button class="btn btn--primary" @click="save">
         <i class="ti ti-device-floppy" aria-hidden="true"></i>Guardar cambios
       </button>
@@ -324,6 +324,8 @@ const formatDate = iso => {
 }
 
 const save = () => {
+  if (creatingCategory.value) confirmNewCategory()
+  if (creatingBrand.value) confirmNewBrand()
   store.editProduct(product.value.id, { ...form })
   store.setProductUpdated()
   router.push(detailPathWithQuery(product.value.id, route.query))

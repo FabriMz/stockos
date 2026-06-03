@@ -152,7 +152,7 @@
               :key="item.id"
               :product="getProduct(item.productId)"
               :show-actions="true"
-              :batch-context="{ itemId: item.id, batchNum: batchNumber }"
+              :batch-context="{ itemId: item.id, batchNum: batchNumber, brandId: brandId }"
               @remove="store.markDeleteBatchItem($event)"
             />
           </template>

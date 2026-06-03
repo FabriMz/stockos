@@ -147,7 +147,8 @@ const imgError = ref(false)
 
 function batchQuery() {
   if (!props.batchContext) return null
-  return { from: 'batch', brandId: props.batchContext.brandId, batchNum: props.batchContext.batchNum }
+  const brandName = store.getBrand(props.batchContext.brandId)?.name ?? ''
+  return { from: 'batch', brandId: props.batchContext.brandId, batchNum: props.batchContext.batchNum, brandName }
 }
 
 function navigateToDetail() {

@@ -15,10 +15,13 @@ export function productRouteFromAlerts(id, ctx) {
 /** @param {Record<string, string>} query */
 export function resolveAlertBack(query, product) {
   if (query.from === 'batch') {
-    const { batchNum } = query
+    const { batchNum, brandId, brandName } = query
+    const resolvedBrandId = brandId || product?.bid
     return {
-      to:    `/catalog/batch/${encodeURIComponent(batchNum)}`,
-      label: batchNum,
+      to:    resolvedBrandId
+        ? `/catalog/batch/${encodeURIComponent(batchNum)}/${resolvedBrandId}`
+        : `/catalog/batch/${encodeURIComponent(batchNum)}`,
+      label: brandName || product?.brand || batchNum,
     }
   }
 
@@ -53,7 +56,7 @@ export function resolveAlertBack(query, product) {
 /** Conserva el contexto de alertas al volver al detalle desde editar. */
 export function detailPathWithQuery(id, query) {
   const params = new URLSearchParams()
-  for (const key of ['from', 'alert', 'brand', 'year', 'month', 'batchNum']) {
+  for (const key of ['from', 'alert', 'brand', 'year', 'month', 'batchNum', 'brandId', 'brandName']) {
     if (query[key]) params.set(key, query[key])
   }
   const qs = params.toString()
