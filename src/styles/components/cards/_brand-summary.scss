@@ -30,4 +30,17 @@
     color     : $color-text-secondary;
     margin-top: 2px;
   }
+
+  &__add-btn {
+    @include icon-btn;
+    margin-left: auto;
+    flex-shrink: 0;
+    color      : $color-text-secondary;
+    border     : $border;
+
+    &:active {
+      background: $color-primary-50;
+      color     : $color-primary-900;
+    }
+  }
 }

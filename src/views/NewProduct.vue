@@ -1,6 +1,6 @@
 <template>
   <div class="screen">
-    <TopBar variant="back" back-label="Cancelar" back-to="/catalog" title="Nuevo producto" />
+    <TopBar variant="back" :back-label="batchContext ? brand?.name ?? 'Marca' : 'Cancelar'" :back-to="backTo" title="Nuevo producto" />
 
     <div class="scroll-content">
       <p class="section-label">Identificación</p>
@@ -17,8 +17,18 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label" for="np-brand">Marca</label>
+            <input
+              v-if="batchContext"
+              class="form-input"
+              id="np-brand"
+              name="np-brand"
+              type="text"
+              :value="brand?.name ?? ''"
+              readonly
+              aria-label="Marca (fijada por el lote)"
+            />
             <select
-              v-if="!creatingBrand"
+              v-else-if="!creatingBrand"
               class="form-select"
               id="np-brand"
               name="np-brand"
@@ -204,12 +214,22 @@ const route  = useRoute()
 const store  = useProductsStore()
 const discountsStore = useDiscountsStore()
 
+// Contexto de lote: presente cuando se llega desde BatchBrandDetail
+const batchContext = route.query.batchNumber || null
+
 const form = reactive({
   sku: '', name: '', bid: route.query.bid || '', origin: '', size: '',
   category: '', cost: '', price: '', discount: DEFAULT_PRESET, unitsPerBox: '',
-  expiry: '', batch: '', stock: 0,
+  expiry: '', batch: batchContext ?? '', stock: 0,
   ic: 'ti-box', bg: '#F0EAE4', col: '#791132', max: 100,
 })
+
+const brand  = computed(() => form.bid ? store.getBrand(form.bid) : null)
+const backTo = computed(() =>
+  batchContext
+    ? `/catalog/batch/${encodeURIComponent(batchContext)}/${form.bid}`
+    : '/catalog'
+)
 
 const {
   discountMode, customDiscountValue, discountSelectValue,
@@ -287,8 +307,14 @@ function cancelNewCategory() {
 }
 
 const save = () => {
-  if (!form.sku || !form.name || !form.bid) return
-  store.addProduct({ ...form })
-  router.push(`/catalog/${form.bid}`)
+  if (!form.name || !form.bid) return
+  if (!batchContext && !form.sku) return
+  if (batchContext) {
+    store.addProductToBatch({ ...form }, batchContext)
+    router.push(`/catalog/batch/${encodeURIComponent(batchContext)}/${form.bid}`)
+  } else {
+    store.addProduct({ ...form })
+    router.push(`/catalog/${form.bid}`)
+  }
 }
 </script>

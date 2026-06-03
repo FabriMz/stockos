@@ -330,6 +330,27 @@ export const useProductsStore = defineStore('products', () => {
     }
   }
 
+  // Crea un producto nuevo directamente dentro de un lote.
+  // Recibe el form completo (igual que addProduct) mas el batchNumber de destino.
+  function addProductToBatch(prod, batchNumber) {
+    const meta = batchFoldersMeta.value.find(f => f.batchNumber === batchNumber)
+    if (!meta) return
+    const newId = Math.max(0, ...products.value.map(p => p.id)) + 1
+    products.value.push({ ...prod, id: newId, _batchOnly: true, batch: batchNumber, expiry: meta.expiry })
+    if (!Array.isArray(meta.brandIds)) meta.brandIds = []
+    if (!meta.brandIds.includes(prod.bid)) meta.brandIds.push(prod.bid)
+    const itemId = `batch_${Date.now()}_${newId}`
+    batches.value.push({
+      id         : itemId,
+      productId  : newId,
+      bid        : prod.bid,
+      batchNumber: batchNumber,
+      expiry     : meta.expiry,
+      stock      : Number(prod.stock) || 0,
+    })
+    return newId
+  }
+
   function cloneToBatch(product, { batchNumber, expiry, stock }) {
     const num = batchNumber.trim()
     if (!num) return
@@ -563,6 +584,7 @@ export const useProductsStore = defineStore('products', () => {
     renameBatchCategory,
     deleteBatchCategory,
     moveBrandInBatch,
+    addProductToBatch,
     cloneToBatch, markDeleteBatchItem, undoDeleteBatchItem, confirmDeleteBatchItem, pendingDeleteBatchItem,
     editBatchFolder,
     pendingDeleteBatchFolder, markDeleteBatchFolder, undoDeleteBatchFolder, confirmDeleteBatchFolder,

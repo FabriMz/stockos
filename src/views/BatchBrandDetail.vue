@@ -18,6 +18,14 @@
             {{ batchItems.length }} {{ batchItems.length === 1 ? 'producto' : 'productos' }}
           </div>
         </div>
+        <button
+          class="brand-summary__add-btn"
+          type="button"
+          aria-label="Nuevo producto"
+          @click="goNewProduct"
+        >
+          <i class="ti ti-plus" aria-hidden="true"></i>
+        </button>
       </div>
 
       <!-- Buscador dentro de la marca (lote) -->
@@ -83,6 +91,7 @@
       >
         <div
           class="cat-accordion__header"
+          :class="{ 'cat-accordion__header--migrating': migratingCat === (group.cat ?? '__sin_cat__') }"
           role="button"
           tabindex="0"
           :aria-expanded="String(catOpen.isOpen(brandId, group.cat ?? '__sin_cat__'))"
@@ -97,6 +106,36 @@
           <span class="cat-accordion__title">{{ group.cat ?? 'Sin categoría' }}</span>
           <span class="cat-accordion__dots" aria-hidden="true"></span>
           <span class="cat-accordion__count" :aria-label="`${group.items.length} productos`">{{ group.items.length }}</span>
+
+          <!-- Gear: categorías con nombre (renombrar, eliminar, migrar) -->
+          <CatalogCatSep
+            v-if="group.cat"
+            :cat-id="group.cat"
+            :cat-name="group.cat"
+            :show-migrate="true"
+            :is-migrating="migratingCat === group.cat"
+            migrate-label="Migrar productos"
+            variant="icon-only"
+            @click.stop
+            @delete="handleDeleteCat(group.cat)"
+            @renamed="(n) => handleRenameCat(group.cat, n)"
+            @toggle-migrate="toggleMigrateMode(group.cat)"
+          />
+          <!-- Gear: sin categoría (solo migrar, si hay productos) -->
+          <CatalogCatSep
+            v-else-if="group.items.length > 0"
+            cat-id="__sin_cat__"
+            cat-name="Sin categoría"
+            :show-migrate="true"
+            :show-delete="false"
+            :show-edit="false"
+            migrate-label="Migrar productos"
+            :is-migrating="migratingCat === '__sin_cat__'"
+            variant="icon-only"
+            @click.stop
+            @toggle-migrate="toggleMigrateMode('__sin_cat__')"
+          />
+
           <i class="ti ti-chevron-down cat-accordion__chevron" aria-hidden="true"></i>
         </div>
 
@@ -106,24 +145,149 @@
           role="region"
           :aria-label="group.cat ?? 'Sin categoría'"
         >
-          <ProductCard
-            v-for="item in group.items"
-            :key="item.id"
-            :product="getProduct(item.productId)"
-            :show-actions="true"
-            :batch-context="{ itemId: item.id, batchNum: batchNumber }"
-            @remove="store.markDeleteBatchItem($event)"
-          />
+          <!-- Modo normal -->
+          <template v-if="!migratingCat || migratingCat !== (group.cat ?? '__sin_cat__')">
+            <ProductCard
+              v-for="item in group.items"
+              :key="item.id"
+              :product="getProduct(item.productId)"
+              :show-actions="true"
+              :batch-context="{ itemId: item.id, batchNum: batchNumber }"
+              @remove="store.markDeleteBatchItem($event)"
+            />
+          </template>
+
+          <!-- Modo migración: selección de productos -->
+          <template v-else>
+            <div
+              v-for="item in group.items"
+              :key="item.id"
+              class="brand-row brand-row--selectable"
+              :class="{ 'brand-row--selected': selectedProductIds.has(item.id) }"
+              role="checkbox"
+              :aria-checked="String(selectedProductIds.has(item.id))"
+              :aria-label="getProduct(item.productId)?.name"
+              tabindex="0"
+              @click="toggleProductSelect(item.id)"
+              @keydown.enter.prevent="toggleProductSelect(item.id)"
+              @keydown.space.prevent="toggleProductSelect(item.id)"
+            >
+              <div class="brand-row__body">
+                <div class="brand-row__header">
+                  <div class="brand-row__check">
+                    <i
+                      class="ti"
+                      :class="selectedProductIds.has(item.id) ? 'ti-circle-check' : 'ti-circle'"
+                      aria-hidden="true"
+                    ></i>
+                  </div>
+                  <div class="brand-row__icon" :style="{ background: brand?.bg }">
+                    <i :class="`ti ${brand?.ic ?? 'ti-box'}`" :style="{ color: brand?.col }" aria-hidden="true"></i>
+                  </div>
+                  <div class="brand-row__info">
+                    <div class="brand-row__name">{{ getProduct(item.productId)?.name }}</div>
+                    <div class="brand-row__meta">{{ getProduct(item.productId)?.size }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
         </div>
       </div>
 
       <div class="spacer--sm"></div>
     </div>
 
+    <!-- Barra de migración -->
+    <Transition name="fab-menu">
+      <div v-if="migratingCat" class="catalog__migrate-bar">
+        <span class="catalog__migrate-count">
+          {{ selectedProductIds.size }} producto{{ selectedProductIds.size !== 1 ? 's' : '' }}
+        </span>
+        <div class="catalog__migrate-actions">
+          <button
+            class="btn btn--ghost btn--sm"
+            :aria-label="isAllSelected ? 'Deseleccionar todos' : 'Seleccionar todos'"
+            @click="toggleSelectAll"
+          >
+            <i class="ti" :class="isAllSelected ? 'ti-square-minus' : 'ti-select-all'" aria-hidden="true"></i>
+            {{ isAllSelected ? 'Ninguno' : 'Todos' }}
+          </button>
+          <button class="btn btn--secondary btn--sm" @click="cancelMigrate">Cancelar</button>
+          <button
+            class="btn btn--primary btn--sm"
+            :disabled="selectedProductIds.size === 0"
+            @click="openMigrateSheet"
+          >
+            Migrar
+          </button>
+        </div>
+      </div>
+    </Transition>
+
     <BottomNav />
 
-    <!-- Ajustes sheet -->
+    <!-- Sheet: destino de migración -->
     <Transition name="sheet">
+      <div
+        v-if="showMigrateSheet"
+        class="sheet-overlay"
+        role="dialog"
+        aria-label="Mover productos"
+        @click.self="showMigrateSheet = false"
+      >
+        <div class="sheet">
+          <div class="sheet__handle" aria-hidden="true"></div>
+          <div class="sheet__header">
+            <div class="sheet__title">Mover productos</div>
+            <div class="sheet__sub">
+              {{ selectedProductIds.size }} producto{{ selectedProductIds.size !== 1 ? 's' : '' }} de
+              "{{ migratingCat === '__sin_cat__' ? 'Sin categoría' : migratingCat }}" pasarán a la categoría que elijas.
+            </div>
+          </div>
+          <div class="sheet__body">
+            <p class="sheet__section-label">Destino</p>
+            <div class="catalog__migrate-dest-list" role="listbox" aria-label="Categoría destino">
+              <button
+                v-for="cat in migrationTargets"
+                :key="cat"
+                class="catalog__migrate-dest-item"
+                :class="{ 'catalog__migrate-dest-item--selected': migrateTarget === cat }"
+                role="option"
+                :aria-selected="migrateTarget === cat"
+                @click="migrateTarget = cat"
+              >
+                <span>{{ cat }}</span>
+                <i v-if="migrateTarget === cat" class="ti ti-check" aria-hidden="true"></i>
+              </button>
+              <button
+                class="catalog__migrate-dest-item"
+                :class="{ 'catalog__migrate-dest-item--selected': migrateTarget === '__sin_cat__' }"
+                role="option"
+                :aria-selected="migrateTarget === '__sin_cat__'"
+                @click="migrateTarget = '__sin_cat__'"
+              >
+                <span style="opacity: 0.6">Sin categoría</span>
+                <i v-if="migrateTarget === '__sin_cat__'" class="ti ti-check" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+          <div class="btn-group">
+            <button
+              class="btn btn--primary"
+              :disabled="!migrateTarget"
+              @click="confirmMigrate"
+            >
+              <i class="ti ti-arrows-exchange" aria-hidden="true"></i>
+              Mover productos
+            </button>
+            <button class="btn btn--secondary" @click="showMigrateSheet = false">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
+    <!-- Ajustes sheet -->    <Transition name="sheet">
       <div
         v-if="showSettingsSheet"
         class="sheet-overlay"
@@ -242,7 +406,8 @@ import { useProductsStore }      from '../stores/products.js'
 import { useProductCatOpenStore } from '../stores/productCatOpen.js'
 import TopBar     from '../components/layout/TopBar.vue'
 import BottomNav  from '../components/layout/BottomNav.vue'
-import ProductCard from '../components/ui/ProductCard.vue'
+import ProductCard    from '../components/ui/ProductCard.vue'
+import CatalogCatSep from '../components/ui/CatalogCatSep.vue'
 
 const route  = useRoute()
 const router = useRouter()
@@ -334,6 +499,97 @@ function collapseAll() {
   catOpen.setAllForBrand(brandId.value, allCatKeys(), false)
 }
 
+// ─── NUEVO PRODUCTO ───────────────────────────────────────────────────────────
+
+function goNewProduct() {
+  router.push({
+    path : '/product/new',
+    query: { bid: brandId.value, batchNumber: batchNumber.value },
+  })
+}
+
+// ─── MIGRACIÓN DE PRODUCTOS ──────────────────────────────────────────────────
+
+const migratingCat       = ref(null)
+const selectedProductIds = ref(new Set())
+const showMigrateSheet   = ref(false)
+const migrateTarget      = ref(null)
+
+const migrationTargets = computed(() =>
+  existingCats.value.filter(c => c !== migratingCat.value)
+)
+
+const currentGroupItems = computed(() => {
+  if (!migratingCat.value) return []
+  const group = categorizedBatchItems.value.find(
+    g => (g.cat ?? '__sin_cat__') === migratingCat.value
+  )
+  return group?.items ?? []
+})
+
+const isAllSelected = computed(() =>
+  currentGroupItems.value.length > 0 &&
+  currentGroupItems.value.every(item => selectedProductIds.value.has(item.id))
+)
+
+function toggleSelectAll() {
+  if (isAllSelected.value) {
+    selectedProductIds.value = new Set()
+  } else {
+    selectedProductIds.value = new Set(currentGroupItems.value.map(item => item.id))
+  }
+}
+
+function toggleMigrateMode(cat) {
+  if (migratingCat.value === cat) {
+    cancelMigrate()
+  } else {
+    migratingCat.value       = cat
+    selectedProductIds.value = new Set()
+  }
+}
+
+function cancelMigrate() {
+  migratingCat.value       = null
+  selectedProductIds.value = new Set()
+  showMigrateSheet.value   = false
+  migrateTarget.value      = null
+}
+
+function toggleProductSelect(itemId) {
+  const s = new Set(selectedProductIds.value)
+  if (s.has(itemId)) s.delete(itemId)
+  else s.add(itemId)
+  selectedProductIds.value = s
+}
+
+function openMigrateSheet() {
+  if (selectedProductIds.value.size === 0) return
+  migrateTarget.value    = null
+  showMigrateSheet.value = true
+}
+
+function confirmMigrate() {
+  if (!migrateTarget.value) return
+  const targetCat = migrateTarget.value === '__sin_cat__' ? '' : migrateTarget.value
+  for (const itemId of selectedProductIds.value) {
+    const item = batchItems.value.find(b => b.id === itemId)
+    if (!item) continue
+    const product = getProduct(item.productId)
+    if (product) product.category = targetCat
+  }
+  cancelMigrate()
+}
+
+function handleDeleteCat(cat) {
+  store.markDeleteCategoryInBrand(brandId.value, cat)
+  if (migratingCat.value === cat) cancelMigrate()
+}
+
+function handleRenameCat(oldName, newName) {
+  store.renameCategoryInBrand(brandId.value, oldName, newName)
+}
+
 // ─── AJUSTES SHEET ───────────────────────────────────────────────────────────
 
 const showSettingsSheet   = ref(false)
@@ -398,10 +654,6 @@ function confirmCatRename(oldName) {
   }
   store.renameCategoryInBrand(brandId.value, oldName, newName)
   cancelSettingsEdit()
-}
-
-function handleDeleteCat(cat) {
-  store.markDeleteCategoryInBrand(brandId.value, cat)
 }
 
 // ─── REDIRECT SI QUEDAN 0 ITEMS ──────────────────────────────────────────────
