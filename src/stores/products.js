@@ -32,16 +32,22 @@ function saveState(products, brands, catalogExpiry, batches, batchFoldersMeta, b
 function deriveBatchFoldersMeta(batches) {
   const map = {}
   batches.forEach(b => {
-    if (!map[b.batchNumber]) map[b.batchNumber] = { batchNumber: b.batchNumber, expiry: b.expiry }
+    if (!map[b.batchNumber]) map[b.batchNumber] = { batchNumber: b.batchNumber, expiry: b.expiry, brandIds: [], categories: [] }
+    if (!map[b.batchNumber].brandIds.includes(b.bid)) map[b.batchNumber].brandIds.push(b.bid)
   })
   return Object.values(map)
 }
 
-// Migra formato antiguo { bid, batchNumber, expiry } → { batchNumber, expiry } deduplicando por nombre
+// Migra formato antiguo { bid, batchNumber, expiry } → { batchNumber, expiry, brandIds, categories } deduplicando por nombre
 function migrateBatchFoldersMeta(raw) {
   const map = {}
   raw.forEach(f => {
-    if (!map[f.batchNumber]) map[f.batchNumber] = { batchNumber: f.batchNumber, expiry: f.expiry }
+    if (!map[f.batchNumber]) map[f.batchNumber] = {
+      batchNumber: f.batchNumber,
+      expiry: f.expiry,
+      brandIds: Array.isArray(f.brandIds) ? [...f.brandIds] : [],
+      categories: Array.isArray(f.categories) ? [...f.categories] : [],
+    }
   })
   return Object.values(map)
 }
@@ -92,6 +98,11 @@ export const useProductsStore = defineStore('products', () => {
     items.forEach(b => {
       if (!brandMap[b.bid]) brandMap[b.bid] = []
       brandMap[b.bid].push(b)
+    })
+    // Incluir marcas asignadas explícitamente al lote aunque no tengan items aún
+    const extraBrandIds = Array.isArray(meta.brandIds) ? meta.brandIds : []
+    extraBrandIds.forEach(bid => {
+      if (!brandMap[bid]) brandMap[bid] = []
     })
     const brandGroups = Object.entries(brandMap)
       .map(([bid, bItems]) => ({ brand: brands.value.find(br => br.id === bid), items: bItems }))
@@ -180,7 +191,8 @@ export const useProductsStore = defineStore('products', () => {
     const n = name.trim()
     if (!n) return
     const id = n.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9]/g, '')
-    if (brands.value.find(b => b.id === id)) return
+    const existing = brands.value.find(b => b.id === id)
+    if (existing) return id   // ya existe → reutilizar (no crear duplicado)
     brands.value.push({ id, name: n, origin: '', ic: 'ti-box', bg: '#F0EAE4', col: '#791132', prods: [] })
     return id
   }
@@ -241,7 +253,81 @@ export const useProductsStore = defineStore('products', () => {
     const num = batchNumber.trim()
     if (!num || !expiry) return
     if (batchFoldersMeta.value.find(f => f.batchNumber === num)) return
-    batchFoldersMeta.value.push({ batchNumber: num, expiry })
+    batchFoldersMeta.value.push({ batchNumber: num, expiry, brandIds: [], categories: [] })
+  }
+
+  // Registra una marca como perteneciente a un lote (aunque no tenga productos aún)
+  function addBrandToFolder(batchNumber, brandId) {
+    const meta = batchFoldersMeta.value.find(f => f.batchNumber === batchNumber)
+    if (!meta) return
+    if (!Array.isArray(meta.brandIds)) meta.brandIds = []
+    if (!meta.brandIds.includes(brandId)) meta.brandIds.push(brandId)
+  }
+
+  // ─── Categorías de lote ───────────────────────────────────────────────────────
+  // Cada lote tiene sus propias categorías en meta.categories: { id, name, brandIds[] }
+
+  function _genBatchCatId() {
+    return `bc${Date.now().toString(36)}${Math.random().toString(36).slice(2, 4)}`
+  }
+
+  function _getBatchMeta(batchNumber) {
+    const meta = batchFoldersMeta.value.find(f => f.batchNumber === batchNumber)
+    if (meta && !Array.isArray(meta.categories)) meta.categories = []
+    return meta ?? null
+  }
+
+  function getBatchSortedCategories(batchNumber) {
+    const meta = _getBatchMeta(batchNumber)
+    if (!meta) return []
+    return [...meta.categories].sort((a, b) => a.name.localeCompare(b.name, 'es'))
+  }
+
+  function getBatchCategoryForBrand(batchNumber, brandId) {
+    const meta = _getBatchMeta(batchNumber)
+    if (!meta) return null
+    return meta.categories.find(c => c.brandIds.includes(brandId)) ?? null
+  }
+
+  function addBatchCategory(batchNumber, name) {
+    const n = name.trim()
+    if (!n) return false
+    const meta = _getBatchMeta(batchNumber)
+    if (!meta) return false
+    if (meta.categories.some(c => c.name === n)) return false
+    meta.categories.push({ id: _genBatchCatId(), name: n, brandIds: [] })
+    return true
+  }
+
+  function renameBatchCategory(batchNumber, id, newName) {
+    const n = newName.trim()
+    if (!n) return 'El nombre no puede quedar vacío'
+    const meta = _getBatchMeta(batchNumber)
+    if (!meta) return 'Lote no encontrado'
+    if (meta.categories.some(c => c.name === n && c.id !== id)) return 'Ya existe un grupo con ese nombre'
+    const cat = meta.categories.find(c => c.id === id)
+    if (!cat) return 'Grupo no encontrado'
+    cat.name = n
+    return null
+  }
+
+  function deleteBatchCategory(batchNumber, id) {
+    const meta = _getBatchMeta(batchNumber)
+    if (!meta) return
+    meta.categories = meta.categories.filter(c => c.id !== id)
+  }
+
+  function moveBrandInBatch(batchNumber, brandId, fromCatId, toCatId) {
+    const meta = _getBatchMeta(batchNumber)
+    if (!meta) return
+    if (fromCatId !== null) {
+      const from = meta.categories.find(c => c.id === fromCatId)
+      if (from) from.brandIds = from.brandIds.filter(b => b !== brandId)
+    }
+    if (toCatId !== null) {
+      const to = meta.categories.find(c => c.id === toCatId)
+      if (to && !to.brandIds.includes(brandId)) to.brandIds.push(brandId)
+    }
   }
 
   function cloneToBatch(product, { batchNumber, expiry, stock }) {
@@ -250,9 +336,11 @@ export const useProductsStore = defineStore('products', () => {
     let folder = batchFoldersMeta.value.find(f => f.batchNumber === num)
     if (!folder) {
       if (!expiry) return
-      folder = { batchNumber: num, expiry }
+      folder = { batchNumber: num, expiry, brandIds: [], categories: [] }
       batchFoldersMeta.value.push(folder)
     }
+    if (!Array.isArray(folder.brandIds)) folder.brandIds = []
+    if (!folder.brandIds.includes(product.bid)) folder.brandIds.push(product.bid)
     const resolvedExpiry = folder.expiry
     const newId = Math.max(0, ...products.value.map(p => p.id)) + 1
     products.value.push({ ...product, id: newId, stock: Number(stock), expiry: resolvedExpiry, batch: num, _batchOnly: true })
@@ -460,7 +548,7 @@ export const useProductsStore = defineStore('products', () => {
     // Alertas (de useAlerts)
     ...alertHelpers,
     // Marcas
-    addBrand, deleteBrand, sortedBrands,
+    addBrand, deleteBrand, editBrandName, sortedBrands,
     pendingDeleteBrand, markDeleteBrand, undoDeleteBrand, confirmDeleteBrand,
     // Productos CRUD
     updateStock, addProduct, editProduct,
@@ -468,6 +556,13 @@ export const useProductsStore = defineStore('products', () => {
     pendingDelete, markDelete, undoDelete, confirmDelete,
     // Lotes
     addEmptyBatchFolder,
+    addBrandToFolder,
+    getBatchSortedCategories,
+    getBatchCategoryForBrand,
+    addBatchCategory,
+    renameBatchCategory,
+    deleteBatchCategory,
+    moveBrandInBatch,
     cloneToBatch, markDeleteBatchItem, undoDeleteBatchItem, confirmDeleteBatchItem, pendingDeleteBatchItem,
     editBatchFolder,
     pendingDeleteBatchFolder, markDeleteBatchFolder, undoDeleteBatchFolder, confirmDeleteBatchFolder,

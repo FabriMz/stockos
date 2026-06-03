@@ -53,7 +53,7 @@
           @delete="handleDeleteCat(catGroup.id)"
           @renamed="(n) => handleRenameCat(catGroup.id, n)"
         />
-        <p v-else-if="catGroup.category" class="section-label">{{ catGroup.category }}</p>
+        <p v-else-if="catGroup.groups.length > 0" class="section-label">Sin categoría</p>
         <BrandRow
           v-for="group in catGroup.groups"
           :key="group.brand.id"
@@ -61,6 +61,9 @@
           :to="`/catalog/batch/${encodeURIComponent(folder.batchNumber)}/${group.brand.id}`"
           :meta="`${group.items.length} ${group.items.length === 1 ? 'producto' : 'productos'}`"
         />
+        <p v-if="catGroup.id && catGroup.groups.length === 0" class="batch-detail__cat-empty">
+          Sin marcas asignadas
+        </p>
       </template>
 
       <div class="spacer--sm"></div>
@@ -333,7 +336,6 @@
 import { ref, computed, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useProductsStore }        from '../stores/products.js'
-import { useBrandCategoriesStore } from '../stores/brandCategories.js'
 import { useSettingsSheet }        from '../composables/useSettingsSheet.js'
 import { formatExpiry, expiryBadgeClass, expiryBadgeLabel } from '../utils/alerts.js'
 import TopBar        from '../components/layout/TopBar.vue'
@@ -341,13 +343,14 @@ import BottomNav     from '../components/layout/BottomNav.vue'
 import BrandRow      from '../components/ui/BrandRow.vue'
 import CatalogCatSep from '../components/ui/CatalogCatSep.vue'
 
-const route    = useRoute()
-const router   = useRouter()
-const store    = useProductsStore()
-const catStore = useBrandCategoriesStore()
+const route  = useRoute()
+const router = useRouter()
+const store  = useProductsStore()
+
+const batchNumber = computed(() => decodeURIComponent(route.params.batchNumber))
 
 const folder = computed(() =>
-  store.getBatchFolder(decodeURIComponent(route.params.batchNumber))
+  store.getBatchFolder(batchNumber.value)
 )
 
 const totalItems = computed(() =>
@@ -359,19 +362,34 @@ const totalItems = computed(() =>
 const categorizedGroups = computed(() => {
   if (!folder.value) return []
   const result = []
-  const seen   = new Map()
+
+  // Categorías locales del lote
+  const batchCats = store.getBatchSortedCategories(batchNumber.value)
+
+  // Marcas del lote indexadas por id para lookup rápido
+  const batchBrandMap = {}
   for (const group of folder.value.brandGroups) {
-    const catResult = catStore.getCategoryForBrand(group.brand.id)
-    const catName   = catResult?.name ?? ''
-    const catId     = catResult?.id   ?? null
-    const key       = catId ?? '__sin_cat__'
-    if (!seen.has(key)) {
-      const entry = { id: catId, category: catName, groups: [] }
-      seen.set(key, entry)
-      result.push(entry)
-    }
-    seen.get(key).groups.push(group)
+    batchBrandMap[group.brand.id] = group
   }
+
+  // 1. Categorías del lote (se muestran aunque estén vacías)
+  for (const cat of batchCats) {
+    const groups = cat.brandIds
+      .filter(bid => batchBrandMap[bid])
+      .map(bid => batchBrandMap[bid])
+      .sort((a, b) => a.brand.name.localeCompare(b.brand.name, 'es'))
+    result.push({ id: cat.id, category: cat.name, groups })
+  }
+
+  // 2. Marcas del lote sin categoría local
+  const categorizedBrandIds = new Set(batchCats.flatMap(c => c.brandIds))
+  const uncategorizedGroups = folder.value.brandGroups
+    .filter(g => !categorizedBrandIds.has(g.brand.id))
+    .sort((a, b) => a.brand.name.localeCompare(b.brand.name, 'es'))
+  if (uncategorizedGroups.length > 0) {
+    result.push({ id: null, category: '', groups: uncategorizedGroups })
+  }
+
   return result
 })
 
@@ -380,11 +398,11 @@ watch(folder, (val, oldVal) => {
 })
 
 function handleDeleteCat(id) {
-  catStore.markDeleteCat(id)
+  store.deleteBatchCategory(batchNumber.value, id)
 }
 
 function handleRenameCat(id, newName) {
-  catStore.renameCategory(id, newName)
+  store.renameBatchCategory(batchNumber.value, id, newName)
 }
 
 // ─── NUEVA CATEGORÍA ─────────────────────────────────────────────────────────
@@ -413,7 +431,7 @@ function handleCreateCat() {
     newCatError.value = 'El nombre no puede quedar vacío'
     return
   }
-  const ok = catStore.addCategory(n)
+  const ok = store.addBatchCategory(batchNumber.value, n)
   if (!ok) {
     newCatError.value = 'Ya existe un grupo con ese nombre'
     return
@@ -448,14 +466,22 @@ function handleCreateBrand() {
     return
   }
   const id = store.addBrand(n)
-  if (!id) {
-    newBrandError.value = 'Ya existe una marca con ese nombre'
-    return
-  }
+  if (id) store.addBrandToFolder(batchNumber.value, id)
   closeNewBrandSheet()
 }
 
 // ─── AJUSTES SHEET ───────────────────────────────────────────────────────────
+
+// IDs de marcas presentes en este lote (para filtrar el settings sheet)
+const batchBrandIds = computed(() =>
+  folder.value ? folder.value.brandGroups.map(g => g.brand.id) : []
+)
+
+// Adaptador que expone las categorías del lote con la interfaz que espera useSettingsSheet
+const batchCatAdapter = {
+  get categories() { return store.getBatchSortedCategories(batchNumber.value) },
+  get sortedCategories() { return store.getBatchSortedCategories(batchNumber.value) },
+}
 
 const {
   showSettingsSheet,
@@ -476,5 +502,9 @@ const {
   confirmSettingsBrandRename,
   handleSettingsDeleteBrand,
   cancelSettingsEdit,
-} = useSettingsSheet(store, catStore)
+} = useSettingsSheet(store, batchCatAdapter, {
+  batchBrandIds,
+  onRenameCat: (id, val) => store.renameBatchCategory(batchNumber.value, id, val),
+  onDeleteCat: (id) => store.deleteBatchCategory(batchNumber.value, id),
+})
 </script>
