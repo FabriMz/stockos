@@ -3,6 +3,7 @@
     <TopBar variant="back" :back-label="batchContext ? brand?.name ?? 'Marca' : 'Cancelar'" :back-to="backTo" title="Nuevo producto" />
 
     <div class="scroll-content">
+      <p class="section-label">Identificación</p>
       <div class="form-view__photo-picker">
         <input
           ref="photoInput"
@@ -20,7 +21,6 @@
           <i v-else class="ti ti-camera" aria-hidden="true"></i>
         </label>
       </div>
-      <p class="section-label">Identificación</p>
       <div class="form-section">
         <div class="form-group">
           <label class="form-label" for="np-sku">Código / SKU</label>
@@ -237,15 +237,18 @@
             <input class="form-input" id="np-batch" name="np-batch" type="text" v-model="form.batch" placeholder="Ej. L2503" />
           </div>
         </div>
-        <div class="form-group">
-          <label class="form-label" for="np-alert-days">Avisar con anticipación</label>
+        <label class="form-label" for="np-alert-days">Avisar con anticipación</label>
+        <div class="expiry-block__footer">
           <select class="form-select" id="np-alert-days" name="np-alert-days" v-model.number="form.alertDays">
             <option :value="30">30 días antes</option>
             <option :value="60">60 días antes</option>
             <option :value="90">90 días antes</option>
           </select>
+          <div v-if="expiryLevel !== 'ok'" :class="`expiry-block__alert expiry-block__alert--${expiryLevel}`" role="alert">
+            <i :class="`ti ${expiryLevelIcon}`" aria-hidden="true"></i>
+            <p>{{ expiryLevelMessage }}</p>
+          </div>
         </div>
-        <span class="expiry-block__hint">Opcional. Dejá en blanco si no aplica.</span>
       </div>
 
       <p class="section-label">Stock inicial</p>
@@ -312,6 +315,28 @@ const backTo = computed(() =>
     ? `/catalog/batch/${encodeURIComponent(batchContext)}/${form.bid}`
     : '/catalog'
 )
+
+const expiryLevel = computed(() => {
+  if (!form.expiry) return 'ok'
+  const diff = Math.ceil((new Date(form.expiry) - new Date()) / (1000 * 60 * 60 * 24))
+  if (diff < 0)              return 'critico'
+  if (diff < 30)             return 'atencion'
+  if (diff < form.alertDays) return 'aviso'
+  return 'ok'
+})
+
+const expiryLevelIcon = computed(() => ({
+  aviso:    'ti-info-circle',
+  atencion: 'ti-alert-triangle',
+  critico:  'ti-alert-triangle',
+}[expiryLevel.value] ?? ''))
+
+const expiryLevelMessage = computed(() => {
+  if (!form.expiry) return ''
+  const diff = Math.ceil((new Date(form.expiry) - new Date()) / (1000 * 60 * 60 * 24))
+  if (diff < 0) return 'Vencido'
+  return `Vence en ${diff} día${diff === 1 ? '' : 's'}`
+})
 
 const {
   discountMode, customDiscountValue, discountSelectValue,
