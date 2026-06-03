@@ -8,7 +8,6 @@
         <div class="form-group">
           <label class="form-label" for="np-sku">Código / SKU</label>
           <input class="form-input" id="np-sku" name="np-sku" type="text" v-model="form.sku" placeholder="Ej. 160533BM" />
-          <span class="form-hint">Tal como aparece en la lista de precios</span>
         </div>
         <div class="form-group">
           <label class="form-label" for="np-name">Nombre del producto</label>
@@ -238,11 +237,11 @@
       <div class="spacer--sm"></div>
     </div>
 
-    <div class="btn-group">
-      <button class="btn btn--primary" @click="save">
-        <i class="ti ti-device-floppy" aria-hidden="true"></i>Guardar producto
-      </button>
+    <div class="btn-group btn-group--row">
       <button class="btn btn--secondary" @click="$router.push('/catalog')">Cancelar</button>
+      <button class="btn btn--primary" @click="save">
+        <i class="ti ti-device-floppy" aria-hidden="true"></i>Guardar
+      </button>
     </div>
   </div>
 </template>
