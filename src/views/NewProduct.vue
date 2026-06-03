@@ -101,7 +101,6 @@
                 <i class="ti ti-x" aria-hidden="true"></i>
               </button>
             </div>
-            <span v-if="creatingCategory" class="form-hint">Enter para confirmar, Esc para cancelar</span>
           </div>
         </div>
       </div>
