@@ -9,13 +9,6 @@
           </div>
           <div class="topbar__subtitle">
             Compañía de Indias · {{ todayDate }}
-            <button class="topbar__currency" @click="currencyStore.toggleCurrency()" :aria-label="`Moneda: ${currencyStore.currency}. Cambiar moneda`">
-              {{ currencyStore.currency }}
-            </button>
-          </div>
-          <div class="topbar__fx" aria-label="Cotización del dólar">
-            USD $ {{ fxRate }}
-            <span v-if="currencyStore.exchangeRateSource" class="topbar__fx-src">{{ currencyStore.exchangeRateSource }}</span>
           </div>
         </div>
         <div class="topbar__actions">
@@ -23,7 +16,6 @@
             <i class="ti ti-bell" aria-hidden="true"></i>
             <span v-if="alerts.length" class="topbar__notification-dot"></span>
           </button>
-          <div class="topbar__avatar" aria-label="Perfil">CI</div>
         </div>
       </div>
       <div v-if="showSearch" class="topbar__search">
@@ -89,7 +81,6 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useProductsStore } from '../../stores/products.js'
-import { useCurrencyStore }  from '../../stores/currency.js'
 import { formatTodayDate } from '../../utils/alerts.js'
 
 const props = defineProps({
@@ -104,18 +95,11 @@ const props = defineProps({
   showSearch:        { type: Boolean, default: true },
 })
 
-const emit          = defineEmits(['update:modelValue', 'back'])
-const router        = useRouter()
-const store         = useProductsStore()
-const currencyStore = useCurrencyStore()
-const alerts       = computed(() => store.alerts)
-const todayDate     = computed(() => formatTodayDate())
-const fxRate        = computed(() =>
-  currencyStore.exchangeRate.toLocaleString('es-UY', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })
-)
+const emit      = defineEmits(['update:modelValue', 'back'])
+const router    = useRouter()
+const store     = useProductsStore()
+const alerts    = computed(() => store.alerts)
+const todayDate = computed(() => formatTodayDate())
 
 const handleBack = () => {
   if (props.backTo) {

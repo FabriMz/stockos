@@ -33,7 +33,7 @@
   &__subtitle {
     @include font-mono($font-size-xs);
     color: $color-text-tertiary;
-    margin: $spacing-1 0 0;
+    margin: $spacing-3 0 $spacing-2;
   }
 
   &__fx {

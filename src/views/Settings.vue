@@ -4,40 +4,8 @@
 
     <div class="scroll-content">
 
-      <div class="settings__profile">
-        <div class="settings__avatar" aria-label="Perfil de usuario">CI</div>
-        <div>
-          <div class="settings__name">Compañía de Indias</div>
-          <div class="settings__email">admin@companiadeindias.com</div>
-        </div>
-      </div>
-
       <p class="section-label">Catálogo</p>
       <div class="settings__group">
-        <div class="settings__item" role="button" tabindex="0">
-          <div class="settings__item-left">
-            <div class="settings__item-icon" style="background: #E1F5EE">
-              <i class="ti ti-package" style="color: #2D8A5F" aria-hidden="true"></i>
-            </div>
-            <div>
-              <div class="settings__item-label">Importar productos</div>
-              <div class="settings__item-sub">CSV / Excel</div>
-            </div>
-          </div>
-          <i class="ti ti-chevron-right settings__item-chevron" aria-hidden="true"></i>
-        </div>
-        <div class="settings__item" role="button" tabindex="0">
-          <div class="settings__item-left">
-            <div class="settings__item-icon" style="background: #FAEEDA">
-              <i class="ti ti-download" style="color: #C07828" aria-hidden="true"></i>
-            </div>
-            <div>
-              <div class="settings__item-label">Exportar inventario</div>
-              <div class="settings__item-sub">Excel o PDF</div>
-            </div>
-          </div>
-          <i class="ti ti-chevron-right settings__item-chevron" aria-hidden="true"></i>
-        </div>
         <div class="settings__item">
           <div class="settings__item-left">
             <div class="settings__item-icon" style="background: #E7F3FF">
@@ -106,112 +74,6 @@
 
       <p class="section-label">Gestión</p>
       <div class="settings__group">
-
-        <!-- ── MARCAS ─────────────────────────────────────────────────────── -->
-        <div
-          class="settings__item"
-          role="button"
-          tabindex="0"
-          :aria-expanded="openSection === 'brands'"
-          @click="toggleSection('brands')"
-          @keyup.enter="toggleSection('brands')"
-        >
-          <div class="settings__item-left">
-            <div class="settings__item-icon" style="background: #EDE8F5">
-              <i class="ti ti-building-store" style="color: #534AB7" aria-hidden="true"></i>
-            </div>
-            <div class="settings__item-label">Marcas</div>
-          </div>
-          <div class="settings__item-right">
-            <span>{{ productsStore.brands.length }}</span>
-            <i
-              class="ti ti-chevron-right settings__item-chevron"
-              :class="{ 'settings__item-chevron--open': openSection === 'brands' }"
-              aria-hidden="true"
-            ></i>
-          </div>
-        </div>
-
-        <div v-if="openSection === 'brands'" class="settings__sublist" role="list">
-          <div
-            v-for="brand in productsStore.sortedBrands"
-            :key="brand.id"
-            class="settings__sublist-item"
-            role="listitem"
-          >
-            <template v-if="editingItem?.type === 'brand' && editingItem?.id === brand.id">
-              <input
-                class="settings__edit-input"
-                type="text"
-                :id="`settings-edit-brand-${brand.id}`"
-                :name="`settings-edit-brand-${brand.id}`"
-                v-model="editValue"
-                :aria-label="`Editar marca ${brand.name}`"
-                :aria-describedby="editError ? `settings-edit-brand-error-${brand.id}` : null"
-                @input="clearEditError"
-                @keydown.enter.stop.prevent="confirmEdit"
-                @keydown.escape.stop.prevent="cancelEdit"
-              />
-              <button
-                class="settings__confirm-yes"
-                type="button"
-                @click.stop="confirmEdit"
-              >Guardar</button>
-              <button
-                class="settings__confirm-no"
-                type="button"
-                @click.stop="cancelEdit"
-              >Cancelar</button>
-              <p
-                v-if="editError"
-                class="settings__edit-error"
-                :id="`settings-edit-brand-error-${brand.id}`"
-              >{{ editError }}</p>
-            </template>
-            <template v-else>
-              <span class="settings__sublist-name">{{ brand.name }}</span>
-              <div class="settings__sublist-actions">
-                <button
-                  class="icon-btn settings__edit-btn"
-                  type="button"
-                  :aria-label="`Editar marca ${brand.name}`"
-                  :title="`Editar ${brand.name}`"
-                  @click.stop="startEdit('brand', brand.id, brand.name)"
-                >
-                  <i class="ti ti-edit" aria-hidden="true"></i>
-                </button>
-                <button
-                  :id="`settings-trash-brand-${brand.id}`"
-                  :name="`settings-trash-brand-${brand.id}`"
-                  class="settings__trash-btn"
-                  :aria-label="`Eliminar marca ${brand.name}`"
-                  :title="`Eliminar ${brand.name}`"
-                  @click.stop="requestDelete('brand', brand.id)"
-                >
-                  <i class="ti ti-trash" aria-hidden="true"></i>
-                </button>
-              </div>
-              <div
-                v-if="confirmingItem?.type === 'brand' && confirmingItem?.id === brand.id"
-                class="settings__confirm"
-              >
-                <span class="settings__confirm-label">¿Eliminar?</span>
-                <button
-                  id="settings-confirm-brand-yes"
-                  name="settings-confirm-brand-yes"
-                  class="settings__confirm-yes"
-                  @click.stop="executeDelete"
-                >Sí</button>
-                <button
-                  id="settings-confirm-brand-no"
-                  name="settings-confirm-brand-no"
-                  class="settings__confirm-no"
-                  @click.stop="cancelConfirm"
-                >No</button>
-              </div>
-            </template>
-          </div>
-        </div>
 
         <!-- ── DESCUENTOS ─────────────────────────────────────────────────── -->
         <div

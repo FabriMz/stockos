@@ -10,12 +10,6 @@
       <Transition name="fab-menu">
         <div v-if="fabOpen" class="fab-menu" role="menu">
           <div class="fab-menu__item">
-            <button class="fab-menu__btn" aria-label="Nueva categoría" @click="goNewCategory">
-              <i class="ti ti-tag" aria-hidden="true"></i>
-              <span>Nueva categoría</span>
-            </button>
-          </div>
-          <div class="fab-menu__item">
             <button class="fab-menu__btn" aria-label="Nuevo lote" @click="goNewBatch">
               <i class="ti ti-folder-plus" aria-hidden="true"></i>
               <span>Nuevo lote</span>
@@ -102,10 +96,5 @@ function goNewProduct() {
 function goNewBatch() {
   fabOpen.value = false
   router.push({ path: '/catalog', query: { tab: 'batches', newBatch: '1' } })
-}
-
-function goNewCategory() {
-  fabOpen.value = false
-  router.push({ path: '/catalog', query: { tab: 'brands', newCategory: '1' } })
 }
 </script>
