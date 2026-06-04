@@ -7,10 +7,22 @@
 
 let _Preferences = null
 
+function isNativeCapacitor() {
+  return typeof window !== 'undefined'
+    && typeof window.Capacitor !== 'undefined'
+    && typeof window.Capacitor.isNativePlatform === 'function'
+    && window.Capacitor.isNativePlatform()
+}
+
 async function getPreferences() {
   if (_Preferences) return _Preferences
+  if (!isNativeCapacitor()) return null
+
   try {
     const cap = await import('@capacitor/preferences')
+    if (!cap?.Preferences || typeof cap.Preferences.get !== 'function') {
+      return null
+    }
     _Preferences = cap.Preferences
     return _Preferences
   } catch {
