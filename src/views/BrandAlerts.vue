@@ -79,8 +79,8 @@
         </template>
         <div v-else class="alerts__empty">
           <i class="ti ti-bell-off" aria-hidden="true"></i>
-          <p>No hay alertas activas</p>
-          <span>Los productos con stock bajo o próximos a vencer aparecerán aquí</span>
+          <p>Sin alertas activas</p>
+          <span>Los productos sin stock, con stock bajo o próximos a vencer aparecerán aquí</span>
         </div>
       </template>
     </div>
