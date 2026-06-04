@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
 import { useUndo } from '../composables/useUndo.js'
 import { brandCategories as SEED } from '../data/brandCategories.js'
+import { storageGet, storageSet } from '../utils/storage.js'
 
 const LS_KEY = 'stockos_brand_categories'
 
@@ -17,24 +18,33 @@ function seedFromStatic() {
   }))
 }
 
-function load() {
-  try {
-    const raw = localStorage.getItem(LS_KEY)
-    if (raw !== null) return JSON.parse(raw)
-  } catch { /* noop */ }
-  return seedFromStatic()
-}
-
-function save(data) {
-  try {
-    localStorage.setItem(LS_KEY, JSON.stringify(data))
-  } catch { /* noop */ }
-}
-
 export const useBrandCategoriesStore = defineStore('brandCategories', () => {
-  const categories = ref(load())
+  const categories = ref([])
+  const _ready = ref(false)
 
-  watch(categories, val => save(val), { deep: true })
+  async function _init() {
+    try {
+      const raw = await storageGet(LS_KEY)
+      if (raw !== null) {
+        const parsed = JSON.parse(raw)
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          categories.value = parsed
+          return
+        }
+      }
+      // Sin datos guardados → arrancar vacío (sin seed)
+      categories.value = []
+    } catch { /* noop */ } finally {
+      _ready.value = true
+    }
+  }
+
+  _init()
+
+  watch(categories, async (val) => {
+    if (!_ready.value) return
+    await storageSet(LS_KEY, JSON.stringify(val))
+  }, { deep: true })
 
   const sortedCategories = computed(() =>
     [...categories.value].sort((a, b) => a.name.localeCompare(b.name, 'es'))
@@ -122,6 +132,7 @@ export const useBrandCategoriesStore = defineStore('brandCategories', () => {
   return {
     categories,
     sortedCategories,
+    _ready,
     addCategory,
     renameCategory,
     getCategoryForBrand,

@@ -1,5 +1,5 @@
 <template>
-  <div class="screen">
+  <div class="screen alerts-view">
     <TopBar variant="title" title="Alertas" />
 
     <AlertSearchBar v-model="searchQuery" input-id="alerts-root-search" />
@@ -41,43 +41,48 @@
       </template>
 
       <template v-else>
-        <p class="section-label">Carpetas</p>
-        <div class="alerts__folder-list">
-          <AlertFolderRow
-            v-if="store.outOfStockAlerts.length"
-            label="Sin Stock"
-            :meta="folderMeta(store.outOfStockAlerts.length, 'producto')"
-            to="/alerts/out-of-stock"
-            icon="ti-ban"
-            icon-bg="#F5E8E8"
-            icon-color="#791132"
-            stripe="#791132"
-          />
-          <AlertFolderRow
-            v-if="store.lowStockAlerts.length"
-            label="Stock Bajo"
-            :meta="folderMeta(store.lowStockAlerts.length, 'producto')"
-            to="/alerts/low-stock"
-            icon="ti-alert-circle"
-            icon-bg="#F5EBE8"
-            icon-color="#90542f"
-            stripe="#90542f"
-          />
-          <AlertFolderRow
-            v-if="store.expiryAlerts.length"
-            label="Vencimientos"
-            :meta="expiryMeta"
-            to="/alerts/expiry"
-            icon="ti-clock"
-            icon-bg="#EDE8F5"
-            icon-color="#534AB7"
-            stripe="#534AB7"
-          />
+        <template v-if="hasFolders">
+          <p class="section-label">Carpetas</p>
+          <div class="alerts__folder-list">
+            <AlertFolderRow
+              v-if="store.outOfStockAlerts.length"
+              label="Sin Stock"
+              :meta="folderMeta(store.outOfStockAlerts.length, 'producto')"
+              to="/alerts/out-of-stock"
+              icon="ti-ban"
+              icon-bg="#F5E8E8"
+              icon-color="#791132"
+              stripe="#791132"
+            />
+            <AlertFolderRow
+              v-if="store.lowStockAlerts.length"
+              label="Stock Bajo"
+              :meta="folderMeta(store.lowStockAlerts.length, 'producto')"
+              to="/alerts/low-stock"
+              icon="ti-alert-circle"
+              icon-bg="#F5EBE8"
+              icon-color="#90542f"
+              stripe="#90542f"
+            />
+            <AlertFolderRow
+              v-if="store.expiryAlerts.length"
+              label="Vencimientos"
+              :meta="expiryMeta"
+              to="/alerts/expiry"
+              icon="ti-clock"
+              icon-bg="#EDE8F5"
+              icon-color="#534AB7"
+              stripe="#534AB7"
+            />
+          </div>
+          <div class="spacer--sm"></div>
+        </template>
+        <div v-else class="alerts__empty">
+          <i class="ti ti-bell-off" aria-hidden="true"></i>
+          <p>No hay alertas activas</p>
+          <span>Los productos con stock bajo o próximos a vencer aparecerán aquí</span>
         </div>
-        <p v-if="!hasFolders" class="home__empty">No hay alertas activas</p>
       </template>
-
-      <div class="spacer--sm"></div>
     </div>
 
     <BottomNav />

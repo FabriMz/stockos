@@ -56,6 +56,38 @@
     gap: $spacing-2;
     padding: 0 $spacing-4;
   }
+
+  &__empty {
+    @include flex-col($spacing-2, center, center);
+    flex      : 1;
+    padding   : $spacing-5;
+    text-align: center;
+
+    i {
+      font-size: $icon-3xl;
+      color    : $color-border-strong;
+    }
+
+    p {
+      font-size  : $font-size-base;
+      font-weight: $font-weight-medium;
+      color      : $color-text-secondary;
+    }
+
+    span {
+      @include font-mono($font-size-sm);
+      color      : $color-text-tertiary;
+      line-height: $line-height-normal;
+      max-width  : 240px;
+    }
+  }
+}
+
+// El scroll-content de la vista de alertas necesita ser flex-col
+// para que alerts__empty con flex:1 ocupe el espacio visible restante
+.alerts-view .scroll-content {
+  display       : flex;
+  flex-direction: column;
 }
 
 // Permite quiebre de línea en nombres largos dentro de acordeones de alertas

@@ -8,7 +8,7 @@ import { ref, computed, nextTick } from 'vue'
  * @param catStore      - useBrandCategoriesStore instance OR a batch-local adapter
  *                        with { categories, sortedCategories }
  * @param options       - {
- *                          onDeleteCat?:  (id) => void      — override delete (batch mode)
+ *                          onDeleteCat?:  (id) => void      — side-effect adicional al borrar (batch mode)
  *                          onRenameCat?:  (id, val) => err  — override rename (batch mode)
  *                          batchBrandIds?: ComputedRef<string[]>  — filter to batch brands
  *                        }
@@ -114,11 +114,10 @@ export function useSettingsSheet(store, catStore, options = {}) {
   }
 
   function handleSettingsDeleteCat(id) {
-    if (onDeleteCat) {
-      onDeleteCat(id)
-    } else {
-      catStore.markDeleteCat(id)
-    }
+    // Siempre ejecutar el borrado real en el store
+    catStore.markDeleteCat(id)
+    // Ejecutar el side-effect adicional si existe (ej: cancelar migración en batch mode)
+    if (onDeleteCat) onDeleteCat(id)
     settingsEditingCatId.value = null
   }
 
