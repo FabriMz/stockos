@@ -205,3 +205,12 @@
     color: $color-danger-text;
   }
 }
+// ─── HINT INLINE (junto al label) ────────────────────────────────────────────
+.form-hint--inline {
+  display: inline;
+  margin-left: $spacing-2;
+  font-size: $font-size-2xs;
+  color: $color-success-text;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-wider;
+}

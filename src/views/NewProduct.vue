@@ -20,6 +20,7 @@
           <i v-else class="ti ti-camera" aria-hidden="true"></i>
         </label>
       </div>
+
       <p class="section-label">Identificación</p>
       <div class="form-section">
         <div class="form-group">
@@ -105,48 +106,49 @@
           </div>
         </div>
         <div class="form-row form-row--half">
-        <div class="form-group">
-          <label class="form-label" for="np-category">Categoría</label>
-          <select
-            v-if="!creatingCategory"
-            class="form-select"
-            id="np-category"
-            name="np-category"
-            :value="form.category === '' ? '__sin_categoria__' : form.category"
-            :disabled="!form.bid"
-            @change="onCategoryChange"
-          >
-            <option value="" disabled>Seleccionar…</option>
-            <option value="__sin_categoria__">Sin categoría</option>
-            <option v-for="c in brandCategories" :key="c" :value="c">{{ c }}</option>
-            <option value="__nueva__">+ Crear categoría…</option>
-          </select>
-          <div v-else class="discount-custom">
-            <input
-              class="form-input discount-custom__input"
+          <div class="form-group">
+            <label class="form-label" for="np-category">Categoría</label>
+            <select
+              v-if="!creatingCategory"
+              class="form-select"
               id="np-category"
               name="np-category"
-              type="text"
-              v-model="newCategory"
-              placeholder="Nombre de categoría"
-              @keydown.enter="confirmNewCategory"
-              @keydown.escape="cancelNewCategory"
-              ref="newCatInput"
-              aria-label="Nombre de nueva categoría"
-            />
-            <button type="button" class="discount-custom__reset" @click="cancelNewCategory" aria-label="Cancelar nueva categoría">
-              <i class="ti ti-x" aria-hidden="true"></i>
-            </button>
+              :value="form.category === '' ? '__sin_categoria__' : form.category"
+              :disabled="!form.bid"
+              @change="onCategoryChange"
+            >
+              <option value="" disabled>Seleccionar…</option>
+              <option value="__sin_categoria__">Sin categoría</option>
+              <option v-for="c in brandCategories" :key="c" :value="c">{{ c }}</option>
+              <option value="__nueva__">+ Crear categoría…</option>
+            </select>
+            <div v-else class="discount-custom">
+              <input
+                class="form-input discount-custom__input"
+                id="np-category"
+                name="np-category"
+                type="text"
+                v-model="newCategory"
+                placeholder="Nombre de categoría"
+                @keydown.enter="confirmNewCategory"
+                @keydown.escape="cancelNewCategory"
+                ref="newCatInput"
+                aria-label="Nombre de nueva categoría"
+              />
+              <button type="button" class="discount-custom__reset" @click="cancelNewCategory" aria-label="Cancelar nueva categoría">
+                <i class="ti ti-x" aria-hidden="true"></i>
+              </button>
+            </div>
           </div>
-        </div>
         </div>
       </div>
 
       <p class="section-label">Precios</p>
       <div class="form-section">
+        <!-- Fila 1: Precio neto + IVA% -->
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label" for="np-cost">Costo IVA inc.</label>
+            <label class="form-label" for="np-cost">Precio neto</label>
             <input
               class="form-input"
               :class="{ 'form-input--error': errors.cost }"
@@ -160,12 +162,96 @@
               :max="MAX_PRICE"
               step="0.01"
               @blur="validateCost"
-              @input="validateCost"
+              @input="onCostInput"
             />
             <span v-if="errors.cost" class="form-hint form-hint--error" role="alert">{{ errors.cost }}</span>
           </div>
           <div class="form-group">
-            <label class="form-label" for="np-price">PVP sugerido</label>
+            <label class="form-label" for="np-vat-rate">IVA %</label>
+            <input
+              class="form-input"
+              :class="{ 'form-input--error': errors.vatRate }"
+              id="np-vat-rate"
+              name="np-vat-rate"
+              type="number"
+              v-model.number="form.vatRate"
+              placeholder="Ej. 21"
+              inputmode="decimal"
+              min="0"
+              max="30"
+              step="0.1"
+              @blur="validateVatRate"
+              @input="onVatRateInput"
+            />
+            <span v-if="errors.vatRate" class="form-hint form-hint--error" role="alert">{{ errors.vatRate }}</span>
+          </div>
+        </div>
+
+        <!-- Fila 2: Descuento + Margen -->
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="np-discount">Descuento</label>
+            <select
+              v-if="discountMode !== 'custom'"
+              class="form-select"
+              id="np-discount"
+              name="np-discount"
+              :value="discountSelectValue"
+              @change="onDiscountAndCalc"
+            >
+              <option v-for="d in discountsStore.sortedDiscounts" :key="d" :value="d">{{ d }}%</option>
+              <option value="custom">Personalizado…</option>
+            </select>
+            <div v-else class="discount-custom">
+              <input
+                class="form-input discount-custom__input"
+                id="np-discount"
+                name="np-discount"
+                type="number"
+                :value="customDiscountValue"
+                @input="e => { onCustomDiscountInput(e); calcPrice(e.target.value) }"
+                @blur="e => { onCustomDiscountBlur(e); calcPrice(form.discount) }"
+                inputmode="decimal"
+                min="1"
+                max="100"
+                step="0.1"
+                placeholder="Ej. 15"
+                aria-label="Descuento personalizado (1-100%)"
+              />
+              <button type="button" class="discount-custom__reset" @click="resetDiscountToPreset" aria-label="Volver a opciones predefinidas">
+                <i class="ti ti-x" aria-hidden="true"></i>
+              </button>
+            </div>
+            <span class="form-hint" v-if="discountMode === 'custom'">Entre 1% y 100%</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="np-margin">Margen %</label>
+            <input
+              class="form-input"
+              :class="{ 'form-input--error': errors.margin }"
+              id="np-margin"
+              name="np-margin"
+              type="number"
+              v-model.number="form.margin"
+              placeholder="Ej. 30"
+              inputmode="decimal"
+              min="0"
+              max="999"
+              step="0.1"
+              @blur="validateMargin"
+              @input="onMarginInput"
+            />
+            <span v-if="errors.margin" class="form-hint form-hint--error" role="alert">{{ errors.margin }}</span>
+          </div>
+        </div>
+
+        <!-- Fila 3: PVP (calculado o manual) -->
+        <div class="form-row form-row--half">
+          <div class="form-group">
+            <label class="form-label" for="np-price">
+              PVP sugerido
+              <span v-if="priceLabel" class="form-hint form-hint--inline">{{ priceLabel }}</span>
+            </label>
             <input
               class="form-input"
               :class="{ 'form-input--error': errors.price }"
@@ -179,47 +265,10 @@
               :max="MAX_PRICE"
               step="0.01"
               @blur="validatePrice"
-              @input="validatePrice"
+              @input="onPriceManualInput"
             />
             <span v-if="errors.price" class="form-hint form-hint--error" role="alert">{{ errors.price }}</span>
           </div>
-        </div>
-        <div class="form-row form-row--half">
-        <div class="form-group">
-          <label class="form-label" for="np-discount">Descuento</label>
-          <select
-            v-if="discountMode !== 'custom'"
-            class="form-select"
-            id="np-discount"
-            name="np-discount"
-            :value="discountSelectValue"
-            @change="onDiscountChange"
-          >
-            <option v-for="d in discountsStore.sortedDiscounts" :key="d" :value="d">{{ d }}%</option>
-            <option value="custom">Personalizado…</option>
-          </select>
-          <div v-else class="discount-custom">
-            <input
-              class="form-input discount-custom__input"
-              id="np-discount"
-              name="np-discount"
-              type="number"
-              :value="customDiscountValue"
-              @input="onCustomDiscountInput"
-              @blur="onCustomDiscountBlur"
-              inputmode="decimal"
-              min="1"
-              max="100"
-              step="0.1"
-              placeholder="Ej. 15"
-              aria-label="Descuento personalizado (1-100%)"
-            />
-            <button type="button" class="discount-custom__reset" @click="resetDiscountToPreset" aria-label="Volver a opciones predefinidas">
-              <i class="ti ti-x" aria-hidden="true"></i>
-            </button>
-          </div>
-          <span class="form-hint" v-if="discountMode === 'custom'">Entre 1% y 100%</span>
-        </div>
         </div>
       </div>
 
@@ -295,14 +344,63 @@ const batchContext = route.query.batchNumber || null
 
 const form = reactive({
   sku: '', name: '', bid: route.query.bid || '', origin: '', size: '',
-  category: '', cost: '', price: '', discount: DEFAULT_PRESET, unitsPerBox: '',
+  category: '', cost: '', vatRate: '', margin: '', price: '', discount: DEFAULT_PRESET, unitsPerBox: '',
   expiry: '', batch: batchContext ?? '', stock: 0,
   ic: 'ti-box', bg: '#F0EAE4', col: '#791132', max: 100, img: '',
   alertDays: 30,
 })
 
-const photoInput = ref(null)
+// ─── Lógica de auto-cálculo del PVP ──────────────────────────────────────────
+// Fórmula: PVP = neto × (1 + IVA/100) × (1 + margen/100) × (1 - descuento/100)
+// "26+5" se resuelve sumando todos los números del string → 31%
+// Si el usuario edita price manualmente, se deja de sobrescribir.
+const priceIsAutoCalc = ref(false)
 
+function resolveDiscount(raw) {
+  if (!raw) return 0
+  const nums = String(raw).match(/[\d.]+/g)
+  if (!nums) return 0
+  return nums.reduce((acc, n) => acc + parseFloat(n), 0)
+}
+
+const discountPct = computed(() => resolveDiscount(form.discount))
+const priceLabel  = computed(() => {
+  if (!priceIsAutoCalc.value) return null
+  return discountPct.value > 0 ? 'con descuento' : 'calculado'
+})
+
+function calcPrice(discountRaw) {
+  const cost    = form.cost
+  const vatRate = form.vatRate
+  const margin  = form.margin
+  const anyEmpty = cost === '' || cost === null || vatRate === '' || vatRate === null || margin === '' || margin === null
+  if (anyEmpty) return
+  if (typeof cost !== 'number' || typeof vatRate !== 'number' || typeof margin !== 'number') return
+  if (isNaN(cost) || isNaN(vatRate) || isNaN(margin)) return
+  // Usar el descuento pasado explícitamente (caso cambio de selector) o leer form.discount
+  const pct         = resolveDiscount(discountRaw !== undefined ? discountRaw : form.discount)
+  const costWithVat = cost * (1 + vatRate / 100)
+  const pvpBase     = costWithVat * (1 + margin / 100)
+  form.price = parseFloat((pvpBase * (1 - pct / 100)).toFixed(2))
+  priceIsAutoCalc.value = true
+}
+
+function onCostInput()       { priceIsAutoCalc.value = false; validateCost();    calcPrice() }
+function onVatRateInput()    { priceIsAutoCalc.value = false; validateVatRate(); calcPrice() }
+function onMarginInput()     { priceIsAutoCalc.value = false; validateMargin();  calcPrice() }
+function onDiscountAndCalc(e){
+  // Leer el nuevo valor ANTES de delegarlo a onDiscountChange para evitar el stale computed
+  const newDiscount = e.target.value === 'custom' ? form.discount : e.target.value
+  onDiscountChange(e)
+  calcPrice(newDiscount)
+}
+function onPriceManualInput() {
+  priceIsAutoCalc.value = false
+  validatePrice()
+}
+
+// ─── Photo ────────────────────────────────────────────────────────────────────
+const photoInput = ref(null)
 function onPhotoChange(e) {
   const file = e.target.files?.[0]
   if (!file) return
@@ -347,7 +445,7 @@ const {
 
 const {
   errors,
-  validateCost, validatePrice, validateUnitsPerBox, validateStock,
+  validateCost, validateVatRate, validateMargin, validatePrice, validateUnitsPerBox, validateStock,
   validateNumericFields, hasNumericErrors,
   MAX_STOCK, MAX_UNITS_BOX, MAX_PRICE,
 } = useProductFieldValidation(form)

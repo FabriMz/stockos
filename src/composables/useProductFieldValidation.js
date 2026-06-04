@@ -6,10 +6,10 @@ const MAX_UNITS_BOX  = 9_999       // Uds. por caja
 const MAX_STOCK      = 99_999      // Unidades en stock
 
 export function useProductFieldValidation(form) {
-  // ─── Reglas ────────────────────────────────────────────────────────────────
-
   const errors = reactive({
     cost:        null,
+    vatRate:     null,
+    margin:      null,
     price:       null,
     unitsPerBox: null,
     stock:       null,
@@ -23,9 +23,26 @@ export function useProductFieldValidation(form) {
     if (typeof v !== 'number' || isNaN(v))         { errors.cost = 'Ingresá un número válido'; return }
     if (v < 0)                                      { errors.cost = 'No puede ser negativo'; return }
     if (v > MAX_PRICE)                              { errors.cost = `Máximo $${MAX_PRICE.toLocaleString()}`; return }
-    // máx 2 decimales
     if (Math.round(v * 1000) % 10 !== 0)           { errors.cost = 'Máx. 2 decimales'; return }
     errors.cost = null
+  }
+
+  function validateVatRate() {
+    const v = form.vatRate
+    if (v === '' || v === null || v === undefined) { errors.vatRate = null; return }
+    if (typeof v !== 'number' || isNaN(v))         { errors.vatRate = 'Ingresá un número válido'; return }
+    if (v < 0)                                     { errors.vatRate = 'No puede ser negativo'; return }
+    if (v > 30)                                    { errors.vatRate = 'Máximo 30%'; return }
+    errors.vatRate = null
+  }
+
+  function validateMargin() {
+    const v = form.margin
+    if (v === '' || v === null || v === undefined) { errors.margin = null; return }
+    if (typeof v !== 'number' || isNaN(v))         { errors.margin = 'Ingresá un número válido'; return }
+    if (v < 0)                                     { errors.margin = 'No puede ser negativo'; return }
+    if (v > 999)                                   { errors.margin = 'Máximo 999%'; return }
+    errors.margin = null
   }
 
   function validatePrice() {
@@ -61,6 +78,8 @@ export function useProductFieldValidation(form) {
 
   function validateNumericFields() {
     validateCost()
+    validateVatRate()
+    validateMargin()
     validatePrice()
     validateUnitsPerBox()
     validateStock()
@@ -73,6 +92,8 @@ export function useProductFieldValidation(form) {
   return {
     errors,
     validateCost,
+    validateVatRate,
+    validateMargin,
     validatePrice,
     validateUnitsPerBox,
     validateStock,
@@ -96,12 +117,9 @@ export function sanitizeInteger(rawValue, max = Infinity) {
 
 /** Fuerza decimal ≥ 0, máx 2 decimales */
 export function sanitizeDecimal(rawValue, max = Infinity) {
-  // Permitir escribir mientras se tipea (ej. "12.")
   let str = String(rawValue).replace(/[^0-9.]/g, '')
-  // Solo un punto
   const parts = str.split('.')
   if (parts.length > 2) str = parts[0] + '.' + parts.slice(1).join('')
-  // Máx 2 decimales
   if (parts[1] !== undefined && parts[1].length > 2) {
     str = parts[0] + '.' + parts[1].slice(0, 2)
   }

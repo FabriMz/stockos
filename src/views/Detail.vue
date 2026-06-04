@@ -23,7 +23,7 @@
         <div class="detail__row"><span class="detail__row-label">Contenido</span><span class="detail__row-value">{{ product.size }}</span></div>
         <div class="detail__row"><span class="detail__row-label">Origen</span><span class="detail__row-value">{{ product.origin }}</span></div>
         <div class="detail__row"><span class="detail__row-label">Uds. por caja</span><span class="detail__row-value">{{ product.unitsPerBox }}</span></div>
-        <div class="detail__row"><span class="detail__row-label">Descuento</span><span class="detail__row-value">26%</span></div>
+        <div class="detail__row"><span class="detail__row-label">Descuento</span><span class="detail__row-value">{{ product.discount ?? '—' }}%</span></div>
         <div class="detail__row"><span class="detail__row-label">Nº de lote</span><span class="detail__row-value">{{ product.batch || 'S/N' }}</span></div>
         <div v-if="product.expiry" class="detail__row">
           <span class="detail__row-label">Vencimiento</span>
@@ -35,16 +35,38 @@
 
       <div class="detail__section">
         <div class="detail__section-title">Precios</div>
+
+        <!-- Fila 1: Precio neto + IVA% -->
         <div class="detail__prices">
           <div class="detail__price-col">
-            <div class="detail__price-label">Costo IVA inc.</div>
+            <div class="detail__price-label">Precio neto</div>
             <div class="detail__price-value">{{ currencyStore.formatProductPrice(product.cost) }}</div>
+          </div>
+          <div class="detail__price-col">
+            <div class="detail__price-label">IVA</div>
+            <div class="detail__price-value">
+              <template v-if="product.vatRate != null">{{ product.vatRate }}%</template>
+              <template v-else>—</template>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fila 2: Margen + PVP -->
+        <div class="detail__prices detail__prices--secondary">
+          <div class="detail__price-col">
+            <div class="detail__price-label">Margen</div>
+            <div class="detail__price-value detail__price-value--success">
+              <template v-if="product.margin != null">{{ product.margin }}%</template>
+              <template v-else>{{ margenCalc }}%</template>
+            </div>
           </div>
           <div class="detail__price-col">
             <div class="detail__price-label">PVP sugerido</div>
             <div class="detail__price-value detail__price-value--success">{{ currencyStore.formatProductPrice(product.price) }}</div>
           </div>
         </div>
+
+        <!-- Fila 3: Moneda -->
         <div class="detail__prices detail__prices--secondary">
           <button
             class="detail__price-col detail__currency-col"
@@ -54,10 +76,6 @@
             <div class="detail__price-label">Moneda</div>
             <div class="detail__price-value">{{ currencyStore.currency }}</div>
           </button>
-          <div class="detail__price-col">
-            <div class="detail__price-label">Margen estimado</div>
-            <div class="detail__price-value detail__price-value--success">{{ margen }}%</div>
-          </div>
         </div>
       </div>
 
@@ -131,13 +149,16 @@ const confirming = ref(false)
 const alertBack = computed(() => resolveAlertBack(route.query, product.value))
 const backTo    = computed(() => alertBack.value?.to ?? `/catalog/${product.value?.bid}`)
 const backLabel = computed(() => alertBack.value?.label ?? product.value?.brand ?? 'Atrás')
-const margen    = computed(() => {
-  if (!product.value) return 0
+
+// Margen calculado como fallback para productos sin margin guardado
+const margenCalc = computed(() => {
+  if (!product.value) return '-'
   const { price, cost } = product.value
   if (!price) return '-'
   return (((price - cost) / price) * 100).toFixed(0)
 })
-const pct       = computed(() => product.value ? store.pct(product.value) : 0)
+
+const pct = computed(() => product.value ? store.pct(product.value) : 0)
 
 function goEdit() {
   router.push({ path: `/product/${product.value.id}/edit`, query: route.query })
