@@ -106,12 +106,12 @@
 
         </div>
 
-        <div class="btn-group">
+        <div class="btn-group btn-group--row">
+          <button class="btn btn--secondary" @click="emit('cancel')">Cancelar</button>
           <button class="btn btn--primary" @click="handleConfirm">
             <i :class="`ti ${confirmIcon}`" aria-hidden="true"></i>
             {{ confirmLabel }}
           </button>
-          <button class="btn btn--secondary" @click="emit('cancel')">Cancelar</button>
         </div>
       </div>
     </div>
