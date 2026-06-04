@@ -1,5 +1,5 @@
-node_modules
-dist
+node_modules/
+dist/
 dist-ssr
 *.local
 .env
@@ -9,3 +9,4 @@ dist-ssr
 
 # Binary assets — no trackear imágenes en git
 public/products/
+android/

@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
-import { storageGet, storageSet } from '../utils/storage.js'
+import { storageGet, storageSet, storageRemove } from '../utils/storage.js'
 
-const ORDERS_KEY = 'stockos_orders_v2'
+const ORDERS_KEY     = 'stockos_orders_v2'
 const ORDERS_KEY_OLD = 'stockos_orders'
 
 export const useOrdersStore = defineStore('orders', () => {
@@ -12,9 +12,8 @@ export const useOrdersStore = defineStore('orders', () => {
 
   async function _init() {
     try {
-      // Migrar datos viejos de localStorage si existen
-      const { storageGet: _get } = await import('../utils/storage.js')
-      const rawOld = await _get(ORDERS_KEY_OLD)
+      // Migrar datos viejos si existen
+      const rawOld = await storageGet(ORDERS_KEY_OLD)
       if (rawOld) {
         const parsed = JSON.parse(rawOld)
         const list = Array.isArray(parsed) ? parsed : (parsed?.orders ?? [])
@@ -28,8 +27,7 @@ export const useOrdersStore = defineStore('orders', () => {
           active: o.active ?? o.enCurso ?? false,
         }))
         await storageSet(ORDERS_KEY, JSON.stringify({ orders: migrated, _seeded: true }))
-        // Intentar limpiar la clave vieja (solo funciona en localStorage)
-        try { localStorage.removeItem(ORDERS_KEY_OLD) } catch {}
+        await storageRemove(ORDERS_KEY_OLD)
         orders.value = migrated
         return
       }
@@ -90,6 +88,7 @@ export const useOrdersStore = defineStore('orders', () => {
   }
 
   return {
+    _ready,
     orders, activeOrders, orderHistory,
     addOrder, editOrder,
     pendingDeleteOrder, markDeleteOrder, undoDeleteOrder, confirmDeleteOrder,
