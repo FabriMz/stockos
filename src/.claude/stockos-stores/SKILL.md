@@ -222,8 +222,6 @@ store.setProductUpdated()     // activa el flag y lo limpia automáticamente
   col:          string,   // color del icono (hex)
   img?:         string,   // ruta de imagen, opcional
   expiry?:      string,   // fecha de vencimiento (YYYY-MM-DD), opcional
-  lot?:         string,   // número de lote, opcional
-  category?:    string,   // nombre de categoría (string desnormalizado), opcional
   batch?:       string,   // número de lote (solo _batchOnly), opcional
   _batchOnly?:  boolean,  // true si el producto es un clon de lote, no aparece en catálogo normal
 }
@@ -249,13 +247,15 @@ store.setProductUpdated()     // activa el flag y lo limpia automáticamente
 {
   batchNumber: string,  // nombre/número del lote, ej. 'Lote 03'
   expiry:      string,  // YYYY-MM-DD
+  brandIds:    string[],// ids de marcas asignadas al lote
+  categories:  Array<{ id: string, name: string, brandIds: string[] }>, // categorías de lote opcionales
 }
 ```
 
 ### Persistencia
-- `products`, `brands`, `batches`, `batchFoldersMeta`, `catalogExpiry`, `brandProductCategories` → `stockos_v1`
+- `products`, `brands`, `batches`, `batchFoldersMeta`, `catalogExpiry`, `brandProductCategories` → `stockos_v2` (migración desde `stockos_v1`)
 - `categories` → `stockos_categories`
-- `orders` → `stockos_orders`
+- `orders` → `stockos_orders_v2` (migración desde `stockos_orders`)
 - `brandCategories` → `stockos_brand_categories`
 
 ---

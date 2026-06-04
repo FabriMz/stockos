@@ -54,6 +54,9 @@ Siempre que construyas o modifiques una vista: para saber qué componentes reuti
   v-model="searchQuery"
 />
 
+<!-- Home sin campo de búsqueda (ocultar con show-search) -->
+<TopBar variant="home" :show-search="false" />
+
 <!-- Alertas / Pedidos / Ajustes: solo título -->
 <TopBar variant="title" title="Mi sección">
   <template #actions>
@@ -63,19 +66,13 @@ Siempre que construyas o modifiques una vista: para saber qué componentes reuti
   </template>
 </TopBar>
 
-<!-- Detalle / Formulario: botón atrás -->
+<!-- Detalle / Formulario: botón atrás (SIN slot #actions) -->
 <TopBar
   variant="back"
   back-label="Catálogo"
   back-to="/catalog"
   title="Detalle"
->
-  <template #actions>
-    <button class="icon-btn" aria-label="Editar">
-      <i class="ti ti-edit" aria-hidden="true"></i>
-    </button>
-  </template>
-</TopBar>
+/>
 
 <!-- Vistas multi-nivel (lotes, vencimientos): breadcrumbs -->
 <TopBar
@@ -100,6 +97,11 @@ Siempre que construyas o modifiques una vista: para saber qué componentes reuti
 | `searchId` | String | `'topbar-search'` | `id` del input (solo variante `home`) |
 | `searchPlaceholder` | String | `'Buscar…'` | Placeholder del input |
 | `modelValue` | String | `''` | v-model del campo de búsqueda |
+| `showSearch` | Boolean | `true` | Muestra/oculta el campo de búsqueda (solo variante `home`) |
+
+**Slots:** `#actions` disponible en variantes `title` y `breadcrumb`. La variante `back` **no tiene** slot `#actions`.
+
+**Emits:** `update:modelValue` (búsqueda), `back` (al hacer click en el botón volver).
 
 ---
 
@@ -158,8 +160,8 @@ Fila de carpeta de alerta con icono, etiqueta, meta, stripe y chevron. Navega al
 | `meta` | String | `''` | Texto secundario |
 | `to` | String | (requerida) | Ruta destino |
 | `icon` | String | `'ti-folder'` | Clase Tabler Icon |
-| `iconBg` | String | — | Color de fondo del icono (hex o variable CSS) |
-| `iconColor` | String | — | Color del icono |
+| `iconBg` | String | `'#F0EAE4'` | Color de fondo del icono (hex o variable CSS) |
+| `iconColor` | String | `'#791132'` | Color del icono |
 | `stripe` | String | `''` | Color del stripe lateral (hex); vacío = sin stripe |
 
 ---
@@ -199,6 +201,18 @@ Separador de categorías en el catálogo con menú de opciones (gear). Tiene dos
   :show-migrate="true"
   :show-delete="true"
   :show-edit="true"
+  :is-migrating="migrating"
+  migrate-label="Migrar marcas"
+  @delete="handleDeleteCat"
+  @renamed="handleRenamed"
+  @toggle-migrate="handleToggleMigrate"
+/>
+
+<!-- Variante default: fila completa con label, dots y gear -->
+<CatalogCatSep
+  :cat-id="cat.id"
+  :cat-name="cat.name"
+  :is-migrating="migrating"
   @delete="handleDeleteCat"
   @renamed="handleRenamed"
   @toggle-migrate="handleToggleMigrate"
@@ -209,17 +223,20 @@ Separador de categorías en el catálogo con menú de opciones (gear). Tiene dos
 |---|---|---|---|
 | `catId` | String | (requerida) | Id del grupo de marcas |
 | `catName` | String | (requerida) | Nombre del grupo |
+| `variant` | String | `'default'` | `'default'` \| `'icon-only'` |
 | `showMigrate` | Boolean | `false` | Muestra opción "Migrar marcas" |
 | `showDelete` | Boolean | `true` | Muestra opción "Eliminar" |
 | `showEdit` | Boolean | `true` | Muestra opción "Renombrar" |
+| `isMigrating` | Boolean | `false` | Estado activo de migración; resalta el botón gear |
+| `migrateLabel` | String | `'Migrar marcas'` | Texto de la opción migrar |
 
-Emite: `delete`, `renamed`, `toggle-migrate`.
+Emite: `delete`, `renamed` (con el nuevo nombre como argumento), `toggle-migrate`.
 
 ---
 
 ## CloneSheet
 
-Sheet modal para clonar un producto a un lote, o para editar los datos de una carpeta de lote.
+Sheet modal para clonar un producto a un lote, editar los datos de una carpeta de lote, o crear un lote vacío.
 
 ```vue
 <!-- Modo clonar producto -->
@@ -237,6 +254,13 @@ Sheet modal para clonar un producto a un lote, o para editar los datos de una ca
   @confirm="handleEditConfirm"
   @cancel="showEditSheet = false"
 />
+
+<!-- Modo crear lote vacío (sin product ni edit-batch) -->
+<CloneSheet
+  v-model="showNewBatchSheet"
+  @confirm="handleNewBatchConfirm"
+  @cancel="showNewBatchSheet = false"
+/>
 ```
 
 | Prop | Tipo | Default | Notas |
@@ -245,7 +269,9 @@ Sheet modal para clonar un producto a un lote, o para editar los datos de una ca
 | `product` | Object | `null` | Si se pasa, activa modo clonar |
 | `editBatch` | Object | `null` | Si se pasa, activa modo editar carpeta |
 
-Emite: `confirm`, `cancel`.
+Si no se pasa ninguno de los dos, activa modo crear lote vacío.
+
+Emite: `confirm` (con payload según modo), `cancel`.
 
 ---
 
@@ -254,14 +280,41 @@ Emite: `confirm`, `cancel`.
 Tarjeta de producto con icono, nombre, SKU, precios, barra de stock y badges.
 
 ```vue
+<!-- Modo navegación (default): click lleva al detalle -->
 <ProductCard :product="product" />
+
+<!-- Modo acciones: muestra botones Detalle / Editar / Clonar -->
+<ProductCard
+  :product="product"
+  :show-actions="true"
+  @clone="handleClone"
+/>
+
+<!-- Modo eliminación: muestra botón trash en lugar de badges -->
+<ProductCard
+  :product="product"
+  :deletable="true"
+/>
+
+<!-- Con contexto de lote: badge de lote + botón Quitar en lugar de Clonar -->
+<ProductCard
+  :product="product"
+  :show-actions="true"
+  :batch-context="{ itemId: item.id, brandId: item.brandId, batchNum: batchNumber }"
+  @remove="handleRemove"
+/>
 ```
 
-| Prop | Tipo | Requerida | Notas |
+| Prop | Tipo | Default | Notas |
 |---|---|---|---|
-| `product` | Object | ✓ | Objeto producto completo |
+| `product` | Object | (requerida) | Objeto producto completo |
+| `showActions` | Boolean | `false` | Muestra barra de acciones (Detalle / Editar / Clonar o Quitar) |
+| `deletable` | Boolean | `false` | Muestra botón trash; llama a `store.markDelete(product.id)` internamente |
+| `batchContext` | Object | `null` | Shape: `{ itemId: string, brandId: string, batchNum: string }` |
 
-El componente maneja internamente la navegación a `/product/${product.id}` y consume `useProductsStore` y `useCurrencyStore`. No requiere nada más desde la vista.
+Emite: `clone` (con el objeto `product`), `remove` (con `batchContext.itemId`).
+
+El componente maneja internamente la navegación y consume `useProductsStore` y `useCurrencyStore`.
 
 ---
 
@@ -291,6 +344,8 @@ Control de ajuste de stock con input numérico, botones +/− y barra de progres
   :max="product.max"
   :show-bar="true"
   input-id="ep-stock"
+  :error="errors.stock"
+  @validate="validateStock"
 />
 
 <!-- Sin barra (creación) -->
@@ -310,6 +365,10 @@ Control de ajuste de stock con input numérico, botones +/− y barra de progres
 | `max` | Number | `0` | Capacidad máxima; necesario para la barra |
 | `showBar` | Boolean | `false` | Muestra barra de progreso |
 | `inputId` | String | `'stock-input'` | `id` y `name` del input |
+| `maxStock` | Number | `99999` | Límite superior del input; el valor nunca supera este número |
+| `error` | String | `null` | Mensaje de error; muestra el input en rojo y el texto debajo |
+
+Emite: `update:modelValue`, `validate` (en blur y en cada click +/−).
 
 ---
 
@@ -356,7 +415,7 @@ Tarjeta de estadística con label, valor, subtexto y barra de color.
 </button>
 
 <!-- Nuevo (TopBar actions) -->
-<button class="btn-new" aria-label="Nuevo pedido" @click="$router.push('/orders/new')">
+<button class="btn-new" aria-label="Nuevo producto" @click="$router.push('/product/new')">
   <i class="ti ti-plus" aria-hidden="true"></i>Nuevo
 </button>
 ```
@@ -407,6 +466,8 @@ Todo identificador nuevo — clases CSS, ids, variables, funciones, props y emit
 - [ ] ¿Usé `AlertSearchBar` para el filtro en vistas de alertas?
 - [ ] ¿Usé `ProductCard` en lugar de replicar la tarjeta manualmente?
 - [ ] ¿Pasé `input-id` a `StockAdjuster` con el prefijo correcto de la vista?
+- [ ] ¿Pasé `error` y escucho `@validate` en `StockAdjuster` cuando hay validación?
+- [ ] ¿La variante `back` de `TopBar` no tiene `<template #actions>`?
 - [ ] ¿Incluí `<div class="spacer--sm"></div>` al final del `scroll-content`?
 - [ ] ¿Los botones de acción están dentro de `.btn-group`?
 - [ ] ¿Usé `.section-label` con `<p>` en lugar de headings?

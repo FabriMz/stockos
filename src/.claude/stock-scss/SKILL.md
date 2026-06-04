@@ -181,9 +181,9 @@ $color-text-on-primary // #ffffff — sobre fondos de acción
 ### Tipografía
 
 ```scss
-$font-display  // 'Barlow Condensed'
-$font-body     // 'Barlow'
-$font-mono     // 'DM Mono'
+$font-display  // 'Barlow', sans-serif
+$font-body     // 'Barlow', sans-serif
+$font-mono     // 'Barlow', sans-serif
 
 // Tamaños
 $font-size-2xs : 9px

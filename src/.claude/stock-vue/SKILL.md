@@ -31,7 +31,7 @@ Siempre que crees, modifiques o revises un componente `.vue` en este proyecto.
 
 ## Layout estándar de vistas
 
-### Vistas de listado / consulta
+### Vistas de listado / consulta y detalle
 ```vue
 <div class="screen">
   <TopBar ... />
@@ -58,7 +58,9 @@ Siempre que crees, modifiques o revises un componente `.vue` en este proyecto.
 </div>
 ```
 
-`BottomNav` solo aparece en vistas principales; los formularios y detalles usan `.btn-group`.
+- `BottomNav` se usa en las vistas de lista, alertas, detalle y otras pantallas principales.
+- Los formularios no usan `BottomNav`; en su lugar, terminan con una `.btn-group`.
+- Para filas de acciones en formularios o vistas internas, también se usa `.btn-group` o `.btn-group.btn-group--row`.
 
 ---
 
