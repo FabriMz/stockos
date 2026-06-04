@@ -25,7 +25,7 @@
       <div class="form-section">
         <div class="form-group">
           <label class="form-label" for="np-sku">Código / SKU</label>
-          <input class="form-input" id="np-sku" name="np-sku" type="text" v-model="form.sku" placeholder="Ej. 160533BM" />
+          <input class="form-input" id="np-sku" name="np-sku" type="text" v-model="form.sku" placeholder="Ej. 160533BM" maxlength="15" />
         </div>
         <div class="form-group">
           <label class="form-label" for="np-name">Nombre del producto</label>
@@ -77,7 +77,7 @@
           </div>
           <div class="form-group">
             <label class="form-label" for="np-origin">Origen</label>
-            <input class="form-input" id="np-origin" name="np-origin" type="text" v-model="form.origin" placeholder="Ej. Italia" />
+            <input class="form-input" id="np-origin" name="np-origin" type="text" :value="form.origin" placeholder="Ej. Italia" @input="e => { form.origin = sanitizeOrigin(e.target.value); e.target.value = form.origin }" />
           </div>
         </div>
         <div class="form-row">
@@ -93,14 +93,14 @@
               id="np-udscaja"
               name="np-udscaja"
               type="number"
-              v-model.number="form.unitsPerBox"
+              :value="form.unitsPerBox"
               placeholder="Ej. 12"
               inputmode="numeric"
               min="1"
               :max="MAX_UNITS_BOX"
               step="1"
               @blur="validateUnitsPerBox"
-              @input="validateUnitsPerBox"
+              @input="e => { const v = sanitizeInteger(e.target.value, MAX_UNITS_BOX); form.unitsPerBox = v === '' ? '' : Number(v); e.target.value = v; validateUnitsPerBox() }"
             />
             <span v-if="errors.unitsPerBox" class="form-hint form-hint--error" role="alert">{{ errors.unitsPerBox }}</span>
           </div>
@@ -114,12 +114,11 @@
               id="np-category"
               name="np-category"
               :value="form.category === '' ? '__sin_categoria__' : form.category"
-              :disabled="!form.bid"
               @change="onCategoryChange"
             >
               <option value="" disabled>Seleccionar…</option>
               <option value="__sin_categoria__">Sin categoría</option>
-              <option v-for="c in brandCategories" :key="c" :value="c">{{ c }}</option>
+              <option v-for="c in catStore.sortedCategories" :key="c.id" :value="c.name">{{ c.name }}</option>
               <option value="__nueva__">+ Crear categoría…</option>
             </select>
             <div v-else class="discount-custom">
@@ -156,13 +155,14 @@
               name="np-cost"
               type="number"
               v-model.number="form.cost"
-              placeholder="0,00"
+              placeholder="Solo números"
               inputmode="decimal"
               min="0"
               :max="MAX_PRICE"
               step="0.01"
               @blur="validateCost"
               @input="onCostInput"
+              @keydown="e => ['-', '+', 'e', 'E'].includes(e.key) && e.preventDefault()"
             />
             <span v-if="errors.cost" class="form-hint form-hint--error" role="alert">{{ errors.cost }}</span>
           </div>
@@ -174,14 +174,15 @@
               id="np-vat-rate"
               name="np-vat-rate"
               type="number"
-              v-model.number="form.vatRate"
+              :value="form.vatRate"
               placeholder="Ej. 21"
-              inputmode="decimal"
+              inputmode="numeric"
               min="0"
-              max="30"
-              step="0.1"
+              :max="MAX_VAT"
+              step="1"
               @blur="validateVatRate"
               @input="onVatRateInput"
+              @keydown="e => ['-', '+', 'e', 'E', '.', ','].includes(e.key) && e.preventDefault()"
             />
             <span v-if="errors.vatRate" class="form-hint form-hint--error" role="alert">{{ errors.vatRate }}</span>
           </div>
@@ -218,11 +219,11 @@
                 placeholder="Ej. 15"
                 aria-label="Descuento personalizado (1-100%)"
               />
-              <button type="button" class="discount-custom__reset" @click="resetDiscountToPreset" aria-label="Volver a opciones predefinidas">
+              <button type="button" class="discount-custom__reset" @click="onResetDiscount" aria-label="Volver a opciones predefinidas">
                 <i class="ti ti-x" aria-hidden="true"></i>
               </button>
             </div>
-            <span class="form-hint" v-if="discountMode === 'custom'">Entre 1% y 100%</span>
+
           </div>
           <div class="form-group">
             <label class="form-label" for="np-margin">Margen %</label>
@@ -232,14 +233,15 @@
               id="np-margin"
               name="np-margin"
               type="number"
-              v-model.number="form.margin"
+              :value="form.margin"
               placeholder="Ej. 30"
-              inputmode="decimal"
+              inputmode="numeric"
               min="0"
-              max="999"
-              step="0.1"
+              :max="MAX_MARGIN"
+              step="1"
               @blur="validateMargin"
               @input="onMarginInput"
+              @keydown="e => ['-', '+', 'e', 'E', '.', ','].includes(e.key) && e.preventDefault()"
             />
             <span v-if="errors.margin" class="form-hint form-hint--error" role="alert">{{ errors.margin }}</span>
           </div>
@@ -254,20 +256,15 @@
             </label>
             <input
               class="form-input"
-              :class="{ 'form-input--error': errors.price }"
               id="np-price"
               name="np-price"
               type="number"
-              v-model.number="form.price"
-              placeholder="0,00"
+              :value="form.price"
+              placeholder="Resultado"
               inputmode="decimal"
-              min="0"
-              :max="MAX_PRICE"
-              step="0.01"
-              @blur="validatePrice"
-              @input="onPriceManualInput"
+              readonly
+              aria-readonly="true"
             />
-            <span v-if="errors.price" class="form-hint form-hint--error" role="alert">{{ errors.price }}</span>
           </div>
         </div>
       </div>
@@ -285,7 +282,7 @@
           </div>
           <div class="form-group">
             <label class="form-label" for="np-batch">Nro. de lote</label>
-            <input class="form-input" id="np-batch" name="np-batch" type="text" v-model="form.batch" placeholder="Ej. L2503" />
+            <input class="form-input" id="np-batch" name="np-batch" type="text" :value="form.batch" placeholder="Ej. L2503" maxlength="20" @input="e => { form.batch = e.target.value.replace(/[^A-Za-z0-9\-]/g, ''); e.target.value = form.batch }" />
           </div>
         </div>
         <label class="form-label" for="np-alert-days">Avisar con anticipación</label>
@@ -306,7 +303,7 @@
       <StockAdjuster
         v-model="form.stock"
         label="Unidades en stock"
-        hint="Podés actualizar el stock después desde el detalle"
+        hint="Puedes actualizar el stock después desde los detalles"
         input-id="np-stock"
         :max-stock="MAX_STOCK"
         :error="errors.stock"
@@ -329,15 +326,17 @@
 import { reactive, ref, computed, watch, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useProductsStore }  from '../stores/products.js'
+import { useBrandCategoriesStore } from '../stores/brandCategories.js'
 import { DEFAULT_PRESET } from '../stores/discounts.js'
 import { useDtoSelector }    from '../composables/useDtoSelector.js'
-import { useProductFieldValidation } from '../composables/useProductFieldValidation.js'
+import { useProductFieldValidation, sanitizeInteger, sanitizeOrigin } from '../composables/useProductFieldValidation.js'
 import TopBar        from '../components/layout/TopBar.vue'
 import StockAdjuster from '../components/ui/StockAdjuster.vue'
 
 const router = useRouter()
 const route  = useRoute()
 const store  = useProductsStore()
+const catStore = useBrandCategoriesStore()
 
 const batchContext = route.query.batchNumber || null
 
@@ -384,18 +383,36 @@ function calcPrice(discountRaw) {
   priceIsAutoCalc.value = true
 }
 
-function onCostInput()       { priceIsAutoCalc.value = false; validateCost();    calcPrice() }
-function onVatRateInput()    { priceIsAutoCalc.value = false; validateVatRate(); calcPrice() }
-function onMarginInput()     { priceIsAutoCalc.value = false; validateMargin();  calcPrice() }
-function onDiscountAndCalc(e){
-  // Leer el nuevo valor ANTES de delegarlo a onDiscountChange para evitar el stale computed
+function onCostInput(e) {
+  const raw = e.target.value.replace(/[^0-9.]/g, '')
+  const parts = raw.split('.')
+  const clean = parts.length > 1 ? parts[0] + '.' + parts.slice(1).join('').slice(0, 2) : raw
+  e.target.value = clean
+  validateCost()
+  calcPrice()
+}
+function onVatRateInput(e) {
+  const clean = sanitizeInteger(e.target.value, MAX_VAT)
+  e.target.value = clean
+  form.vatRate = clean === '' ? '' : Number(clean)
+  validateVatRate()
+  calcPrice()
+}
+function onMarginInput(e) {
+  const clean = sanitizeInteger(e.target.value, MAX_MARGIN)
+  e.target.value = clean
+  form.margin = clean === '' ? '' : Number(clean)
+  validateMargin()
+  calcPrice()
+}
+function onDiscountAndCalc(e) {
   const newDiscount = e.target.value === 'custom' ? form.discount : e.target.value
   onDiscountChange(e)
   calcPrice(newDiscount)
 }
-function onPriceManualInput() {
-  priceIsAutoCalc.value = false
-  validatePrice()
+function onResetDiscount() {
+  resetDiscountToPreset()
+  calcPrice('0')
 }
 
 // ─── Photo ────────────────────────────────────────────────────────────────────
@@ -446,7 +463,7 @@ const {
   errors,
   validateCost, validateVatRate, validateMargin, validatePrice, validateUnitsPerBox, validateStock,
   validateNumericFields, hasNumericErrors,
-  MAX_STOCK, MAX_UNITS_BOX, MAX_PRICE,
+  MAX_STOCK, MAX_UNITS_BOX, MAX_PRICE, MAX_VAT, MAX_MARGIN,
 } = useProductFieldValidation(form)
 
 const creatingCategory = ref(false)
@@ -457,10 +474,8 @@ const creatingBrand    = ref(false)
 const newBrand         = ref('')
 const newBrandInput    = ref(null)
 
-const brandCategories = computed(() => store.getCategoriesForBrand(form.bid))
-
 function _resetCategoryIfStale() {
-  if (form.category && !brandCategories.value.includes(form.category)) {
+  if (form.category && !catStore.categories.some(c => c.name === form.category)) {
     form.category = ''
   }
 }
@@ -507,7 +522,7 @@ function onCategoryChange(e) {
 function confirmNewCategory() {
   const n = newCategory.value.trim()
   if (!n) return
-  store.addCategoryToBrand(form.bid, n)
+  catStore.addCategory(n)
   form.category = n
   creatingCategory.value = false
   newCategory.value = ''

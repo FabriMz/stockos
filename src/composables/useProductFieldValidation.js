@@ -4,6 +4,8 @@ import { reactive, computed } from 'vue'
 const MAX_PRICE      = 99_999.99   // USD — precio / costo
 const MAX_UNITS_BOX  = 9_999       // Uds. por caja
 const MAX_STOCK      = 99_999      // Unidades en stock
+const MAX_VAT        = 99          // IVA máx. 2 dígitos enteros
+const MAX_MARGIN     = 100         // Margen máx. 100%
 
 export function useProductFieldValidation(form) {
   const errors = reactive({
@@ -32,7 +34,8 @@ export function useProductFieldValidation(form) {
     if (v === '' || v === null || v === undefined) { errors.vatRate = null; return }
     if (typeof v !== 'number' || isNaN(v))         { errors.vatRate = 'Ingresá un número válido'; return }
     if (v < 0)                                     { errors.vatRate = 'No puede ser negativo'; return }
-    if (v > 30)                                    { errors.vatRate = 'Máximo 30%'; return }
+    if (!Number.isInteger(v))                      { errors.vatRate = 'Solo números enteros'; return }
+    if (v > MAX_VAT)                               { errors.vatRate = `Máximo ${MAX_VAT}%`; return }
     errors.vatRate = null
   }
 
@@ -41,7 +44,8 @@ export function useProductFieldValidation(form) {
     if (v === '' || v === null || v === undefined) { errors.margin = null; return }
     if (typeof v !== 'number' || isNaN(v))         { errors.margin = 'Ingresá un número válido'; return }
     if (v < 0)                                     { errors.margin = 'No puede ser negativo'; return }
-    if (v > 999)                                   { errors.margin = 'Máximo 999%'; return }
+    if (!Number.isInteger(v))                      { errors.margin = 'Solo números enteros'; return }
+    if (v > MAX_MARGIN)                            { errors.margin = `Máximo ${MAX_MARGIN}%`; return }
     errors.margin = null
   }
 
@@ -102,6 +106,8 @@ export function useProductFieldValidation(form) {
     MAX_STOCK,
     MAX_UNITS_BOX,
     MAX_PRICE,
+    MAX_VAT,
+    MAX_MARGIN,
   }
 }
 
@@ -124,4 +130,9 @@ export function sanitizeDecimal(rawValue, max = Infinity) {
     str = parts[0] + '.' + parts[1].slice(0, 2)
   }
   return str
+}
+
+/** Fuerza solo letras unicode (incluye ñ, ü, ö, é, etc.), espacios y guiones. Sin números ni símbolos. */
+export function sanitizeOrigin(rawValue) {
+  return String(rawValue).replace(/[^\p{L}\s\-]/gu, '')
 }
