@@ -19,6 +19,15 @@
           <img v-if="form.img" :src="form.img" alt="Foto del producto" class="form-view__photo-img" />
           <i v-else class="ti ti-camera" aria-hidden="true"></i>
         </label>
+        <button
+          v-if="form.img"
+          type="button"
+          class="form-view__photo-remove"
+          aria-label="Quitar imagen"
+          @click="removePhoto"
+        >
+          <i class="ti ti-x" aria-hidden="true"></i>
+        </button>
       </div>
 
       <p class="section-label">Identificación</p>
@@ -487,6 +496,10 @@ function onPhotoChange(e) {
   const reader = new FileReader()
   reader.onload = ev => { form.img = ev.target.result }
   reader.readAsDataURL(file)
+}
+function removePhoto() {
+  form.img = ''
+  if (photoInput.value) photoInput.value.value = ''
 }
 
 const brand  = computed(() => form.bid ? store.getBrand(form.bid) : null)
