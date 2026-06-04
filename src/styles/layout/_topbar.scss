@@ -34,6 +34,37 @@
     @include font-mono($font-size-xs);
     color: $color-text-tertiary;
     margin: $spacing-3 0 $spacing-2;
+    display: flex;
+    align-items: center;
+    gap: $spacing-1;
+  }
+
+  &__company-name {
+    color: $color-text-tertiary;
+  }
+
+  &__company-edit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: $color-text-tertiary;
+    border-radius: $radius-sm;
+    transition: color $transition-fast;
+    flex-shrink: 0;
+
+    i {
+      font-size: 10px;
+    }
+
+    &:active {
+      color: $color-primary;
+    }
   }
 
   &__fx {

@@ -25,9 +25,9 @@
         <div class="detail__row"><span class="detail__row-label">Uds. por caja</span><span class="detail__row-value">{{ product.unitsPerBox }}</span></div>
         <div class="detail__row"><span class="detail__row-label">Descuento</span><span class="detail__row-value">{{ product.discount ?? '—' }}%</span></div>
         <div class="detail__row"><span class="detail__row-label">Nº de lote</span><span class="detail__row-value">{{ product.batch || 'S/N' }}</span></div>
-        <div v-if="product.expiry" class="detail__row">
+        <div v-if="formattedExpiry" class="detail__row">
           <span class="detail__row-label">Vencimiento</span>
-          <span class="detail__row-value detail__row-value--warn">{{ product.expiry }}</span>
+          <span class="detail__row-value detail__row-value--warn">{{ formattedExpiry }}</span>
         </div>
       </div>
 
@@ -179,6 +179,12 @@ function remove() {
     router.push(`/catalog/${bid}`)
   }
 }
+
+const formattedExpiry = computed(() => {
+  if (!product.value?.expiry) return null
+  const [y, m, d] = product.value.expiry.split('-')
+  return `${d}/${m}/${y}`
+})
 
 const fillClass = computed(() => {
   if (!product.value) return ''

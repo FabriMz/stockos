@@ -8,7 +8,20 @@
             STOCK<span class="topbar__logo-dot">.</span>OS
           </div>
           <div class="topbar__subtitle">
-            Compañía de Indias · {{ todayDate }}
+            <span class="topbar__company-name">{{ store.companyName }}</span>
+            <button
+              class="topbar__company-edit"
+              @click="emit('edit-company')"
+              aria-label="Editar nombre de empresa"
+              type="button"
+            >
+              <i class="ti ti-pencil" aria-hidden="true"></i>
+            </button>
+            · {{ todayDate }}
+          </div>
+          <div class="topbar__fx">
+            {{ fxDisplay }}
+            <span v-if="currencyStore.exchangeRateSource" class="topbar__fx-src">{{ currencyStore.exchangeRateSource }}</span>
           </div>
         </div>
         <div class="topbar__actions">
@@ -81,6 +94,7 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useProductsStore } from '../../stores/products.js'
+import { useCurrencyStore }  from '../../stores/currency.js'
 import { formatTodayDate } from '../../utils/alerts.js'
 
 const props = defineProps({
@@ -95,11 +109,13 @@ const props = defineProps({
   showSearch:        { type: Boolean, default: true },
 })
 
-const emit      = defineEmits(['update:modelValue', 'back'])
-const router    = useRouter()
-const store     = useProductsStore()
-const alerts    = computed(() => store.alerts)
-const todayDate = computed(() => formatTodayDate())
+const emit          = defineEmits(['update:modelValue', 'back', 'edit-company'])
+const router        = useRouter()
+const store         = useProductsStore()
+const currencyStore = useCurrencyStore()
+const alerts        = computed(() => store.alerts)
+const todayDate     = computed(() => formatTodayDate())
+const fxDisplay     = computed(() => `USD · $${currencyStore.exchangeRate.toFixed(2)}`)
 
 const handleBack = () => {
   if (props.backTo) {

@@ -6,7 +6,30 @@
       v-model="searchQuery"
       search-id="home-product-search"
       search-placeholder="Buscar producto…"
+      @edit-company="startEditingCompany"
     />
+
+    <div v-if="editingCompany" class="home__company-edit-overlay" @click.self="cancelEditCompany">
+      <div class="home__company-edit-box">
+        <label for="company-name-input" class="home__company-edit-label">Nombre de empresa</label>
+        <input
+          id="company-name-input"
+          name="company-name-input"
+          type="text"
+          class="home__company-edit-input"
+          v-model="companyNameDraft"
+          @keydown.enter="saveCompanyName"
+          @keydown.escape="cancelEditCompany"
+          maxlength="40"
+          aria-label="Nombre de empresa"
+          ref="companyInput"
+        />
+        <div class="home__company-edit-actions">
+          <button class="btn btn--secondary" @click="cancelEditCompany" type="button">Cancelar</button>
+          <button class="btn btn--primary" @click="saveCompanyName" type="button">Guardar</button>
+        </div>
+      </div>
+    </div>
 
     <div v-if="searchQuery" class="home__search-dropdown">
       <ul
@@ -151,7 +174,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useProductsStore } from '../stores/products.js'
 import { useDiscountsStore } from '../stores/discounts.js'
@@ -193,4 +216,23 @@ const searchResults = computed(() => {
     .filter(p => matchesProductSearch(p, searchQuery.value))
     .slice(0, 8)
 })
+
+const editingCompany   = ref(false)
+const companyNameDraft = ref('')
+const companyInput     = ref(null)
+
+function startEditingCompany() {
+  companyNameDraft.value = store.companyName
+  editingCompany.value = true
+  nextTick(() => companyInput.value?.focus())
+}
+
+function saveCompanyName() {
+  store.setCompanyName(companyNameDraft.value)
+  editingCompany.value = false
+}
+
+function cancelEditCompany() {
+  editingCompany.value = false
+}
 </script>

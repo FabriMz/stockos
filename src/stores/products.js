@@ -17,11 +17,11 @@ function getDefaultCatalogExpiry() {
   return `${year}-${month}`
 }
 
-function saveState(products, brands, catalogExpiry, batches, batchFoldersMeta, brandProductCategories) {
+function saveState(products, brands, catalogExpiry, batches, batchFoldersMeta, brandProductCategories, companyName) {
   try {
     scheduleStorageSet(STORAGE_KEY, JSON.stringify({
       products, brands, catalogExpiry, batches,
-      batchFoldersMeta, brandProductCategories,
+      batchFoldersMeta, brandProductCategories, companyName,
       _seeded: true,
     }))
   } catch { /* noop */ }
@@ -59,6 +59,7 @@ export const useProductsStore = defineStore('products', () => {
   const batches                = ref([])
   const batchFoldersMeta       = ref([])
   const brandProductCategories = ref({})
+  const companyName            = ref('Mi Empresa')
 
   // Señal que indica si el store ya cargó desde el storage nativo
   const _ready = ref(false)
@@ -81,6 +82,7 @@ export const useProductsStore = defineStore('products', () => {
             ? migrateBatchFoldersMeta(saved.batchFoldersMeta)
             : (Array.isArray(saved.batches) ? deriveBatchFoldersMeta(saved.batches) : [])
           brandProductCategories.value = saved.brandProductCategories ?? {}
+          companyName.value            = typeof saved.companyName === 'string' ? saved.companyName : 'Mi Empresa'
         }
       }
     } catch { /* noop */ } finally {
@@ -91,10 +93,10 @@ export const useProductsStore = defineStore('products', () => {
   _init()
 
   watch(
-    [products, brands, catalogExpiry, batches, batchFoldersMeta, brandProductCategories],
+    [products, brands, catalogExpiry, batches, batchFoldersMeta, brandProductCategories, companyName],
     () => {
       if (!_ready.value) return
-      saveState(products.value, brands.value, catalogExpiry.value, batches.value, batchFoldersMeta.value, brandProductCategories.value)
+      saveState(products.value, brands.value, catalogExpiry.value, batches.value, batchFoldersMeta.value, brandProductCategories.value, companyName.value)
     },
     { deep: true }
   )
@@ -581,7 +583,7 @@ export const useProductsStore = defineStore('products', () => {
   return {
     // Estado
     _ready,
-    brands, products, catalogExpiry, batches, batchFoldersMeta,
+    brands, products, catalogExpiry, batches, batchFoldersMeta, companyName,
     // Getters
     getBrand, getProduct, getByBrand,
     getBatchesByBrand, getBatchItemsByBrand, getAllBatchFolders, getBatchFolder,
@@ -609,6 +611,8 @@ export const useProductsStore = defineStore('products', () => {
     pendingDeleteBatchFolder, markDeleteBatchFolder, undoDeleteBatchFolder, confirmDeleteBatchFolder,
     // UI
     productUpdated, setProductUpdated,
+    // Empresa
+    setCompanyName: (name) => { companyName.value = name.trim() || 'Mi Empresa' },
     // Catálogo
     setCatalogExpiry,
     // Categorías por marca
