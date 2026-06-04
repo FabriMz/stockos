@@ -70,12 +70,40 @@
     padding: $spacing-4;
   }
 
+  &__section-head {
+    @include flex-between;
+    margin-bottom: $spacing-3;
+  }
+
   &__section-title {
     @include font-mono($font-size-xs, $font-weight-medium);
     letter-spacing: $letter-spacing-wider;
     text-transform: uppercase;
     color: $color-text-secondary;
-    margin-bottom: $spacing-3;
+  }
+
+  &__currency-pill {
+    @include flex-row($spacing-1, center);
+    background: $color-bg-secondary;
+    border: $border-width solid $color-border-strong;
+    border-radius: $radius-full;
+    padding: $spacing-1 $spacing-3 $spacing-1 $spacing-2;
+    cursor: pointer;
+    transition: filter $transition-fast;
+
+    i {
+      font-size: $icon-sm;
+      color: $color-text-secondary;
+    }
+
+    span {
+      @include font-mono($font-size-sm, $font-weight-medium);
+      color: $color-text-secondary;
+    }
+
+    &:active {
+      filter: brightness(0.8);
+    }
   }
 
   &__prices {
@@ -95,12 +123,26 @@
     background: $color-bg-secondary;
   }
 
-  &__currency-col {
-    cursor: pointer;
-    transition: filter $transition-fast;
+  &__saved-currency {
+    @include flex-row($spacing-2, center);
+    margin-top: $spacing-3;
 
-    &:active {
-      filter: brightness(0.85);
+    &__dot {
+      width: 4px;
+      height: 4px;
+      border-radius: $radius-full;
+      background: $color-text-secondary;
+      flex-shrink: 0;
+    }
+
+    &__text {
+      @include font-mono($font-size-sm);
+      color: $color-text-secondary;
+
+      strong {
+        font-weight: $font-weight-medium;
+        color: $color-text-primary;
+      }
     }
   }
 

@@ -85,7 +85,25 @@ export const useCurrencyStore = defineStore('currency', () => {
     return currency.value === 'USD' ? 'U$S ' + formatted : '$' + formatted
   }
 
+  // Para precios con moneda explícita guardada (priceCurrency: 'USD' | 'UYU')
+  // Convierte al viewCurrency actual si es distinta de la guardada.
+  const formatProductPriceWithCurrency = (n, priceCurrency = 'USD') => {
+    const stored = priceCurrency ?? 'USD'
+    let value
+    if (stored === currency.value) {
+      value = n
+    } else if (stored === 'USD' && currency.value === 'UYU') {
+      value = n * exchangeRate.value
+    } else {
+      // stored === 'UYU' && currency.value === 'USD'
+      value = n / exchangeRate.value
+    }
+    const [a, b] = value.toFixed(2).split('.')
+    const formatted = a.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ',' + b
+    return currency.value === 'USD' ? 'U$S ' + formatted : '$' + formatted
+  }
+
   fetchExchangeRate()
 
-  return { currency, exchangeRate, exchangeRateSource, priceListValidity, setPriceListValidity, toggleCurrency, setCurrency, formatPrice, formatProductPrice }
+  return { currency, exchangeRate, exchangeRateSource, priceListValidity, setPriceListValidity, toggleCurrency, setCurrency, formatPrice, formatProductPrice, formatProductPriceWithCurrency }
 })

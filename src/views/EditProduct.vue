@@ -191,22 +191,35 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label" for="ep-cost">Precio neto</label>
-            <input
-              class="form-input"
-              :class="{ 'form-input--error': errors.cost }"
-              id="ep-cost"
-              name="ep-cost"
-              type="number"
-              v-model.number="form.cost"
-              placeholder="Solo números"
-              inputmode="decimal"
-              min="0"
-              :max="MAX_PRICE"
-              step="0.01"
-              @blur="validateCost"
-              @input="onCostInput"
-              @keydown="e => ['-', '+', 'e', 'E'].includes(e.key) && e.preventDefault()"
-            />
+            <div class="size-field">
+              <input
+                class="form-input size-field__qty"
+                :class="{ 'form-input--error': errors.cost }"
+                id="ep-cost"
+                name="ep-cost"
+                type="number"
+                v-model.number="form.cost"
+                placeholder="0.00"
+                inputmode="decimal"
+                min="0"
+                :max="MAX_PRICE"
+                step="0.01"
+                @blur="validateCost"
+                @input="onCostInput"
+                @keydown="e => ['-', '+', 'e', 'E'].includes(e.key) && e.preventDefault()"
+                aria-label="Precio neto"
+              />
+              <select
+                class="form-select size-field__unit-select"
+                id="ep-price-currency"
+                name="ep-price-currency"
+                v-model="form.priceCurrency"
+                aria-label="Moneda del precio"
+              >
+                <option value="USD">USD</option>
+                <option value="UYU">UYU</option>
+              </select>
+            </div>
             <span v-if="errors.cost" class="form-hint form-hint--error" role="alert">{{ errors.cost }}</span>
           </div>
           <div class="form-group">
@@ -406,6 +419,7 @@ const form = reactive({
   bid: '', origin: '', category: '',
   alertDays: 30,
   img: '',
+  priceCurrency: 'USD',
 })
 
 watch([sizeQty, sizeUnit], ([qty, unit]) => {
@@ -501,6 +515,7 @@ watch(product, p => {
     bid: p.bid || '', origin: p.origin || '', category: p.category || '',
     alertDays: p.alertDays || 30,
     img: p.img || '',
+    priceCurrency: p.priceCurrency || 'USD',
   })
   const parsed = parseSizeString(p.size)
   sizeQty.value  = parsed.qty

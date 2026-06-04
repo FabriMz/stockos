@@ -34,13 +34,23 @@
       <div class="spacer--xs"></div>
 
       <div class="detail__section">
-        <div class="detail__section-title">Precios</div>
+        <div class="detail__section-head">
+          <div class="detail__section-title">Precios</div>
+          <button
+            class="detail__currency-pill"
+            @click.stop="currencyStore.toggleCurrency()"
+            :aria-label="`Cambiar vista a ${currencyStore.currency === 'UYU' ? 'dólares' : 'pesos uruguayos'}`"
+          >
+            <i class="ti ti-arrows-exchange" aria-hidden="true"></i>
+            <span>{{ currencyStore.currency }}</span>
+          </button>
+        </div>
 
         <!-- Fila 1: Precio neto + IVA% -->
         <div class="detail__prices">
           <div class="detail__price-col">
             <div class="detail__price-label">Precio neto</div>
-            <div class="detail__price-value">{{ currencyStore.formatProductPrice(product.cost) }}</div>
+            <div class="detail__price-value">{{ currencyStore.formatProductPriceWithCurrency(product.cost, product.priceCurrency) }}</div>
           </div>
           <div class="detail__price-col">
             <div class="detail__price-label">IVA</div>
@@ -62,20 +72,14 @@
           </div>
           <div class="detail__price-col">
             <div class="detail__price-label">PVP sugerido</div>
-            <div class="detail__price-value detail__price-value--success">{{ currencyStore.formatProductPrice(product.price) }}</div>
+            <div class="detail__price-value detail__price-value--success">{{ currencyStore.formatProductPriceWithCurrency(product.price, product.priceCurrency) }}</div>
           </div>
         </div>
 
-        <!-- Fila 3: Moneda -->
-        <div class="detail__prices detail__prices--secondary">
-          <button
-            class="detail__price-col detail__currency-col"
-            @click.stop="currencyStore.toggleCurrency()"
-            :aria-label="`Cambiar a ${currencyStore.currency === 'UYU' ? 'dólares' : 'pesos uruguayos'}`"
-          >
-            <div class="detail__price-label">Moneda</div>
-            <div class="detail__price-value">{{ currencyStore.currency }}</div>
-          </button>
+        <!-- Hint: moneda guardada -->
+        <div class="detail__saved-currency">
+          <span class="detail__saved-currency__dot"></span>
+          <span class="detail__saved-currency__text">guardado en <strong>{{ product.priceCurrency || 'USD' }}</strong></span>
         </div>
       </div>
 
