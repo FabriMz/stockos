@@ -66,7 +66,46 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label" for="ep-size">Contenido</label>
-            <input class="form-input" id="ep-size" name="ep-size" type="text" v-model="form.size" />
+            <div class="size-field">
+              <input
+                class="form-input size-field__qty"
+                id="ep-size"
+                name="ep-size"
+                type="number"
+                v-model="sizeQty"
+                placeholder="Ej. 190"
+                inputmode="decimal"
+                min="0"
+                step="any"
+                aria-label="Cantidad de contenido"
+              />
+              <select
+                class="form-select size-field__unit-select"
+                id="ep-size-unit"
+                name="ep-size-unit"
+                v-model="sizeUnit"
+                aria-label="Unidad de medida"
+              >
+                <optgroup label="Sólidos">
+                  <option value="gr">gr</option>
+                  <option value="Kg">Kg</option>
+                  <option value="mg">mg</option>
+                  <option value="oz">oz</option>
+                  <option value="lb">lb</option>
+                </optgroup>
+                <optgroup label="Líquidos">
+                  <option value="ml">ml</option>
+                  <option value="Lt">Lt</option>
+                  <option value="cl">cl</option>
+                  <option value="fl oz">fl oz</option>
+                </optgroup>
+                <optgroup label="Otros">
+                  <option value="cm">cm</option>
+                  <option value="m">m</option>
+                  <option value="ud">ud</option>
+                </optgroup>
+              </select>
+            </div>
           </div>
           <div class="form-group">
             <label class="form-label" for="ep-units-per-box">Uds. por caja</label>
@@ -326,12 +365,28 @@ const alertBack      = computed(() => resolveAlertBack(route.query, product.valu
 const backTo         = computed(() => alertBack.value?.to ?? detailPathWithQuery(route.params.id, route.query))
 const backLabel      = computed(() => alertBack.value?.label ?? 'Detalle')
 
+const SIZE_UNITS = ['gr', 'Kg', 'mg', 'oz', 'lb', 'ml', 'Lt', 'cl', 'fl oz', 'cm', 'm', 'ud']
+const sizeQty  = ref('')
+const sizeUnit = ref('gr')
+
+function parseSizeString(raw) {
+  if (!raw) return { qty: '', unit: 'gr' }
+  const match = String(raw).match(/^([\d.]+)\s*([a-zA-Z]+)$/)
+  if (!match) return { qty: raw, unit: 'gr' }
+  const unit = SIZE_UNITS.find(u => u.toLowerCase() === match[2].toLowerCase()) ?? 'gr'
+  return { qty: match[1], unit }
+}
+
 const form = reactive({
   name: '', size: '', unitsPerBox: 0,
   cost: 0, vatRate: '', margin: '', price: 0, discount: DEFAULT_PRESET,
   stock: 0, expiry: '', batch: '',
   bid: '', origin: '', category: '',
   alertDays: 30,
+})
+
+watch([sizeQty, sizeUnit], ([qty, unit]) => {
+  form.size = qty !== '' && qty !== null ? `${qty} ${unit}` : ''
 })
 
 const {
@@ -423,8 +478,10 @@ watch(product, p => {
     bid: p.bid || '', origin: p.origin || '', category: p.category || '',
     alertDays: p.alertDays || 30,
   })
+  const parsed = parseSizeString(p.size)
+  sizeQty.value  = parsed.qty
+  sizeUnit.value = parsed.unit
   initFromValue(p.discount)
-  // Si el producto ya tiene los tres valores, marcar como auto-calc para mostrar el badge
   priceIsAutoCalc.value = p.vatRate != null && p.margin != null
 }, { immediate: true })
 

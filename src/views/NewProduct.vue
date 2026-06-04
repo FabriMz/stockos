@@ -25,11 +25,30 @@
       <div class="form-section">
         <div class="form-group">
           <label class="form-label" for="np-sku">Código / SKU</label>
-          <input class="form-input" id="np-sku" name="np-sku" type="text" v-model="form.sku" placeholder="Ej. 160533BM" maxlength="15" />
+          <input
+            class="form-input"
+            :class="{ 'form-input--error': requiredErrors.sku }"
+            id="np-sku"
+            name="np-sku"
+            type="text"
+            v-model="form.sku"
+            placeholder="Ej. 160533BM"
+            maxlength="15"
+          />
+          <span v-if="requiredErrors.sku" class="form-hint form-hint--error" role="alert">{{ requiredErrors.sku }}</span>
         </div>
         <div class="form-group">
           <label class="form-label" for="np-name">Nombre del producto</label>
-          <input class="form-input" id="np-name" name="np-name" type="text" v-model="form.name" placeholder="Ej. Pesto Alla Genovese 190gr" />
+          <input
+            class="form-input"
+            :class="{ 'form-input--error': requiredErrors.name }"
+            id="np-name"
+            name="np-name"
+            type="text"
+            v-model="form.name"
+            placeholder="Ej. Pesto Alla Genovese 190gr"
+          />
+          <span v-if="requiredErrors.name" class="form-hint form-hint--error" role="alert">{{ requiredErrors.name }}</span>
         </div>
         <div class="form-row">
           <div class="form-group">
@@ -73,6 +92,7 @@
                 <i class="ti ti-x" aria-hidden="true"></i>
               </button>
             </div>
+            <span v-if="requiredErrors.bid" class="form-hint form-hint--error" role="alert">{{ requiredErrors.bid }}</span>
 
           </div>
           <div class="form-group">
@@ -83,7 +103,46 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label" for="np-size">Contenido</label>
-            <input class="form-input" id="np-size" name="np-size" type="text" v-model="form.size" placeholder="Ej. 190gr" />
+            <div class="size-field">
+              <input
+                class="form-input size-field__qty"
+                id="np-size"
+                name="np-size"
+                type="number"
+                v-model="sizeQty"
+                placeholder="Ej. 190"
+                inputmode="decimal"
+                min="0"
+                step="any"
+                aria-label="Cantidad de contenido"
+              />
+              <select
+                class="form-select size-field__unit-select"
+                id="np-size-unit"
+                name="np-size-unit"
+                v-model="sizeUnit"
+                aria-label="Unidad de medida"
+              >
+                <optgroup label="Sólidos">
+                  <option value="gr">gr</option>
+                  <option value="Kg">Kg</option>
+                  <option value="mg">mg</option>
+                  <option value="oz">oz</option>
+                  <option value="lb">lb</option>
+                </optgroup>
+                <optgroup label="Líquidos">
+                  <option value="ml">ml</option>
+                  <option value="Lt">Lt</option>
+                  <option value="cl">cl</option>
+                  <option value="fl oz">fl oz</option>
+                </optgroup>
+                <optgroup label="Otros">
+                  <option value="cm">cm</option>
+                  <option value="m">m</option>
+                  <option value="ud">ud</option>
+                </optgroup>
+              </select>
+            </div>
           </div>
           <div class="form-group">
             <label class="form-label" for="np-udscaja">Uds. por caja</label>
@@ -338,12 +397,19 @@ const store  = useProductsStore()
 
 const batchContext = route.query.batchNumber || null
 
+const sizeQty  = ref('')
+const sizeUnit = ref('gr')
+
 const form = reactive({
   sku: '', name: '', bid: route.query.bid || '', origin: '', size: '',
   category: '', cost: '', vatRate: '', margin: '', price: '', discount: DEFAULT_PRESET, unitsPerBox: '',
   expiry: '', batch: batchContext ?? '', stock: 0,
   ic: 'ti-box', bg: '#F0EAE4', col: '#791132', max: 100, img: '',
   alertDays: 30,
+})
+
+watch([sizeQty, sizeUnit], ([qty, unit]) => {
+  form.size = qty !== '' && qty !== null ? `${qty} ${unit}` : ''
 })
 
 // ─── Lógica de auto-cálculo del PVP ──────────────────────────────────────────
@@ -464,6 +530,12 @@ const {
   MAX_STOCK, MAX_UNITS_BOX, MAX_PRICE, MAX_VAT, MAX_MARGIN,
 } = useProductFieldValidation(form)
 
+const requiredErrors = reactive({ sku: null, name: null, bid: null })
+
+watch(() => form.sku,  () => { if (form.sku)  requiredErrors.sku  = null })
+watch(() => form.name, () => { if (form.name) requiredErrors.name = null })
+watch(() => form.bid,  () => { if (form.bid)  requiredErrors.bid  = null })
+
 const creatingCategory = ref(false)
 const newCategory      = ref('')
 const newCatInput      = ref(null)
@@ -540,10 +612,13 @@ function cancelNewCategory() {
 }
 
 const save = () => {
+  if (creatingBrand.value) confirmNewBrand()
   if (creatingCategory.value) confirmNewCategory()
   validateNumericFields()
-  if (!form.name || !form.bid) return
-  if (!batchContext && !form.sku) return
+  requiredErrors.sku  = (!batchContext && !form.sku)  ? 'Requerido' : null
+  requiredErrors.name = !form.name ? 'Requerido' : null
+  requiredErrors.bid  = !form.bid  ? 'Seleccioná una marca' : null
+  if (requiredErrors.sku || requiredErrors.name || requiredErrors.bid) return
   if (hasNumericErrors.value) return
   if (form.category && form.bid) store.addCategoryToBrand(form.bid, form.category)
   if (batchContext) {
