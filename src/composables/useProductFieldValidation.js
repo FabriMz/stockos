@@ -4,7 +4,7 @@ import { reactive, computed } from 'vue'
 const MAX_PRICE      = 99_999.99   // USD — precio / costo
 const MAX_UNITS_BOX  = 9_999       // Uds. por caja
 const MAX_STOCK      = 99_999      // Unidades en stock
-const MAX_VAT        = 99          // IVA máx. 2 dígitos enteros
+const MAX_VAT        = 30          // IVA máx. 30%
 const MAX_MARGIN     = 100         // Margen máx. 100%
 
 export function useProductFieldValidation(form) {

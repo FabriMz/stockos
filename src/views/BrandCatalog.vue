@@ -125,12 +125,30 @@
           </div>
         </template>
         <template v-else>
+          <template v-if="filteredBrands.length">
+            <BrandRow
+              v-for="brand in filteredBrands"
+              :key="brand.id"
+              :brand="brand"
+              :to="`/catalog/${brand.id}`"
+              :meta="`${getByBrand(brand.id).length} productos · ${brand.origin}`"
+              :stripe="brandStripe(brand.id)"
+            >
+              <template #badges>
+                <span v-if="hasOutOfStock(brand.id)" class="badge badge--out"><i class="ti ti-ban"></i>Sin stock</span>
+                <span v-if="hasLowStock(brand.id)" class="badge badge--low"><i class="ti ti-alert-circle"></i>Stock bajo</span>
+                <span v-if="hasExpiry(brand.id)" class="badge badge--venc"><i class="ti ti-clock"></i>Por vencer</span>
+              </template>
+            </BrandRow>
+          </template>
+
           <ProductCard
             v-for="p in filteredProducts"
             :key="p.id"
             :product="p"
           />
-          <p v-if="!filteredProducts.length" class="home__empty">
+
+          <p v-if="!filteredBrands.length && !filteredProducts.length" class="home__empty">
             Sin resultados para "{{ searchQuery.trim() }}"
           </p>
         </template>
@@ -1230,9 +1248,7 @@ const sortedBrandCat = computed(() =>
   })
 )
 
-const totalBrands = computed(() =>
-  sortedBrandCat.value.reduce((sum, { bids }) => sum + bids.length, 0)
-)
+const totalBrands = computed(() => store.brands.length)
 
 const uncategorizedBrands = computed(() => {
   const categorizedIds = new Set(catStore.categories.flatMap(c => c.brandIds))
@@ -1246,18 +1262,21 @@ const unbrandedProducts = computed(() =>
   store.products.filter(p => !p.bid || !store.getBrand(p.bid))
 )
 
+const filteredBrands = computed(() => {
+  const q = searchQuery.value.trim().toLowerCase()
+  if (!q) return []
+  return store.brands.filter(b => b.name.toLowerCase().includes(q))
+})
+
 const filteredProducts = computed(() => {
   const q = searchQuery.value.trim().toLowerCase()
   if (!q) return []
   const result = []
-  for (const cat of catStore.categories) {
-    for (const bid of cat.brandIds) {
-      const brand = getBrand(bid)
-      const brandMatches = brand?.name.toLowerCase().includes(q)
-      for (const p of getByBrand(bid)) {
-        if (brandMatches || p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q)) {
-          result.push(p)
-        }
+  for (const brand of store.brands) {
+    const brandMatches = brand.name.toLowerCase().includes(q)
+    for (const p of getByBrand(brand.id)) {
+      if (brandMatches || p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q)) {
+        result.push(p)
       }
     }
   }

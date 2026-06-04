@@ -42,6 +42,17 @@ export async function storageSet(key, value) {
   } catch { /* noop */ }
 }
 
+const _saveTimers = {}
+export function scheduleStorageSet(key, value, delay = 300) {
+  if (_saveTimers[key]) clearTimeout(_saveTimers[key])
+  _saveTimers[key] = setTimeout(async () => {
+    try {
+      await storageSet(key, value)
+    } catch { /* noop */ }
+    delete _saveTimers[key]
+  }, delay)
+}
+
 export async function storageRemove(key) {
   try {
     const Prefs = await getPreferences()

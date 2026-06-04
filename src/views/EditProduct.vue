@@ -100,7 +100,7 @@
             >
               <option value="" disabled>Seleccionar…</option>
               <option value="__sin_categoria__">Sin categoría</option>
-              <option v-for="c in catStore.sortedCategories" :key="c.id" :value="c.name">{{ c.name }}</option>
+              <option v-for="c in availableCategories" :key="c" :value="c">{{ c }}</option>
               <option value="__nueva__">+ Crear categoría…</option>
             </select>
             <div v-else class="discount-custom">
@@ -309,7 +309,6 @@
 import { computed, reactive, ref, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useProductsStore }  from '../stores/products.js'
-import { useBrandCategoriesStore } from '../stores/brandCategories.js'
 import { DEFAULT_PRESET } from '../stores/discounts.js'
 import { useDtoSelector }    from '../composables/useDtoSelector.js'
 import { detailPathWithQuery, resolveAlertBack } from '../composables/useAlertNavigation.js'
@@ -321,7 +320,6 @@ import StockAdjuster from '../components/ui/StockAdjuster.vue'
 const route   = useRoute()
 const router  = useRouter()
 const store          = useProductsStore()
-const catStore       = useBrandCategoriesStore()
 const product        = computed(() => store.getProduct(route.params.id))
 const isBatchContext = computed(() => route.query.from === 'batch')
 const alertBack      = computed(() => resolveAlertBack(route.query, product.value))
@@ -435,7 +433,8 @@ const newBrand      = ref('')
 const newBrandInput = ref(null)
 
 function _resetCategoryIfStale() {
-  if (form.category && !catStore.categories.some(c => c.name === form.category)) {
+  if (!form.category) return
+  if (!availableCategories.value.includes(form.category)) {
     form.category = ''
   }
 }
@@ -470,6 +469,10 @@ const creatingCategory = ref(false)
 const newCategory      = ref('')
 const newCatInput      = ref(null)
 
+const availableCategories = computed(() =>
+  form.bid ? store.getCategoriesForBrand(form.bid) : []
+)
+
 function onCategoryChange(e) {
   if (e.target.value === '__nueva__') {
     creatingCategory.value = true
@@ -479,13 +482,15 @@ function onCategoryChange(e) {
     form.category = ''
   } else {
     form.category = e.target.value
+    if (form.bid) store.addCategoryToBrand(form.bid, form.category)
   }
 }
 
 function confirmNewCategory() {
   const n = newCategory.value.trim()
   if (!n) return
-  catStore.addCategory(n)
+  store.addCategory(n)
+  if (form.bid) store.addCategoryToBrand(form.bid, n)
   form.category = n
   creatingCategory.value = false
   newCategory.value = ''
@@ -523,6 +528,7 @@ const save = () => {
   if (creatingBrand.value) confirmNewBrand()
   validateNumericFields()
   if (hasNumericErrors.value) return
+  if (form.category && form.bid) store.addCategoryToBrand(form.bid, form.category)
   store.editProduct(product.value.id, { ...form })
   store.setProductUpdated()
   router.push(detailPathWithQuery(product.value.id, route.query))

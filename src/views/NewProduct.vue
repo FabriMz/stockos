@@ -118,7 +118,7 @@
             >
               <option value="" disabled>Seleccionar…</option>
               <option value="__sin_categoria__">Sin categoría</option>
-              <option v-for="c in catStore.sortedCategories" :key="c.id" :value="c.name">{{ c.name }}</option>
+              <option v-for="c in availableCategories" :key="c" :value="c">{{ c }}</option>
               <option value="__nueva__">+ Crear categoría…</option>
             </select>
             <div v-else class="discount-custom">
@@ -326,7 +326,6 @@
 import { reactive, ref, computed, watch, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useProductsStore }  from '../stores/products.js'
-import { useBrandCategoriesStore } from '../stores/brandCategories.js'
 import { DEFAULT_PRESET } from '../stores/discounts.js'
 import { useDtoSelector }    from '../composables/useDtoSelector.js'
 import { useProductFieldValidation, sanitizeInteger, sanitizeOrigin } from '../composables/useProductFieldValidation.js'
@@ -336,7 +335,6 @@ import StockAdjuster from '../components/ui/StockAdjuster.vue'
 const router = useRouter()
 const route  = useRoute()
 const store  = useProductsStore()
-const catStore = useBrandCategoriesStore()
 
 const batchContext = route.query.batchNumber || null
 
@@ -474,8 +472,13 @@ const creatingBrand    = ref(false)
 const newBrand         = ref('')
 const newBrandInput    = ref(null)
 
+const availableCategories = computed(() =>
+  form.bid ? store.getCategoriesForBrand(form.bid) : []
+)
+
 function _resetCategoryIfStale() {
-  if (form.category && !catStore.categories.some(c => c.name === form.category)) {
+  if (!form.category) return
+  if (!availableCategories.value.includes(form.category)) {
     form.category = ''
   }
 }
@@ -516,13 +519,15 @@ function onCategoryChange(e) {
     form.category = ''
   } else {
     form.category = e.target.value
+    if (form.bid) store.addCategoryToBrand(form.bid, form.category)
   }
 }
 
 function confirmNewCategory() {
   const n = newCategory.value.trim()
   if (!n) return
-  catStore.addCategory(n)
+  store.addCategory(n)
+  if (form.bid) store.addCategoryToBrand(form.bid, n)
   form.category = n
   creatingCategory.value = false
   newCategory.value = ''
@@ -540,6 +545,7 @@ const save = () => {
   if (!form.name || !form.bid) return
   if (!batchContext && !form.sku) return
   if (hasNumericErrors.value) return
+  if (form.category && form.bid) store.addCategoryToBrand(form.bid, form.category)
   if (batchContext) {
     store.addProductToBatch({ ...form }, batchContext)
     router.push(`/catalog/batch/${encodeURIComponent(batchContext)}/${form.bid}`)

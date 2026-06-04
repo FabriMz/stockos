@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
-import { storageGet, storageSet, storageRemove } from '../utils/storage.js'
+import { storageGet, scheduleStorageSet, storageRemove } from '../utils/storage.js'
 
 const ORDERS_KEY     = 'stockos_orders_v2'
 const ORDERS_KEY_OLD = 'stockos_orders'
@@ -43,9 +43,9 @@ export const useOrdersStore = defineStore('orders', () => {
 
   _init()
 
-  watch(orders, async (val) => {
+  watch(orders, (val) => {
     if (!_ready.value) return
-    await storageSet(ORDERS_KEY, JSON.stringify({ orders: val, _seeded: true }))
+    scheduleStorageSet(ORDERS_KEY, JSON.stringify({ orders: val, _seeded: true }))
   }, { deep: true })
 
   const activeOrders = computed(() => orders.value.filter(p => p.active))

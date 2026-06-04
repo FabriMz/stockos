@@ -18,22 +18,23 @@ export function useAlerts(products, brands) {
   const hasAlert     = p => isOutOfStock(p) || isLowStock(p) || isExpiring(p)
   const stockColor   = p => isOutOfStock(p) ? '#791132' : isLowStock(p) ? '#90542f' : '#2D8A5F'
 
-  const _getProduct  = id => products.value.find(p => p.id === Number(id))
-
-  // ─── Computeds de alertas ────────────────────────────────────────────────────
   const alerts           = computed(() => products.value.filter(hasAlert))
   const outOfStockAlerts = computed(() => products.value.filter(isOutOfStock))
   const lowStockAlerts   = computed(() => products.value.filter(isLowStock))
   const expiryAlerts     = computed(() => products.value.filter(isExpiring))
 
+  const alertProductIds = computed(() => new Set(alerts.value.map(p => p.id)))
+  const outOfStockIds   = computed(() => new Set(outOfStockAlerts.value.map(p => p.id)))
+  const lowStockIds     = computed(() => new Set(lowStockAlerts.value.map(p => p.id)))
+
   const alertBrands = computed(() =>
-    brands.value.filter(b => b.prods.some(id => hasAlert(_getProduct(id))))
+    brands.value.filter(b => b.prods.some(id => alertProductIds.value.has(Number(id))))
   )
   const outOfStockBrands = computed(() =>
-    brands.value.filter(b => b.prods.some(id => isOutOfStock(_getProduct(id))))
+    brands.value.filter(b => b.prods.some(id => outOfStockIds.value.has(Number(id))))
   )
   const lowStockBrands = computed(() =>
-    brands.value.filter(b => b.prods.some(id => isLowStock(_getProduct(id))))
+    brands.value.filter(b => b.prods.some(id => lowStockIds.value.has(Number(id))))
   )
 
   // ─── Árbol de vencimientos ───────────────────────────────────────────────────

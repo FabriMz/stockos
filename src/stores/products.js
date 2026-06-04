@@ -5,7 +5,7 @@ import { productsData }       from '../data/products.js'
 import { useUndo }            from '../composables/useUndo.js'
 import { useAlerts }          from '../composables/useAlerts.js'
 import { useCategoriesStore } from './categories.js'
-import { storageGet, storageSet, storageRemove } from '../utils/storage.js'
+import { storageGet, scheduleStorageSet, storageRemove } from '../utils/storage.js'
 
 const STORAGE_KEY     = 'stockos_v2'
 const STORAGE_KEY_OLD = 'stockos_v1'
@@ -17,9 +17,9 @@ function getDefaultCatalogExpiry() {
   return `${year}-${month}`
 }
 
-async function saveState(products, brands, catalogExpiry, batches, batchFoldersMeta, brandProductCategories) {
+function saveState(products, brands, catalogExpiry, batches, batchFoldersMeta, brandProductCategories) {
   try {
-    await storageSet(STORAGE_KEY, JSON.stringify({
+    scheduleStorageSet(STORAGE_KEY, JSON.stringify({
       products, brands, catalogExpiry, batches,
       batchFoldersMeta, brandProductCategories,
       _seeded: true,

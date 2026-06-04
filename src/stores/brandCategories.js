@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
 import { useUndo } from '../composables/useUndo.js'
 import { brandCategories as SEED } from '../data/brandCategories.js'
-import { storageGet, storageSet } from '../utils/storage.js'
+import { storageGet, scheduleStorageSet } from '../utils/storage.js'
 
 const LS_KEY = 'stockos_brand_categories'
 
@@ -41,9 +41,9 @@ export const useBrandCategoriesStore = defineStore('brandCategories', () => {
 
   _init()
 
-  watch(categories, async (val) => {
+  watch(categories, (val) => {
     if (!_ready.value) return
-    await storageSet(LS_KEY, JSON.stringify(val))
+    scheduleStorageSet(LS_KEY, JSON.stringify(val))
   }, { deep: true })
 
   const sortedCategories = computed(() =>
