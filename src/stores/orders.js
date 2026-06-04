@@ -1,73 +1,54 @@
 import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
+import { storageGet, storageSet } from '../utils/storage.js'
 
-const LEGACY_KEY = 'stockos_pedidos'
-const ORDERS_KEY = 'stockos_orders'
-
-function migrateStorage() {
-  try {
-    const legacy = localStorage.getItem(LEGACY_KEY)
-    if (legacy && !localStorage.getItem(ORDERS_KEY)) {
-      localStorage.setItem(ORDERS_KEY, legacy)
-    }
-    localStorage.removeItem(LEGACY_KEY)
-  } catch { /* noop */ }
-}
-
-function migrateOrderKeys() {
-  try {
-    const raw = localStorage.getItem(ORDERS_KEY)
-    if (!raw) return
-    const parsed = JSON.parse(raw)
-    const orders = Array.isArray(parsed) ? parsed : parsed?.orders
-    if (!Array.isArray(orders)) return
-    const needsMigration = orders.some(o => 'nombre' in o || 'estado' in o || 'monto' in o || 'enCurso' in o)
-    if (!needsMigration) {
-      if (Array.isArray(parsed)) {
-        localStorage.setItem(ORDERS_KEY, JSON.stringify({ orders: parsed, _seeded: true }))
-      }
-      return
-    }
-    const migrated = orders.map(o => ({
-      ...o,
-      ...(('nombre'  in o) && { name:   o.nombre,   nombre:   undefined }),
-      ...(('estado'  in o) && { status: o.estado,   estado:   undefined }),
-      ...(('monto'   in o) && { amount: o.monto,    monto:    undefined }),
-      ...(('enCurso' in o) && { active: o.enCurso,  enCurso:  undefined }),
-    })).map(o => Object.fromEntries(Object.entries(o).filter(([, v]) => v !== undefined)))
-    localStorage.setItem(ORDERS_KEY, JSON.stringify({ orders: migrated, _seeded: true }))
-  } catch { /* noop */ }
-}
-
-migrateStorage()
-migrateOrderKeys()
+const ORDERS_KEY = 'stockos_orders_v2'
+const ORDERS_KEY_OLD = 'stockos_orders'
 
 export const useOrdersStore = defineStore('orders', () => {
 
-  const ordersSeed = [
-    { id: 1, name: 'Polli — Reposición salsas',  ref: 'PO-2025-031', status: 'enviado hace 2 días', amount: 4820,  color: '#C07828', active: true  },
-    { id: 2, name: 'Baqué — Cápsulas y molidos', ref: 'PO-2025-032', status: 'en preparación',       amount: 6340,  color: '#791132', active: true  },
-    { id: 3, name: 'Borges — Aceites EVOO',       ref: 'PO-2025-028', status: 'recibido 3 may.',      amount: 9619,  color: '#2D8A5F', active: false },
-    { id: 4, name: 'Kaiserdom — Cervezas lata',   ref: 'PO-2025-027', status: 'recibido 28 abr.',     amount: 5318,  color: '#2D8A5F', active: false },
-    { id: 5, name: 'Botran — Rones Guatemala',    ref: 'PO-2025-026', status: 'recibido 20 abr.',     amount: 41820, color: '#2D8A5F', active: false },
-  ]
+  const orders = ref([])
+  const _ready = ref(false)
 
-  function loadOrders() {
+  async function _init() {
     try {
-      const raw = localStorage.getItem(ORDERS_KEY)
-      if (!raw) return ordersSeed
-      const parsed = JSON.parse(raw)
-      return parsed._seeded ? parsed.orders : ordersSeed
-    } catch {
-      return ordersSeed
+      // Migrar datos viejos de localStorage si existen
+      const { storageGet: _get } = await import('../utils/storage.js')
+      const rawOld = await _get(ORDERS_KEY_OLD)
+      if (rawOld) {
+        const parsed = JSON.parse(rawOld)
+        const list = Array.isArray(parsed) ? parsed : (parsed?.orders ?? [])
+        const migrated = list.map(o => ({
+          id:     o.id,
+          name:   o.name   ?? o.nombre  ?? '',
+          ref:    o.ref    ?? '',
+          status: o.status ?? o.estado  ?? '',
+          amount: o.amount ?? o.monto   ?? 0,
+          color:  o.color  ?? '#C07828',
+          active: o.active ?? o.enCurso ?? false,
+        }))
+        await storageSet(ORDERS_KEY, JSON.stringify({ orders: migrated, _seeded: true }))
+        // Intentar limpiar la clave vieja (solo funciona en localStorage)
+        try { localStorage.removeItem(ORDERS_KEY_OLD) } catch {}
+        orders.value = migrated
+        return
+      }
+      const raw = await storageGet(ORDERS_KEY)
+      if (raw) {
+        const parsed = JSON.parse(raw)
+        orders.value = parsed._seeded ? (parsed.orders ?? []) : []
+      }
+    } catch { /* noop */ } finally {
+      _ready.value = true
     }
   }
 
-  const orders = ref(loadOrders())
+  _init()
 
-  watch(orders, (val) => {
-    localStorage.setItem(ORDERS_KEY, JSON.stringify({ orders: val, _seeded: true }))
-  }, { deep: true, immediate: true })
+  watch(orders, async (val) => {
+    if (!_ready.value) return
+    await storageSet(ORDERS_KEY, JSON.stringify({ orders: val, _seeded: true }))
+  }, { deep: true })
 
   const activeOrders = computed(() => orders.value.filter(p => p.active))
   const orderHistory = computed(() => orders.value.filter(p => !p.active))

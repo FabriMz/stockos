@@ -5,16 +5,10 @@ import { productsData }       from '../data/products.js'
 import { useUndo }            from '../composables/useUndo.js'
 import { useAlerts }          from '../composables/useAlerts.js'
 import { useCategoriesStore } from './categories.js'
+import { storageGet, storageSet, storageRemove } from '../utils/storage.js'
 
-const STORAGE_KEY = 'stockos_v1'
-
-function loadState() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (raw) return JSON.parse(raw)
-  } catch {}
-  return null
-}
+const STORAGE_KEY     = 'stockos_v2'
+const STORAGE_KEY_OLD = 'stockos_v1'
 
 function getDefaultCatalogExpiry() {
   const date = new Date()
@@ -23,10 +17,14 @@ function getDefaultCatalogExpiry() {
   return `${year}-${month}`
 }
 
-function saveState(products, brands, catalogExpiry, batches, batchFoldersMeta, brandProductCategories) {
+async function saveState(products, brands, catalogExpiry, batches, batchFoldersMeta, brandProductCategories) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ products, brands, catalogExpiry, batches, batchFoldersMeta, brandProductCategories, _seeded: true }))
-  } catch {}
+    await storageSet(STORAGE_KEY, JSON.stringify({
+      products, brands, catalogExpiry, batches,
+      batchFoldersMeta, brandProductCategories,
+      _seeded: true,
+    }))
+  } catch { /* noop */ }
 }
 
 function deriveBatchFoldersMeta(batches) {
@@ -55,29 +53,49 @@ function migrateBatchFoldersMeta(raw) {
 export const useProductsStore = defineStore('products', () => {
 
   // ─── Estado ──────────────────────────────────────────────────────────────────
-  const saved          = loadState()
-  const brands         = ref(saved?._seeded ? saved.brands : brandsData)
-  const products       = ref(saved?._seeded ? saved.products : productsData)
-  const catalogExpiry  = ref(saved?._seeded && typeof saved.catalogExpiry === 'string'
-    ? saved.catalogExpiry
-    : getDefaultCatalogExpiry())
-  const batches          = ref(saved?._seeded && Array.isArray(saved.batches) ? saved.batches : [])
-  const batchFoldersMeta = ref(
-    saved?._seeded && Array.isArray(saved.batchFoldersMeta)
-      ? migrateBatchFoldersMeta(saved.batchFoldersMeta)
-      : (saved?._seeded && Array.isArray(saved.batches) ? deriveBatchFoldersMeta(saved.batches) : [])
-  )
+  const brands                 = ref(brandsData)
+  const products               = ref(productsData)
+  const catalogExpiry          = ref(getDefaultCatalogExpiry())
+  const batches                = ref([])
+  const batchFoldersMeta       = ref([])
+  const brandProductCategories = ref({})
 
-  // brandProductCategories: { [brandId]: string[] }
-  const brandProductCategories = ref(
-    saved?._seeded && saved.brandProductCategories
-      ? saved.brandProductCategories
-      : {}
-  )
+  // Señal que indica si el store ya cargó desde el storage nativo
+  const _ready = ref(false)
+
+  // ─── Init async ──────────────────────────────────────────────────────────────
+  async function _init() {
+    try {
+      await storageRemove(STORAGE_KEY_OLD)
+      const raw = await storageGet(STORAGE_KEY)
+      if (raw) {
+        const saved = JSON.parse(raw)
+        if (saved?._seeded) {
+          brands.value                 = saved.brands                 ?? []
+          products.value               = saved.products               ?? []
+          catalogExpiry.value          = typeof saved.catalogExpiry === 'string'
+            ? saved.catalogExpiry
+            : getDefaultCatalogExpiry()
+          batches.value                = Array.isArray(saved.batches) ? saved.batches : []
+          batchFoldersMeta.value       = Array.isArray(saved.batchFoldersMeta)
+            ? migrateBatchFoldersMeta(saved.batchFoldersMeta)
+            : (Array.isArray(saved.batches) ? deriveBatchFoldersMeta(saved.batches) : [])
+          brandProductCategories.value = saved.brandProductCategories ?? {}
+        }
+      }
+    } catch { /* noop */ } finally {
+      _ready.value = true
+    }
+  }
+
+  _init()
 
   watch(
     [products, brands, catalogExpiry, batches, batchFoldersMeta, brandProductCategories],
-    () => saveState(products.value, brands.value, catalogExpiry.value, batches.value, batchFoldersMeta.value, brandProductCategories.value),
+    () => {
+      if (!_ready.value) return
+      saveState(products.value, brands.value, catalogExpiry.value, batches.value, batchFoldersMeta.value, brandProductCategories.value)
+    },
     { deep: true }
   )
 
@@ -226,7 +244,7 @@ export const useProductsStore = defineStore('products', () => {
   }
 
   function addProduct(prod) {
-    const newId = Math.max(...products.value.map(p => p.id)) + 1
+    const newId = Math.max(0, ...products.value.map(p => p.id)) + 1
     products.value.push({ ...prod, id: newId })
     const brand = brands.value.find(b => b.id === prod.bid)
     if (brand) brand.prods.push(newId)
@@ -562,6 +580,7 @@ export const useProductsStore = defineStore('products', () => {
 
   return {
     // Estado
+    _ready,
     brands, products, catalogExpiry, batches, batchFoldersMeta,
     // Getters
     getBrand, getProduct, getByBrand,
