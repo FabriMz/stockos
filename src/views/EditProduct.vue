@@ -5,9 +5,31 @@
     <div class="scroll-content">
 
       <div class="form-view__preview">
-        <div class="form-view__preview-icon" :style="{ background: product.bg }">
-          <img v-if="product.img" :src="product.img" :alt="product.name" class="form-view__preview-img">
-          <i v-else :class="`ti ${product.ic}`" :style="{ color: product.col }" aria-hidden="true"></i>
+        <div class="form-view__photo-picker">
+          <input
+            ref="photoInput"
+            id="ep-photo"
+            name="ep-photo"
+            type="file"
+            accept="image/*"
+            capture="environment"
+            class="form-view__photo-input"
+            aria-label="Tomar foto del producto"
+            @change="onPhotoChange"
+          />
+          <label for="ep-photo" class="form-view__photo-trigger">
+            <img v-if="form.img" :src="form.img" :alt="product.name" class="form-view__photo-img" />
+            <i v-else class="ti ti-camera" aria-hidden="true"></i>
+          </label>
+          <button
+            v-if="form.img"
+            type="button"
+            class="form-view__photo-remove"
+            aria-label="Quitar imagen"
+            @click="removePhoto"
+          >
+            <i class="ti ti-x" aria-hidden="true"></i>
+          </button>
         </div>
         <div class="form-view__preview-name">{{ product.name }}</div>
         <StockBadge :product="product" />
@@ -383,6 +405,7 @@ const form = reactive({
   stock: 0, expiry: '', batch: '',
   bid: '', origin: '', category: '',
   alertDays: 30,
+  img: '',
 })
 
 watch([sizeQty, sizeUnit], ([qty, unit]) => {
@@ -477,6 +500,7 @@ watch(product, p => {
     stock: p.stock, expiry: p.expiry || '', batch: p.batch || '',
     bid: p.bid || '', origin: p.origin || '', category: p.category || '',
     alertDays: p.alertDays || 30,
+    img: p.img || '',
   })
   const parsed = parseSizeString(p.size)
   sizeQty.value  = parsed.qty
@@ -484,6 +508,20 @@ watch(product, p => {
   initFromValue(p.discount)
   priceIsAutoCalc.value = p.vatRate != null && p.margin != null
 }, { immediate: true })
+
+// ─── Photo ────────────────────────────────────────────────────────────────────
+const photoInput = ref(null)
+function onPhotoChange(e) {
+  const file = e.target.files?.[0]
+  if (!file) return
+  const reader = new FileReader()
+  reader.onload = ev => { form.img = ev.target.result }
+  reader.readAsDataURL(file)
+}
+function removePhoto() {
+  form.img = ''
+  if (photoInput.value) photoInput.value.value = ''
+}
 
 const creatingBrand = ref(false)
 const newBrand      = ref('')
