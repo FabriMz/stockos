@@ -1,21 +1,21 @@
 import { ref, computed } from 'vue'
-import { useDiscountsStore } from '../stores/discounts.js'
-import { DEFAULT_PRESET }    from '../stores/discounts.js'
+import { DEFAULT_PRESET } from '../stores/discounts.js'
 
 export function useDtoSelector(form) {
-  const discountsStore      = useDiscountsStore()
-  const discountMode        = ref('preset')
+  const discountMode        = ref('none')
   const customDiscountValue = ref('')
 
-  const discountSelectValue = computed(() => discountMode.value === 'custom' ? 'custom' : form.discount)
+  const discountSelectValue = computed(() => discountMode.value === 'custom' ? 'custom' : 'none')
 
   function initFromValue(val) {
     const discount = val || DEFAULT_PRESET
-    if (discountsStore.discounts.includes(discount)) {
-      discountMode.value = 'preset'
+    const num = parseFloat(discount)
+    if (!discount || discount === '0' || isNaN(num) || num === 0) {
+      discountMode.value = 'none'
+      customDiscountValue.value = ''
     } else {
       discountMode.value        = 'custom'
-      customDiscountValue.value = discount
+      customDiscountValue.value = String(num)
     }
   }
 
@@ -25,31 +25,29 @@ export function useDtoSelector(form) {
       customDiscountValue.value = ''
       form.discount             = ''
     } else {
-      discountMode.value = 'preset'
-      form.discount      = e.target.value
+      discountMode.value = 'none'
+      form.discount      = '0'
     }
   }
 
   function onCustomDiscountInput(e) {
-    // Allow only digits and a single decimal point; strip everything else
     let raw = e.target.value.replace(/[^0-9.]/g, '')
 
-    // Remove extra dots (keep only the first one)
     const dotIndex = raw.indexOf('.')
     if (dotIndex !== -1) {
       raw = raw.slice(0, dotIndex + 1) + raw.slice(dotIndex + 1).replace(/\./g, '')
+      if (raw.length > dotIndex + 2) {
+        raw = raw.slice(0, dotIndex + 2)
+      }
     }
 
-    // Strip leading zeros before a digit (e.g. "010" → "10"), but allow "0." for decimals
     raw = raw.replace(/^0+(\d)/, '$1')
 
-    // Clamp to 100 if the numeric value exceeds it
     const num = parseFloat(raw)
     if (!isNaN(num) && num > 100) {
       raw = '100'
     }
 
-    // Sync the displayed value and the form only if valid
     customDiscountValue.value = raw
     e.target.value = raw
     const parsed = parseFloat(raw)
@@ -65,13 +63,14 @@ export function useDtoSelector(form) {
       customDiscountValue.value = '100'
       form.discount             = '100'
     } else {
-      customDiscountValue.value = String(num)
-      form.discount             = String(num)
+      const rounded = Math.round(num * 10) / 10
+      customDiscountValue.value = String(rounded)
+      form.discount             = String(rounded)
     }
   }
 
   function resetDiscountToPreset() {
-    discountMode.value        = 'preset'
+    discountMode.value        = 'none'
     form.discount             = DEFAULT_PRESET
     customDiscountValue.value = ''
   }

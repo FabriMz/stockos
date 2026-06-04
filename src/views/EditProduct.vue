@@ -56,7 +56,7 @@
                 <i class="ti ti-x" aria-hidden="true"></i>
               </button>
             </div>
-            <span v-if="creatingBrand" class="form-hint">Enter para confirmar, Esc para cancelar</span>
+
           </div>
           <div class="form-group">
             <label class="form-label" for="ep-origin">Origen</label>
@@ -179,8 +179,8 @@
               :value="discountSelectValue"
               @change="onDiscountAndCalc"
             >
-              <option v-for="d in discountsStore.sortedDiscounts" :key="d" :value="d">{{ d }}%</option>
-              <option value="custom">Personalizado…</option>
+              <option value="none">Sin descuento</option>
+              <option value="custom">Personalizado</option>
             </select>
             <div v-else class="discount-custom">
               <input
@@ -310,7 +310,7 @@
 import { computed, reactive, ref, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useProductsStore }  from '../stores/products.js'
-import { useDiscountsStore, DEFAULT_PRESET } from '../stores/discounts.js'
+import { DEFAULT_PRESET } from '../stores/discounts.js'
 import { useDtoSelector }    from '../composables/useDtoSelector.js'
 import { detailPathWithQuery, resolveAlertBack } from '../composables/useAlertNavigation.js'
 import { useProductFieldValidation } from '../composables/useProductFieldValidation.js'
@@ -321,7 +321,6 @@ import StockAdjuster from '../components/ui/StockAdjuster.vue'
 const route   = useRoute()
 const router  = useRouter()
 const store          = useProductsStore()
-const discountsStore = useDiscountsStore()
 const product        = computed(() => store.getProduct(route.params.id))
 const isBatchContext = computed(() => route.query.from === 'batch')
 const alertBack      = computed(() => resolveAlertBack(route.query, product.value))

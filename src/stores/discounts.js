@@ -4,15 +4,14 @@ import { useUndo } from '../composables/useUndo.js'
 
 const DISCOUNTS_KEY = 'stockos_discounts'
 
-const DEFAULT_DISCOUNTS = ['26', '26+5']
-const DEFAULT_PRESET    = '26'
+const DEFAULT_PRESET = '0'
 
 function loadDiscounts() {
   try {
     const raw = localStorage.getItem(DISCOUNTS_KEY)
     if (raw !== null) return JSON.parse(raw)
   } catch { /* noop */ }
-  return [...DEFAULT_DISCOUNTS]
+  return []
 }
 
 function saveDiscounts(discounts) {
