@@ -16,6 +16,14 @@
           <div class="brand-summary__name">{{ brand.name }} · {{ brand.origin }}</div>
           <div class="brand-summary__meta">{{ products.length }} productos</div>
         </div>
+        <button
+          class="brand-summary__add-btn"
+          type="button"
+          aria-label="Nuevo producto"
+          @click="goNewProduct"
+        >
+          <i class="ti ti-plus" aria-hidden="true"></i>
+        </button>
       </div>
 
       <!-- Buscador dentro de la marca -->
@@ -476,6 +484,15 @@ const catOpen  = useProductCatOpenStore()
 
 const brand    = computed(() => store.getBrand(route.params.brandId))
 const products = computed(() => store.getByBrand(route.params.brandId))
+
+// ─── Nuevo producto directo a esta marca ──────────────────────────────────────
+
+function goNewProduct() {
+  router.push({
+    path : '/product/new',
+    query: { bid: route.params.brandId },
+  })
+}
 
 const searchQuery = ref('')
 
