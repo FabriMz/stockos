@@ -67,13 +67,6 @@
           color="blue"
         />
         <StatCard
-          label="LISTA"
-          :value="catalogExpiryLabel"
-          :sub="catalogExpirySub"
-          color="success"
-          value-class="stat-card__value--sm"
-        />
-        <StatCard
           label="EN STOCK"
           :value="inStock"
           :sub="`de ${totalProds} cargados`"
@@ -81,11 +74,14 @@
           :value-class="inStock === 0 ? 'stat-card__value--danger' : ''"
         />
         <StatCard
-          label="TOTAL ALERTAS"
-          :value="alerts.length"
-          sub="acción requerida"
-          color="danger"
-          value-class="stat-card__value--danger"
+          label="LISTA ACTIVA"
+          :value="catalogExpiryLabel"
+          :sub="catalogExpirySub"
+          color="success"
+          value-class="stat-card__value--sm"
+          :full="true"
+          badge="Vigente"
+          badge-icon="ri-calendar-check-line"
         />
       </div>
 
@@ -99,7 +95,9 @@
         @click="$router.push('/alerts/out-of-stock')"
         @keydown.enter="$router.push('/alerts/out-of-stock')"
       >
-        <span class="home__alert-dot home__alert-dot--out" aria-hidden="true"></span>
+        <span class="home__alert-icon home__alert-icon--out" aria-hidden="true">
+          <i class="ri-box-3-line"></i>
+        </span>
         <div class="home__alert-info">
           <span class="home__alert-type">Sin stock</span>
           <span class="home__alert-name">
@@ -124,7 +122,9 @@
         @click="$router.push('/alerts/low-stock')"
         @keydown.enter="$router.push('/alerts/low-stock')"
       >
-        <span class="home__alert-dot home__alert-dot--low" aria-hidden="true"></span>
+        <span class="home__alert-icon home__alert-icon--low" aria-hidden="true">
+          <i class="ri-arrow-down-line"></i>
+        </span>
         <div class="home__alert-info">
           <span class="home__alert-type">Stock bajo</span>
           <span class="home__alert-name">
@@ -149,7 +149,9 @@
         @click="$router.push('/alerts/expiry')"
         @keydown.enter="$router.push('/alerts/expiry')"
       >
-        <span class="home__alert-dot home__alert-dot--expiry" aria-hidden="true"></span>
+        <span class="home__alert-icon home__alert-icon--expiry" aria-hidden="true">
+          <i class="ri-time-line"></i>
+        </span>
         <div class="home__alert-info">
           <span class="home__alert-type">Vencimiento</span>
           <span class="home__alert-name">
@@ -191,13 +193,13 @@ const alerts     = computed(() => store.alerts)
 const totalProds = computed(() => store.products.length)
 const inStock    = computed(() => store.products.filter(p => p.stock > 0).length)
 
-const outOfStockCount      = computed(() => store.outOfStockAlerts.length)
+const outOfStockCount       = computed(() => store.outOfStockAlerts.length)
 const outOfStockBrandsCount = computed(() => store.outOfStockBrands.length)
-const lowStockCount        = computed(() => store.lowStockAlerts.length)
+const lowStockCount         = computed(() => store.lowStockAlerts.length)
 const lowStockBrandsCount   = computed(() => store.lowStockBrands.length)
-const expiryCount          = computed(() => store.expiryAlerts.length)
-const expiryBrandsCount    = computed(() => new Set(store.expiryAlerts.map(p => p.bid)).size)
-const catalogExpiryLabel   = computed(() => {
+const expiryCount           = computed(() => store.expiryAlerts.length)
+const expiryBrandsCount     = computed(() => new Set(store.expiryAlerts.map(p => p.bid)).size)
+const catalogExpiryLabel    = computed(() => {
   const [year, month] = String(store.catalogExpiry || '').split('-')
   if (!year || !month) return 'Sin fecha'
   return `${monthLabel(Number(month))} ${year}`
@@ -206,7 +208,7 @@ const catalogExpirySub = computed(() => {
   const [year, month] = String(store.catalogExpiry || '').split('-')
   if (!year || !month) return 'Configurar en ajustes'
   const dtos = discountsStore.discounts
-  return dtos.length ? `Dto. ${dtos.map(d => `${d}%`).join(' / ')}` : 'Sin descuentos'
+  return dtos.length ? `Dto. ${dtos.map(d => `${d}%`).join(' / ')}` : 'Sin descuentos activos'
 })
 
 const searchQuery   = ref('')

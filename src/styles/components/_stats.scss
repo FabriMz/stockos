@@ -11,6 +11,17 @@
   @include card-base;
   padding: $spacing-3 $spacing-4;
 
+  // ─── Variante full-width (ocupa las dos columnas del grid) ────────────────
+  &--full {
+    grid-column: 1 / -1;
+    @include flex-row(0, center, space-between);
+  }
+
+  &__main {
+    flex: 1;
+    min-width: 0;
+  }
+
   &__label {
     @include font-mono($font-size-xs);
     color: $color-text-secondary;
@@ -42,5 +53,23 @@
     &--warning { background: $color-warning; }
     &--danger  { background: $color-danger; }
     &--primary { background: $color-primary; }
+  }
+
+  // ─── Badge inline (ej: "Vigente") ─────────────────────────────────────────
+  &__badge {
+    @include flex-row($spacing-1, center);
+    @include font-mono($font-size-xs, $font-weight-medium);
+    flex-shrink: 0;
+    padding: $spacing-2 $spacing-3;
+    border-radius: $radius-md;
+    background: $color-neumorph-base;
+    box-shadow: $shadow-neumorph-raised;
+    color: $color-text-secondary;
+    margin-left: $spacing-4;
+
+    i {
+      font-size: $icon-xs;
+      color: $color-success;
+    }
   }
 }

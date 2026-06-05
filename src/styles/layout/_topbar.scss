@@ -1,8 +1,8 @@
 @use '../abstracts' as *;
 
 .topbar {
-  background: $color-bg-primary;
-  border-bottom: $border;
+  background: $color-neumorph-base;
+  box-shadow : 0 2px 8px $color-neumorph-dark, 0 -1px 0 $color-neumorph-light;
   flex-shrink: 0;
 
   &--simple {
@@ -137,17 +137,18 @@
     @include tap-target;
     padding: 0 $spacing-3 0 $spacing-2;
     border-radius: $radius-md;
-    background: $color-bg-secondary;
+    background: $color-neumorph-base;
+    box-shadow: $shadow-neumorph-raised;
     font-size: $font-size-base;
     font-weight: $font-weight-medium;
     color: $color-text-primary;
     min-height: $btn-height-sm;
     height: auto;
     align-self: center;
-    transition: background $transition-fast;
+    transition: box-shadow $transition-fast;
 
     &:active {
-      background: $color-cream-200;
+      box-shadow: $shadow-neumorph-pressed;
     }
 
     i {
@@ -158,7 +159,8 @@
 
   &__search {
     @include flex-row($spacing-2);
-    background: $color-bg-tertiary;
+    background: $color-neumorph-base;
+    box-shadow: $shadow-neumorph-inset;
     border-radius: $radius-md;
     padding: $spacing-6 $spacing-4;
     height: 34px;
@@ -194,10 +196,11 @@
     width: $avatar-size-sm + 2px;
     height: $avatar-size-sm + 2px;
     border-radius: $radius-full;
-    background: $color-primary-100;
+    background: $color-neumorph-base;
+    box-shadow: $shadow-neumorph-raised;
     @include flex-center;
     @include font-mono($font-size-xs, $font-weight-semibold);
-    color: $color-primary-900;
+    color: $color-primary;
     cursor: pointer;
     flex-shrink: 0;
   }
@@ -210,23 +213,23 @@
     height: 6px;
     border-radius: $radius-full;
     background: $color-danger;
-    border: 1.5px solid $color-bg-primary;
+    border: 1.5px solid $color-neumorph-base;
   }
 
   &__currency {
     @include font-mono($font-size-xs, $font-weight-medium);
     color: $color-primary;
-    background: $color-primary-50;
-    border: $border-width solid $color-primary-100;
+    background: $color-neumorph-base;
+    box-shadow: $shadow-neumorph-flat;
     border-radius: $radius-sm;
     padding: 1px $spacing-2;
     cursor: pointer;
     margin-left: $spacing-2;
-    transition: background $transition-fast;
+    transition: box-shadow $transition-fast;
     vertical-align: middle;
 
     &:active {
-      background: $color-primary-100;
+      box-shadow: $shadow-neumorph-pressed;
     }
   }
 
@@ -254,7 +257,7 @@
 
   &--active-danger {
     color: $color-danger;
-    background: $color-danger-bg;
+    box-shadow: $shadow-neumorph-inset;
   }
 }
 
@@ -268,10 +271,11 @@
   font-family: $font-body;
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
-  transition: background $transition-fast;
+  box-shadow: 3px 3px 8px rgba(192, 57, 43, 0.35), -1px -1px 4px rgba(255,255,255,0.4);
+  transition: box-shadow $transition-fast;
 
   &:active {
-    background: $color-primary-700;
+    box-shadow: inset 2px 2px 5px rgba(0,0,0,0.25), inset -1px -1px 3px rgba(255,255,255,0.15);
   }
 
   i {

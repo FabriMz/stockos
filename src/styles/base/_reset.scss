@@ -21,7 +21,7 @@ body {
   font-family: $font-body;
   font-size: $font-size-base;
   color: $color-text-primary;
-  background: $color-bg-tertiary;
+  background: $color-neumorph-base;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -50,7 +50,7 @@ a {
   align-items: center;
   justify-content: center;
   min-height: 100dvh;
-  background: $color-cream-300;
+  background: $color-neumorph-base;
 
   &__frame {
     width: 360px;

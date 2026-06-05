@@ -2,74 +2,88 @@
 @use 'sass:math';
 
   // ─── BRAND COLORS ────────────────────────────────────────────────────────────
-$color-primary: #6366f1;
-$color-cream  : #e0e7ff;
-$color-salmon : #67e8f9;
-$color-copper : #4338ca;
+$color-primary: #c0392b;
+$color-cream  : #c8b8b0;
+$color-salmon : #d45a4a;
+$color-copper : #8c3020;
 
   // ─── DERIVED BRAND TINTS ─────────────────────────────────────────────────────
-$color-primary-50 : rgba(99, 102, 241, 0.14);
-$color-primary-100: rgba(99, 102, 241, 0.22);
-$color-primary-200: rgba(99, 102, 241, 0.36);
-$color-primary-700: #4f46e5;
-$color-primary-900: #a5b4fc;
+$color-primary-50 : rgba(192, 57, 43, 0.08);
+$color-primary-100: rgba(192, 57, 43, 0.14);
+$color-primary-200: rgba(192, 57, 43, 0.22);
+$color-primary-700: #a03020;
+$color-primary-900: #c0392b;
 
-$color-cream-50 : #1e1a2e;
-$color-cream-100: #252036;
-$color-cream-200: #2a253e;
-$color-cream-300: #0f0d1a;
+$color-cream-50 : #edeae4;
+$color-cream-100: #e5e2dc;
+$color-cream-200: #dedad2;
+$color-cream-300: #e8e4dc;
 
-$color-salmon-50 : rgba(103, 232, 249, 0.12);
-$color-salmon-100: rgba(103, 232, 249, 0.22);
-$color-salmon-700: #06b6d4;
-$color-salmon-900: #67e8f9;
+$color-salmon-50 : rgba(212, 90, 74, 0.08);
+$color-salmon-100: rgba(212, 90, 74, 0.14);
+$color-salmon-700: #b04838;
+$color-salmon-900: #d45a4a;
 
-$color-copper-50 : rgba(67, 56, 202, 0.12);
-$color-copper-100: rgba(67, 56, 202, 0.22);
-$color-copper-700: #3730a3;
-$color-copper-900: #818cf8;
+$color-copper-50 : rgba(140, 48, 32, 0.08);
+$color-copper-100: rgba(140, 48, 32, 0.14);
+$color-copper-700: #6e2016;
+$color-copper-900: #c0392b;
 
   // ─── SEMANTIC COLORS ─────────────────────────────────────────────────────────
   // Peligro / Sin stock
-$color-danger       : #ef4444;
-$color-danger-bg    : rgba(239, 68, 68, 0.14);
-$color-danger-text  : #fca5a5;
-$color-danger-border: rgba(239, 68, 68, 0.28);
+$color-danger       : #c0392b;
+$color-danger-bg    : rgba(192, 57, 43, 0.07);
+$color-danger-text  : #a03020;
+$color-danger-border: rgba(192, 57, 43, 0.18);
 
   // Advertencia / Stock bajo
-$color-warning       : #d97706;
-$color-warning-bg    : rgba(217, 119, 6, 0.14);
-$color-warning-text  : #fbbf24;
-$color-warning-border: rgba(217, 119, 6, 0.28);
+$color-warning       : #b05e08;
+$color-warning-bg    : rgba(176, 94, 8, 0.07);
+$color-warning-text  : #8c4a06;
+$color-warning-border: rgba(176, 94, 8, 0.18);
 
   // Acento / Destacado
 $color-accent     : $color-salmon;
 $color-accent-bg  : $color-salmon-50;
-$color-accent-text: $color-salmon-900;
+$color-accent-text: $color-salmon-700;
 
-  // OK / En stock  (único color fuera de la paleta — semántico puro)
-$color-success       : #059669;
-$color-success-bg    : rgba(5, 150, 105, 0.14);
-$color-success-text  : #34d399;
-$color-success-border: rgba(5, 150, 105, 0.28);
+  // OK / En stock
+$color-success       : #1a6e42;
+$color-success-bg    : rgba(26, 110, 66, 0.07);
+$color-success-text  : #155234;
+$color-success-border: rgba(26, 110, 66, 0.18);
 
-  // Vencimiento (semántico puro)
-$color-expiry       : #7c3aed;
-$color-expiry-bg    : rgba(124, 58, 237, 0.14);
-$color-expiry-text  : #c4b5fd;
-$color-expiry-border: rgba(124, 58, 237, 0.28);
+  // Vencimiento
+$color-expiry       : #6b38a8;
+$color-expiry-bg    : rgba(107, 56, 168, 0.07);
+$color-expiry-text  : #4e2880;
+$color-expiry-border: rgba(107, 56, 168, 0.18);
 
-  // ─── NEUTROS OSCUROS (dark mode) ─────────────────────────────────────────────
-$color-bg-primary  : #13111e;
-$color-bg-secondary: #1e1a2e;
-$color-bg-tertiary : #0f0d1a;
+  // ─── BASE NEUMÓRFICA ─────────────────────────────────────────────────────────
+  // Todo el sistema comparte un único fondo base. Cards, nav, screen: mismo color.
+$color-neumorph-base   : #e8e4dc;
+$color-neumorph-light  : #f4f1eb;   // highlight (arriba-izquierda)
+$color-neumorph-dark   : #ccc8c0;   // sombra    (abajo-derecha)
+$color-neumorph-inset-l: #d8d4cc;   // inset dark  (para hundidos)
+$color-neumorph-inset-s: #f6f3ed;   // inset light (para hundidos)
 
-$color-border       : rgba(165, 180, 252, 0.08);
-$color-border-strong: rgba(165, 180, 252, 0.14);
+  // Sombras neumórficas
+$shadow-neumorph-raised : 4px 4px 10px $color-neumorph-dark, -4px -4px 10px $color-neumorph-light;
+$shadow-neumorph-inset  : inset 2px 2px 6px $color-neumorph-inset-l, inset -2px -2px 6px $color-neumorph-inset-s;
+$shadow-neumorph-flat   : 2px 2px 6px $color-neumorph-dark, -2px -2px 6px $color-neumorph-light;
+$shadow-neumorph-pressed: inset 1px 1px 4px $color-neumorph-inset-l, inset -1px -1px 4px $color-neumorph-inset-s;
 
-$color-text-primary   : #f5f3ff;
-$color-text-secondary : #c4b5fd;
-$color-text-tertiary  : #ddd6fe;
+  // ─── SUPERFICIES (light/neumorph mode) ───────────────────────────────────────
+$color-bg-primary  : $color-neumorph-base;   // cards, topbar, nav → mismo fondo
+$color-bg-secondary: $color-neumorph-base;   // sheets, secondary surfaces
+$color-bg-tertiary : $color-neumorph-base;   // screen background
+
+$color-border       : rgba(0, 0, 0, 0.06);
+$color-border-strong: rgba(0, 0, 0, 0.10);
+
+$color-text-primary   : #2a2420;
+$color-text-secondary : #6b5e57;
+$color-text-tertiary  : #9c8e87;
 $color-text-on-primary: #ffffff;
 
   // ─── TIPOGRAFÍA ──────────────────────────────────────────────────────────────
@@ -128,10 +142,11 @@ $radius-3xl : 18px;
 $radius-full: 9999px;
 
   // ─── BORDES ──────────────────────────────────────────────────────────────────
-$border-width   : 0.5px;
-$border-width-md: 1px;
-$border         : $border-width solid $color-border;
-$border-strong  : $border-width solid $color-border-strong;
+  // En neumorfismo los bordes se reemplazan por sombras; se mantienen mínimos
+$border-width   : 0px;
+$border-width-md: 0px;
+$border         : none;
+$border-strong  : none;
 
   // ─── ÍCONOS ──────────────────────────────────────────────────────────────────
 $icon-xs : 14px;
@@ -161,9 +176,10 @@ $stock-bar-width  : 68px;
 $stripe-width     : 3px;
 
   // ─── SOMBRAS ─────────────────────────────────────────────────────────────────
-$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.30);
-$shadow-md: 0 2px 8px rgba(0, 0, 0, 0.40);
-$shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.50);
+  // Las sombras neumorph son las primarias; estas se usan solo donde corresponde
+$shadow-sm: $shadow-neumorph-flat;
+$shadow-md: $shadow-neumorph-raised;
+$shadow-lg: 6px 6px 14px $color-neumorph-dark, -6px -6px 14px $color-neumorph-light;
 
   // ─── TRANSICIONES ────────────────────────────────────────────────────────────
 $transition-fast  : 0.1s ease;

@@ -78,13 +78,14 @@
   height: $icon-btn-size;
   border-radius: $radius-md;
   border: none;
-  background: transparent;
+  background: $color-neumorph-base;
   color: $color-text-secondary;
   cursor: pointer;
-  transition: background $transition-fast;
+  box-shadow: $shadow-neumorph-raised;
+  transition: box-shadow $transition-fast;
 
   &:active {
-    background: $color-bg-secondary;
+    box-shadow: $shadow-neumorph-pressed;
   }
 
   i {
@@ -93,9 +94,10 @@
 }
 
 @mixin card-base {
-  background: $color-bg-primary;
-  border: $border;
+  background: $color-neumorph-base;
+  border: none;
   border-radius: $radius-xl;
+  box-shadow: $shadow-neumorph-raised;
 }
 
 @mixin section-label {
@@ -108,7 +110,7 @@
   flex-direction: column;
   height: 100dvh;
   overflow: hidden;
-  background: $color-bg-tertiary;
+  background: $color-neumorph-base;
 }
 
 @mixin scroll-content {
@@ -121,7 +123,7 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background: $color-border-strong;
+    background: $color-neumorph-dark;
     border-radius: $radius-full;
   }
 }
@@ -156,18 +158,19 @@
   width: 100%;
   height: $input-height;
   border-radius: $radius-md;
-  border: $border;
-  background: $color-bg-primary;
+  border: none;
+  background: $color-neumorph-base;
   font-family: $font-body;
   font-size: $font-size-base;
   color: $color-text-primary;
-  color-scheme: dark;
+  color-scheme: light;
   padding: 0 $spacing-4;
   outline: none;
-  transition: border-color $transition-fast;
+  box-shadow: $shadow-neumorph-inset;
+  transition: box-shadow $transition-fast;
 
   &:focus {
-    border-color: $color-primary;
+    box-shadow: $shadow-neumorph-inset, 0 0 0 2px rgba(192, 57, 43, 0.20);
   }
 
   &::placeholder {
@@ -175,7 +178,7 @@
   }
 
   &[readonly] {
-    background: $color-bg-secondary;
     color: $color-text-secondary;
+    box-shadow: $shadow-neumorph-pressed;
   }
 }

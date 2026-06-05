@@ -2,8 +2,8 @@
 
 .bottom-nav {
   @include flex-row;
-  background : $color-bg-primary;
-  border-top : $border;
+  background : $color-neumorph-base;
+  box-shadow : -2px -2px 8px $color-neumorph-light, 0 -1px 4px $color-neumorph-dark;
   padding    : $spacing-2 0 $spacing-2 + 2px;
   flex-shrink: 0;
   z-index    : $z-nav;
@@ -31,7 +31,6 @@
     }
 
     &--active {
-
       i,
       span {
         color: $color-primary;
@@ -63,13 +62,12 @@
       background     : $color-primary;
       color          : #fff;
       font-size      : $icon-xl;
-      box-shadow     : $shadow-md;
-      transition     : background $transition-fast, box-shadow $transition-fast, transform 0.2s ease;
+      box-shadow     : 3px 3px 8px rgba(192, 57, 43, 0.40), -2px -2px 6px rgba(255,255,255,0.50);
+      transition     : box-shadow $transition-fast, transform 0.2s ease;
     }
 
     &:active i {
-      background: $color-primary-700;
-      box-shadow: $shadow-sm;
+      box-shadow: inset 2px 2px 5px rgba(0,0,0,0.30), inset -1px -1px 3px rgba(255,255,255,0.15);
     }
 
     &--open i {
@@ -91,7 +89,7 @@
   position  : fixed;
   inset     : 0;
   z-index   : $z-overlay - 1;
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(200, 196, 188, 0.70);
 }
 
 .fab-menu {
@@ -112,14 +110,13 @@
   &__btn {
     @include flex-row($spacing-3, center, flex-start);
     border-radius: $radius-full;
-    background   : $color-bg-secondary;
-    border       : $border;
+    background   : $color-neumorph-base;
+    box-shadow   : $shadow-neumorph-raised;
     padding      : $spacing-2 $spacing-6 $spacing-2 $spacing-4;
     cursor       : pointer;
-    box-shadow   : $shadow-md;
     white-space  : nowrap;
     min-width    : 160px;
-    transition   : background $transition-fast;
+    transition   : box-shadow $transition-fast;
 
     i {
       font-size  : $icon-md;
@@ -135,7 +132,7 @@
     }
 
     &:active {
-      background: $color-bg-tertiary;
+      box-shadow: $shadow-neumorph-pressed;
     }
   }
 }
