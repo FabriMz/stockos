@@ -34,7 +34,9 @@
       :aria-current="isActive(item.to) ? 'page' : undefined"
       @click="$router.push(item.to)"
     >
-      <i :class="`ti ${item.ic}`" aria-hidden="true"></i>
+      <div class="bottom-nav__tab-icon">
+        <i :class="`ti ${item.ic}`" aria-hidden="true"></i>
+      </div>
       <div v-if="item.dot && alerts.length" class="bottom-nav__dot"></div>
       <span>{{ item.label }}</span>
     </button>
@@ -46,7 +48,9 @@
       :aria-expanded="String(fabOpen)"
       @click="fabOpen = !fabOpen"
     >
-      <i class="ti ti-plus" aria-hidden="true"></i>
+      <div class="bottom-nav__fab-inner">
+        <i class="ti ti-plus" aria-hidden="true"></i>
+      </div>
     </button>
 
     <button
@@ -58,7 +62,9 @@
       :aria-current="isActive(item.to) ? 'page' : undefined"
       @click="$router.push(item.to)"
     >
-      <i :class="`ti ${item.ic}`" aria-hidden="true"></i>
+      <div class="bottom-nav__tab-icon">
+        <i :class="`ti ${item.ic}`" aria-hidden="true"></i>
+      </div>
       <div v-if="item.dot && alerts.length" class="bottom-nav__dot"></div>
       <span>{{ item.label }}</span>
     </button>

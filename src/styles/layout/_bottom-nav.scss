@@ -3,40 +3,58 @@
 .bottom-nav {
   @include flex-row;
   background : $color-neumorph-base;
-  box-shadow : -2px -2px 8px $color-neumorph-light, 0 -1px 4px $color-neumorph-dark;
-  padding    : $spacing-2 0 $spacing-2 + 2px;
+  box-shadow : 0 -4px 12px #C8C5BF;
+  padding    : 14px 16px 24px;
   flex-shrink: 0;
   z-index    : $z-nav;
+  align-items: flex-start;
 
   &__tab {
-    flex: 1;
-    @include flex-col(2px, center, center);
-    @include tap-target;
-    background: transparent;
-    border    : none;
-    cursor    : pointer;
-    padding   : $spacing-1 0;
+    flex           : 1;
+    display        : flex;
+    flex-direction : column;
+    align-items    : center;
+    gap            : 5px;
+    background     : transparent;
+    border         : none;
+    cursor         : pointer;
+    padding        : $spacing-1 0;
+    min-height     : $tap-target;
 
-    i {
-      font-size : $icon-lg;
-      color     : $color-text-tertiary;
-      transition: color $transition-fast;
+    .bottom-nav__tab-icon {
+      width        : 44px;
+      height       : 44px;
+      border-radius: 14px;
+      background   : $color-neumorph-base;
+      box-shadow   : 4px 4px 10px #C8C5BF, -4px -4px 10px #FFFFFF;
+      display      : flex;
+      align-items  : center;
+      justify-content: center;
+      transition   : box-shadow $transition-fast;
+
+      i {
+        font-size : $icon-lg;
+        color     : #B8A898;
+        transition: color $transition-fast;
+      }
     }
 
     span {
       font-family: $font-body;
-      font-size  : $font-size-2xs;
-      color      : $color-text-tertiary;
+      font-size  : 10px;
+      color      : #B8A898;
       transition : color $transition-fast;
     }
 
     &--active {
-      i,
-      span {
-        color: $color-primary;
+      .bottom-nav__tab-icon {
+        box-shadow: inset 2px 2px 6px #C8C5BF, inset -2px -2px 6px #FFFFFF;
+
+        i { color: $color-primary; }
       }
 
       span {
+        color      : $color-primary;
         font-weight: $font-weight-medium;
       }
     }
@@ -50,27 +68,42 @@
     background     : transparent;
     border         : none;
     cursor         : pointer;
-    padding        : $spacing-1 0;
+    padding        : 0;
 
-    i {
+    &-inner {
       display        : flex;
       align-items    : center;
       justify-content: center;
-      width          : 42px;
-      height         : 42px;
+      width          : 52px;
+      height         : 52px;
       border-radius  : $radius-full;
-      background     : $color-primary;
-      color          : #fff;
-      font-size      : $icon-xl;
-      box-shadow     : 3px 3px 8px rgba(192, 57, 43, 0.40), -2px -2px 6px rgba(255,255,255,0.50);
+      background     : $color-neumorph-base;
+      box-shadow     : 5px 5px 12px #C8C5BF, -5px -5px 12px #FFFFFF;
+      position       : relative;
       transition     : box-shadow $transition-fast, transform 0.2s ease;
+
+      &::after {
+        content      : '';
+        position     : absolute;
+        inset        : 6px;
+        border-radius: $radius-full;
+        background   : $color-primary;
+        z-index      : 0;
+      }
+
+      i {
+        font-size: $icon-xl;
+        color    : #fff;
+        position : relative;
+        z-index  : 1;
+      }
     }
 
-    &:active i {
+    &:active &-inner {
       box-shadow: inset 2px 2px 5px rgba(0,0,0,0.30), inset -1px -1px 3px rgba(255,255,255,0.15);
     }
 
-    &--open i {
+    &--open &-inner {
       transform: rotate(45deg);
     }
   }
@@ -84,7 +117,8 @@
   }
 }
 
-  // ─── FAB SPEED-DIAL ────────────────────────────────────────────────────────────
+// ─── FAB SPEED-DIAL ──────────────────────────────────────────────────────────
+
 .fab-backdrop {
   position  : fixed;
   inset     : 0;
@@ -103,15 +137,13 @@
   align-items   : flex-end;
   gap           : $spacing-3;
 
-  &__item {
-    @include flex-center;
-  }
+  &__item { @include flex-center; }
 
   &__btn {
     @include flex-row($spacing-3, center, flex-start);
     border-radius: $radius-full;
     background   : $color-neumorph-base;
-    box-shadow   : $shadow-neumorph-raised;
+    box-shadow   : 5px 5px 12px #C8C5BF, -5px -5px 12px #FFFFFF;
     padding      : $spacing-2 $spacing-6 $spacing-2 $spacing-4;
     cursor       : pointer;
     white-space  : nowrap;
@@ -131,13 +163,12 @@
       color      : $color-text-primary;
     }
 
-    &:active {
-      box-shadow: $shadow-neumorph-pressed;
-    }
+    &:active { box-shadow: $shadow-neumorph-pressed; }
   }
 }
 
-  // ─── FAB SPEED-DIAL TRANSITION ─────────────────────────────────────────────────
+// ─── FAB SPEED-DIAL TRANSITION ───────────────────────────────────────────────
+
 .fab-menu-enter-active,
 .fab-menu-leave-active {
   transition: opacity 0.15s ease, transform 0.15s ease;

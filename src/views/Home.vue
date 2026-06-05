@@ -81,90 +81,98 @@
           value-class="stat-card__value--sm"
           :full="true"
           badge="Vigente"
-          badge-icon="ri-calendar-check-line"
+          badge-icon="ti ti-calendar-event"
         />
       </div>
 
       <p class="section-label">Alertas activas</p>
 
-      <div
-        class="home__alert-item home__alert-item--out"
-        role="button"
-        tabindex="0"
-        aria-label="Ver alertas sin stock"
-        @click="$router.push('/alerts/out-of-stock')"
-        @keydown.enter="$router.push('/alerts/out-of-stock')"
-      >
-        <span class="home__alert-icon home__alert-icon--out" aria-hidden="true">
-          <i class="ri-box-3-line"></i>
-        </span>
-        <div class="home__alert-info">
-          <span class="home__alert-type">Sin stock</span>
-          <span class="home__alert-name">
-            {{ outOfStockBrandsCount }} marca{{ outOfStockBrandsCount !== 1 ? 's' : '' }} afectada{{ outOfStockBrandsCount !== 1 ? 's' : '' }}
-          </span>
+      <div class="home__alert-list">
+        <div
+          class="home__alert-item home__alert-item--out"
+          role="button"
+          tabindex="0"
+          aria-label="Ver alertas sin stock"
+          @click="$router.push('/alerts/out-of-stock')"
+          @keydown.enter="$router.push('/alerts/out-of-stock')"
+        >
+          <div class="home__alert-left">
+            <span class="home__alert-icon home__alert-icon--out" aria-hidden="true">
+              <i class="ti ti-package-off"></i>
+            </span>
+            <div class="home__alert-info">
+              <span class="home__alert-type">Sin stock</span>
+              <span class="home__alert-name">
+                {{ outOfStockBrandsCount }} marca{{ outOfStockBrandsCount !== 1 ? 's' : '' }} afectada{{ outOfStockBrandsCount !== 1 ? 's' : '' }}
+              </span>
+            </div>
+          </div>
+          <div class="home__alert-right">
+            <span
+              class="home__alert-count"
+              :class="{ 'home__alert-count--zero': outOfStockCount === 0 }"
+            >{{ outOfStockCount }}</span>
+            <span v-if="outOfStockCount > 0" class="badge badge--out">Crítica</span>
+            <span v-else class="home__alert-ok">Sin alertas</span>
+          </div>
         </div>
-        <div class="home__alert-right">
-          <span
-            class="home__alert-count"
-            :class="{ 'home__alert-count--zero': outOfStockCount === 0 }"
-          >{{ outOfStockCount }}</span>
-          <span v-if="outOfStockCount > 0" class="badge badge--out">Crítica</span>
-          <span v-else class="home__alert-ok">Sin alertas</span>
-        </div>
-      </div>
 
-      <div
-        class="home__alert-item home__alert-item--low"
-        role="button"
-        tabindex="0"
-        aria-label="Ver alertas de stock bajo"
-        @click="$router.push('/alerts/low-stock')"
-        @keydown.enter="$router.push('/alerts/low-stock')"
-      >
-        <span class="home__alert-icon home__alert-icon--low" aria-hidden="true">
-          <i class="ri-arrow-down-line"></i>
-        </span>
-        <div class="home__alert-info">
-          <span class="home__alert-type">Stock bajo</span>
-          <span class="home__alert-name">
-            {{ lowStockBrandsCount }} marca{{ lowStockBrandsCount !== 1 ? 's' : '' }} afectada{{ lowStockBrandsCount !== 1 ? 's' : '' }}
-          </span>
+        <div
+          class="home__alert-item home__alert-item--low"
+          role="button"
+          tabindex="0"
+          aria-label="Ver alertas de stock bajo"
+          @click="$router.push('/alerts/low-stock')"
+          @keydown.enter="$router.push('/alerts/low-stock')"
+        >
+          <div class="home__alert-left">
+            <span class="home__alert-icon home__alert-icon--low" aria-hidden="true">
+              <i class="ti ti-trending-down"></i>
+            </span>
+            <div class="home__alert-info">
+              <span class="home__alert-type">Stock bajo</span>
+              <span class="home__alert-name">
+                {{ lowStockBrandsCount }} marca{{ lowStockBrandsCount !== 1 ? 's' : '' }} afectada{{ lowStockBrandsCount !== 1 ? 's' : '' }}
+              </span>
+            </div>
+          </div>
+          <div class="home__alert-right">
+            <span
+              class="home__alert-count"
+              :class="{ 'home__alert-count--zero': lowStockCount === 0 }"
+            >{{ lowStockCount }}</span>
+            <span v-if="lowStockCount > 0" class="badge badge--low">Atención</span>
+            <span v-else class="home__alert-ok">Sin alertas</span>
+          </div>
         </div>
-        <div class="home__alert-right">
-          <span
-            class="home__alert-count"
-            :class="{ 'home__alert-count--zero': lowStockCount === 0 }"
-          >{{ lowStockCount }}</span>
-          <span v-if="lowStockCount > 0" class="badge badge--low">Atención</span>
-          <span v-else class="home__alert-ok">Sin alertas</span>
-        </div>
-      </div>
 
-      <div
-        class="home__alert-item home__alert-item--expiry"
-        role="button"
-        tabindex="0"
-        aria-label="Ver alertas de vencimiento"
-        @click="$router.push('/alerts/expiry')"
-        @keydown.enter="$router.push('/alerts/expiry')"
-      >
-        <span class="home__alert-icon home__alert-icon--expiry" aria-hidden="true">
-          <i class="ri-time-line"></i>
-        </span>
-        <div class="home__alert-info">
-          <span class="home__alert-type">Vencimiento</span>
-          <span class="home__alert-name">
-            {{ expiryBrandsCount }} marca{{ expiryBrandsCount !== 1 ? 's' : '' }} afectada{{ expiryBrandsCount !== 1 ? 's' : '' }}
-          </span>
-        </div>
-        <div class="home__alert-right">
-          <span
-            class="home__alert-count"
-            :class="{ 'home__alert-count--zero': expiryCount === 0 }"
-          >{{ expiryCount }}</span>
-          <span v-if="expiryCount > 0" class="badge badge--expiry">Próximo</span>
-          <span v-else class="home__alert-ok">Sin alertas</span>
+        <div
+          class="home__alert-item home__alert-item--expiry"
+          role="button"
+          tabindex="0"
+          aria-label="Ver alertas de vencimiento"
+          @click="$router.push('/alerts/expiry')"
+          @keydown.enter="$router.push('/alerts/expiry')"
+        >
+          <div class="home__alert-left">
+            <span class="home__alert-icon home__alert-icon--expiry" aria-hidden="true">
+              <i class="ti ti-clock-exclamation"></i>
+            </span>
+            <div class="home__alert-info">
+              <span class="home__alert-type">Vencimiento</span>
+              <span class="home__alert-name">
+                {{ expiryBrandsCount }} marca{{ expiryBrandsCount !== 1 ? 's' : '' }} afectada{{ expiryBrandsCount !== 1 ? 's' : '' }}
+              </span>
+            </div>
+          </div>
+          <div class="home__alert-right">
+            <span
+              class="home__alert-count"
+              :class="{ 'home__alert-count--zero': expiryCount === 0 }"
+            >{{ expiryCount }}</span>
+            <span v-if="expiryCount > 0" class="badge badge--expiry">Próximo</span>
+            <span v-else class="home__alert-ok">Sin alertas</span>
+          </div>
         </div>
       </div>
 

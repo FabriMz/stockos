@@ -73,131 +73,139 @@
     }
   }
 
+  // ─── Alert list ────────────────────────────────────────────────────────────
+
+  &__alert-list {
+    display       : flex;
+    flex-direction: column;
+    gap           : 10px;
+  }
+
   // ─── Alert items ───────────────────────────────────────────────────────────
 
   &__alert-item {
-    @include flex-row($spacing-3, center);
-    padding: $spacing-3 $spacing-4;
-    margin: 0 $spacing-4 $spacing-2;
-    border-radius: $radius-xl;
-    background: $color-neumorph-base;
-    box-shadow: $shadow-neumorph-raised;
-    cursor: pointer;
-    transition: box-shadow $transition-fast;
+    display        : flex;
+    align-items    : center;
+    justify-content: space-between;
+    padding        : 14px 16px;
+    border-radius  : 18px;
+    background     : $color-neumorph-base;
+    box-shadow     : 5px 5px 12px #C8C5BF, -5px -5px 12px #FFFFFF;
+    cursor         : pointer;
+    transition     : box-shadow $transition-fast;
 
     &:active {
       box-shadow: $shadow-neumorph-pressed;
     }
   }
 
-  // ─── Ícono neumorph inset (reemplaza el dot) ───────────────────────────────
+  &__alert-left {
+    display    : flex;
+    align-items: center;
+    gap        : 12px;
+  }
+
+  // ─── Ícono neumorph inset ──────────────────────────────────────────────────
 
   &__alert-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: $radius-lg;
-    background: $color-neumorph-base;
-    box-shadow: $shadow-neumorph-inset;
+    width        : 36px;
+    height       : 36px;
+    border-radius: 12px;
+    background   : $color-neumorph-base;
+    box-shadow   : inset 2px 2px 5px #C8C5BF, inset -2px -2px 5px #FFFFFF;
     @include flex-center;
-    flex-shrink: 0;
+    flex-shrink  : 0;
 
-    i {
-      font-size: $icon-md;
-    }
+    i { font-size: 16px; }
 
-    &--out i  { color: $color-danger; }
-    &--low i  { color: $color-warning; }
+    &--out i    { color: #C04030; }
+    &--low i    { color: #A07010; }
     &--expiry i { color: $color-expiry; }
   }
 
   &__alert-info {
     @include flex-col($spacing-1);
-    flex: 1;
+    flex    : 1;
     min-width: 0;
   }
 
   &__alert-type {
-    font-size: $font-size-base;
+    font-size  : 14px;
     font-weight: $font-weight-medium;
-    color: $color-text-primary;
+    color      : $color-text-primary;
   }
 
   &__alert-name {
-    @include font-mono($font-size-xs);
-    color: $color-text-secondary;
+    font-size: 12px;
+    color    : #A09080;
+    margin-top: 2px;
     @include truncate;
   }
 
   &__alert-right {
-    @include flex-col($spacing-1, flex-end);
-    flex-shrink: 0;
+    display        : flex;
+    flex-direction : column;
+    align-items    : flex-end;
+    flex-shrink    : 0;
+    text-align     : right;
   }
 
   &__alert-count {
-    @include font-display($font-size-2xl, $font-weight-bold);
-    line-height: $line-height-tight;
-    text-align: right;
+    font-size     : 24px;
+    font-weight   : $font-weight-medium;
+    letter-spacing: -1px;
+    line-height   : 1;
 
     &--zero { color: $color-text-tertiary; }
   }
 
-  &__alert-item--out   &__alert-count:not(&__alert-count--zero) { color: $color-danger; }
-  &__alert-item--low   &__alert-count:not(&__alert-count--zero) { color: $color-warning; }
+  &__alert-item--out   &__alert-count:not(&__alert-count--zero) { color: #C04030; }
+  &__alert-item--low   &__alert-count:not(&__alert-count--zero) { color: #A07010; }
   &__alert-item--expiry &__alert-count:not(&__alert-count--zero) { color: $color-expiry; }
 
   &__alert-ok {
-    @include font-mono($font-size-xs);
-    color: $color-text-tertiary;
+    font-size : 11px;
+    color     : #B8A898;
+    margin-top: 3px;
   }
 
   // ─── Product search ────────────────────────────────────────────────────────
 
   &__search-dropdown {
     flex-shrink: 0;
-    background: $color-neumorph-base;
+    background : $color-neumorph-base;
   }
 
   &__search-results {
-    list-style: none;
-    background: $color-neumorph-base;
-    overflow: hidden;
-    max-height: 220px;
-    overflow-y: auto;
+    list-style  : none;
+    background  : $color-neumorph-base;
+    overflow    : hidden;
+    max-height  : 220px;
+    overflow-y  : auto;
 
-    &::-webkit-scrollbar {
-      width: 3px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: $color-neumorph-dark;
-      border-radius: $radius-full;
-    }
-
-    &::-webkit-scrollbar-track {
-      background: transparent;
-    }
+    &::-webkit-scrollbar { width: 3px; }
+    &::-webkit-scrollbar-thumb { background: $color-neumorph-dark; border-radius: $radius-full; }
+    &::-webkit-scrollbar-track { background: transparent; }
   }
 
   &__search-result {
     @include flex-row($spacing-2, center, space-between);
     padding: $spacing-3 $spacing-4;
-    cursor: pointer;
+    cursor : pointer;
 
-    &:active {
-      box-shadow: $shadow-neumorph-inset;
-    }
+    &:active { box-shadow: $shadow-neumorph-inset; }
 
     &__name {
-      font-size: $font-size-base;
+      font-size  : $font-size-base;
       font-weight: $font-weight-medium;
-      color: $color-text-primary;
+      color      : $color-text-primary;
       @include truncate;
       flex: 1;
     }
 
     &__meta {
       @include font-mono($font-size-xs);
-      color: $color-text-secondary;
+      color      : $color-text-secondary;
       flex-shrink: 0;
       margin-left: $spacing-2;
     }
@@ -205,68 +213,82 @@
 
   &__search-empty {
     @include font-mono($font-size-sm);
-    color: $color-text-tertiary;
-    text-align: center;
-    padding: $spacing-4 $spacing-4;
+    color      : $color-text-tertiary;
+    text-align : center;
+    padding    : $spacing-4 $spacing-4;
   }
 
   // ─── CTA ───────────────────────────────────────────────────────────────────
 
   &__cta {
-    display: flex;
+    display    : flex;
     flex-direction: row;
     align-items: center;
-    gap: $spacing-3;
-    padding: $spacing-2 $spacing-5 0;
+    gap        : $spacing-3;
+    padding    : $spacing-2 $spacing-5 0;
 
-    .btn {
-      flex: 1;
-      width: auto;
-    }
+    .btn { flex: 1; width: auto; }
   }
 
   // ─── Company edit overlay ──────────────────────────────────────────────────
 
   &__company-edit-overlay {
-    position: fixed;
-    inset: 0;
+    position  : fixed;
+    inset     : 0;
     background: rgba(200, 196, 188, 0.70);
-    z-index: 200;
-    display: flex;
-    align-items: center;
+    z-index   : 200;
+    display   : flex;
+    align-items    : center;
     justify-content: center;
-    padding: $spacing-5;
+    padding   : $spacing-5;
   }
 
   &__company-edit-box {
-    background: $color-neumorph-base;
-    box-shadow: $shadow-neumorph-raised;
+    background   : $color-neumorph-base;
+    box-shadow   : $shadow-neumorph-raised;
     border-radius: $radius-xl;
-    padding: $spacing-7;
-    width: 100%;
-    max-width: 320px;
-    display: flex;
+    padding      : $spacing-7;
+    width        : 100%;
+    max-width    : 320px;
+    display      : flex;
     flex-direction: column;
-    gap: $spacing-4;
+    gap          : $spacing-4;
   }
 
   &__company-edit-label {
     font-family: $font-body;
-    font-size: $font-size-sm;
+    font-size  : $font-size-sm;
     font-weight: $font-weight-medium;
-    color: $color-text-secondary;
+    color      : $color-text-secondary;
   }
 
-  &__company-edit-input {
-    @include input-base;
-  }
+  &__company-edit-input { @include input-base; }
 
   &__company-edit-actions {
     display: flex;
-    gap: $spacing-3;
+    gap    : $spacing-3;
 
-    .btn {
-      flex: 1;
-    }
+    .btn { flex: 1; }
   }
+  // ─── Layout padding (match reference 22px lateral) ─────────────────────────
+
+  .section-label {
+    margin        : 0 0 10px;
+    padding       : 0 22px;
+    border-bottom : none;
+  }
+
+  &__alert-list {
+    padding: 0 22px;
+  }
+
+
+  // ─── Scroll area padding ─────────────────────────────────────────────────────
+
+  .scroll-content {
+    padding-top   : 10px;
+    padding-bottom: 16px;
+  }
+
+
 }
