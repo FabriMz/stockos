@@ -5,15 +5,15 @@
   display      : flex;
   align-items  : stretch;
   background   : $color-bg-primary;
-  border       : $border-width-md solid $color-border-strong;
   border-radius: $radius-lg;
   margin       : $spacing-4 $spacing-5;
   cursor       : pointer;
   overflow     : hidden;
-  transition   : background $transition-fast;
+  box-shadow   : $shadow-neumorph-raised;
+  transition   : box-shadow $transition-fast;
 
   &:active {
-    background: $color-bg-secondary;
+    box-shadow: $shadow-neumorph-pressed;
   }
 
   &__stripe {
