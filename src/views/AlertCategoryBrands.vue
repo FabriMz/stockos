@@ -61,7 +61,22 @@
             </template>
           </BrandRow>
         </template>
-        <p v-if="!filteredCategories.length" class="home__empty">
+
+        <!-- Marcas con alerta no asignadas a ninguna categoría -->
+        <BrandRow
+          v-for="bid in uncategorizedAlertBrandIds"
+          :key="bid"
+          :brand="getBrand(bid)"
+          :to="`${config.basePath}/${bid}`"
+          :meta="`${productCount(bid)} producto${productCount(bid) > 1 ? 's' : ''} · ${getBrand(bid).origin}`"
+          :stripe="config.stripe"
+        >
+          <template #badges>
+            <span :class="config.badgeClass"><i :class="`ti ${config.badgeIcon}`"></i>{{ config.badgeLabel }}</span>
+          </template>
+        </BrandRow>
+
+        <p v-if="!filteredCategories.length && !uncategorizedAlertBrandIds.length" class="home__empty">
           Sin productos en esta carpeta
         </p>
       </template>
@@ -130,6 +145,13 @@ const filteredCategories = computed(() => {
     if (matching.length) result.push({ id: cat.id, name: cat.name, bids: matching })
   }
   return result
+})
+
+const uncategorizedAlertBrandIds = computed(() => {
+  const categorizedIds = new Set(catStore.categories.flatMap(c => c.brandIds))
+  return [...alertBrandIds.value]
+    .filter(bid => !categorizedIds.has(bid))
+    .sort((a, b) => (getBrand(a)?.name ?? '').localeCompare(getBrand(b)?.name ?? '', 'es'))
 })
 
 const filteredProducts = computed(() => {

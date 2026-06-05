@@ -224,7 +224,7 @@
                 name="np-cost"
                 type="number"
                 v-model.number="form.cost"
-                placeholder="0.00"
+                placeholder="Valor"
                 inputmode="decimal"
                 min="0"
                 :max="MAX_PRICE"
