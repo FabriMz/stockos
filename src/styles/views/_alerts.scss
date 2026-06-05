@@ -3,6 +3,7 @@
 .alert-search {
   @include flex-row($spacing-2);
   background: $color-bg-secondary;
+  box-shadow: $shadow-neumorph-inset;
   border-radius: $radius-md;
   padding: 0 $spacing-4;
   height: 34px;

@@ -16,9 +16,10 @@
     font-weight  : $font-weight-medium;
     color        : $color-text-secondary;
     background   : $color-bg-secondary;
+    box-shadow   : $shadow-neumorph-raised;
     border       : none;
     cursor       : pointer;
-    transition   : background $transition-fast, color $transition-fast;
+    transition   : box-shadow $transition-fast, color $transition-fast;
     white-space  : nowrap;
     min-width    : 0;
 
@@ -32,7 +33,7 @@
     }
 
     &:active {
-      background: $color-bg-tertiary;
+      box-shadow: $shadow-neumorph-pressed;
     }
 
     &--settings {

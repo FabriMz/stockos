@@ -13,10 +13,10 @@
     height       : $btn-height-sm;
     border-radius: $radius-md;
     background   : $color-bg-secondary;
-    border       : $border-strong;
+    box-shadow   : $shadow-neumorph-raised;
     cursor       : pointer;
     padding      : 0 $spacing-2;
-    transition   : background $transition-fast;
+    transition   : box-shadow $transition-fast;
 
     i {
       font-size  : $icon-sm;
@@ -35,7 +35,7 @@
     }
 
     &:active {
-      background: $color-bg-tertiary;
+      box-shadow: $shadow-neumorph-pressed;
     }
 
     &--active {

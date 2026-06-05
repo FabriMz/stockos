@@ -143,10 +143,10 @@ $radius-full: 9999px;
 
   // ─── BORDES ──────────────────────────────────────────────────────────────────
   // En neumorfismo los bordes se reemplazan por sombras; se mantienen mínimos
-$border-width   : 0px;
-$border-width-md: 0px;
-$border         : none;
-$border-strong  : none;
+$border-width   : 1px;
+$border-width-md: 1px;
+$border         : 1px solid $color-border;
+$border-strong  : 1px solid $color-border-strong;
 
   // ─── ÍCONOS ──────────────────────────────────────────────────────────────────
 $icon-xs : 14px;

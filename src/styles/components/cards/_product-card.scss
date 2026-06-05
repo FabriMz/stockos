@@ -151,7 +151,7 @@
     font-weight  : $font-weight-medium;
     color        : $color-text-secondary;
     background   : $color-bg-secondary;
-    border       : none;
+    border       : $border;
     cursor       : pointer;
     transition   : background $transition-fast;
 
