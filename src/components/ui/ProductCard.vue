@@ -12,7 +12,7 @@
 
     <div class="product-card__body">
       <div class="product-card__header">
-        <div class="product-card__icon" :style="{ background: product.bg }">
+        <div class="product-card__icon">
           <img
             v-if="product.img && !imgError"
             :src="product.img"

@@ -10,7 +10,7 @@
     <div v-if="stripe" class="brand-row__stripe" :style="{ background: stripe }"></div>
     <div class="brand-row__body">
       <div class="brand-row__header">
-        <div class="brand-row__icon" :style="{ background: brand.bg }">
+        <div class="brand-row__icon">
           <i :class="`ti ${brand.ic}`" :style="{ color: brand.col }" aria-hidden="true"></i>
         </div>
         <div class="brand-row__info">

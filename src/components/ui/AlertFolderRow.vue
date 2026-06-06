@@ -8,7 +8,7 @@
     @keydown.enter="$router.push(to)"
   >
     <div v-if="stripe" class="alert-folder__stripe" :style="{ background: stripe }"></div>
-    <div class="alert-folder__icon" :style="{ background: iconBg }">
+    <div class="alert-folder__icon">
       <i :class="`ti ${icon}`" :style="{ color: iconColor }" aria-hidden="true"></i>
     </div>
     <div class="alert-folder__info">
