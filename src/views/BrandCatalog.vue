@@ -526,12 +526,12 @@
               <span v-if="newCatError" class="form-hint form-hint--error" role="alert">{{ newCatError }}</span>
             </div>
           </div>
-          <div class="btn-group">
+          <div class="btn-group btn-group--row">
+            <button class="btn btn--secondary" @click="closeNewCatSheet">Cancelar</button>
             <button class="btn btn--primary" @click="handleCreateCat">
               <i class="ti ti-plus" aria-hidden="true"></i>
               Crear categoría
             </button>
-            <button class="btn btn--secondary" @click="closeNewCatSheet">Cancelar</button>
           </div>
         </div>
       </div>
@@ -569,12 +569,12 @@
               <span v-if="newBrandError" class="form-hint form-hint--error" role="alert">{{ newBrandError }}</span>
             </div>
           </div>
-          <div class="btn-group">
+          <div class="btn-group btn-group--row">
+            <button class="btn btn--secondary" @click="closeNewBrandSheet">Cancelar</button>
             <button class="btn btn--primary" @click="handleCreateBrand">
               <i class="ti ti-plus" aria-hidden="true"></i>
               Crear marca
             </button>
-            <button class="btn btn--secondary" @click="closeNewBrandSheet">Cancelar</button>
           </div>
         </div>
       </div>
