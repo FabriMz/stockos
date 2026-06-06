@@ -2,34 +2,30 @@
 
 .badge {
   @include badge-base;
+  box-shadow: $shadow-neumorph-inset;
 
   &--ok {
     background: $color-success-bg;
-    color: $color-success-text;
-    border: $border-width solid $color-success-border;
+    color     : $color-success-text;
   }
 
   &--low {
     background: $color-warning-bg;
-    color: $color-warning-text;
-    border: $border-width solid $color-warning-border;
+    color     : $color-warning-text;
   }
 
   &--out {
     background: $color-danger-bg;
-    color: $color-danger-text;
-    border: $border-width solid $color-danger-border;
+    color     : $color-danger-text;
   }
 
   &--expiry {
     background: $color-expiry-bg;
-    color: $color-expiry-text;
-    border: $border-width solid $color-expiry-border;
+    color     : $color-expiry-text;
   }
 
   &--venc {
     background: $color-expiry-bg;
     color     : $color-expiry-text;
-    border    : $border-width solid $color-expiry-border;
   }
 }

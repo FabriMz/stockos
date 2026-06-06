@@ -43,6 +43,7 @@
     border-radius: $radius-md;
     @include flex-center;
     flex-shrink  : 0;
+    background   : $color-neumorph-base;
     box-shadow   : $shadow-neumorph-inset;
 
     i { font-size: $icon-md; }
@@ -152,34 +153,35 @@
     font-size    : $font-size-sm;
     font-weight  : $font-weight-medium;
     color        : $color-text-secondary;
-    background   : $color-bg-secondary;
-    border       : $border;
+    background   : $color-neumorph-base;
+    border       : none;
     cursor       : pointer;
-    transition   : background $transition-fast;
+    box-shadow   : $shadow-neumorph-inset;
+    transition   : box-shadow $transition-fast;
 
     i { font-size: $icon-sm; }
 
-    &:active { background: $color-bg-tertiary; }
+    &:active { box-shadow: $shadow-neumorph-pressed; }
 
     &--edit {
       color     : $color-danger-text;
       background: $color-danger-bg;
 
-      &:active { background: $color-primary-100; }
+      &:active { box-shadow: $shadow-neumorph-pressed; }
     }
 
     &--clone {
       color     : $color-expiry-text;
       background: $color-expiry-bg;
 
-      &:active { background: $color-expiry-border; }
+      &:active { box-shadow: $shadow-neumorph-pressed; }
     }
 
     &--remove {
       color     : $color-warning-text;
       background: $color-warning-bg;
 
-      &:active { background: $color-warning-border; }
+      &:active { box-shadow: $shadow-neumorph-pressed; }
     }
   }
 

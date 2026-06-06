@@ -105,33 +105,34 @@
 }
 
 .alert-folder {
-  display: flex;
-  align-items: center;
-  background: $color-bg-primary;
-  border: $border-strong;
+  display      : flex;
+  align-items  : center;
+  background   : $color-bg-primary;
   border-radius: $radius-xl;
-  overflow: hidden;
-  cursor: pointer;
-  transition: background $transition-fast;
+  overflow     : hidden;
+  cursor       : pointer;
+  box-shadow   : $shadow-neumorph-raised;
+  transition   : box-shadow $transition-fast;
 
   &:active {
-    background: $color-bg-secondary;
+    box-shadow: $shadow-neumorph-pressed;
   }
 
   &__stripe {
-    width: $stripe-width;
+    width     : $stripe-width;
     align-self: stretch;
     flex-shrink: 0;
   }
 
   &__icon {
-    width     : $brand-icon-size;
-    height    : $brand-icon-size;
+    width        : $brand-icon-size;
+    height       : $brand-icon-size;
     border-radius: $radius-md;
     @include flex-center;
-    flex-shrink: 0;
-    margin    : $spacing-4 0 $spacing-4 $spacing-4;
-    box-shadow: $shadow-neumorph-inset;
+    flex-shrink  : 0;
+    margin       : $spacing-4 0 $spacing-4 $spacing-4;
+    background   : $color-neumorph-base;
+    box-shadow   : $shadow-neumorph-inset;
 
     i {
       font-size: $icon-lg;
@@ -139,27 +140,27 @@
   }
 
   &__info {
-    flex: 1;
+    flex     : 1;
     min-width: 0;
-    padding: $spacing-4 $spacing-3;
+    padding  : $spacing-4 $spacing-3;
   }
 
   &__name {
-    font-size: $font-size-base;
+    font-size  : $font-size-base;
     font-weight: $font-weight-medium;
-    color: $color-text-primary;
+    color      : $color-text-primary;
   }
 
   &__meta {
     @include font-mono($font-size-xs);
-    color: $color-text-tertiary;
+    color     : $color-text-tertiary;
     margin-top: 2px;
   }
 
   &__chevron {
-    font-size: $icon-md;
-    color: $color-text-tertiary;
+    font-size   : $icon-md;
+    color       : $color-text-tertiary;
     margin-right: $spacing-4;
-    flex-shrink: 0;
+    flex-shrink : 0;
   }
 }

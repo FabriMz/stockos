@@ -38,6 +38,7 @@
     border-radius: $radius-lg;
     @include flex-center;
     flex-shrink  : 0;
+    background   : $color-neumorph-base;
     box-shadow   : $shadow-neumorph-inset;
 
     i {
@@ -47,7 +48,7 @@
     &-img {
       width        : 100%;
       height       : 100%;
-      object-fit   : contain;
+      object-fit   : cover;
       border-radius: $radius-lg;
       overflow     : hidden;
     }

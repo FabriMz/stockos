@@ -14,6 +14,7 @@
     border-radius: $radius-2xl;
     @include flex-center;
     margin       : 0 auto $spacing-2;
+    background   : $color-neumorph-base;
     box-shadow   : $shadow-neumorph-inset;
 
     i { font-size: $icon-3xl; }
