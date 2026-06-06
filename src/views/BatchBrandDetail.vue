@@ -9,7 +9,7 @@
 
     <div class="scroll-content">
       <div class="brand-summary">
-        <div class="brand-summary__icon" :style="{ background: brand.bg }">
+        <div class="brand-summary__icon">
           <i :class="`ti ${brand.ic}`" :style="{ color: brand.col }" aria-hidden="true"></i>
         </div>
         <div>

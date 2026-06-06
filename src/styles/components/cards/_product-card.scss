@@ -156,7 +156,7 @@
     background   : $color-neumorph-base;
     border       : none;
     cursor       : pointer;
-    box-shadow   : $shadow-neumorph-inset;
+    box-shadow   : $shadow-neumorph-raised;
     transition   : box-shadow $transition-fast;
 
     i { font-size: $icon-sm; }

@@ -91,25 +91,27 @@
     font-size    : $font-size-sm;
     font-weight  : $font-weight-medium;
     color        : $color-text-secondary;
-    background   : $color-bg-secondary;
+    background   : $color-neumorph-base;
+    box-shadow   : $shadow-neumorph-flat;
     border       : none;
     cursor       : pointer;
-    transition   : background $transition-fast;
+    transition   : box-shadow $transition-fast;
 
     i {
       font-size: $icon-sm;
     }
 
     &:active {
-      background: $color-bg-tertiary;
+      box-shadow: $shadow-neumorph-pressed;
     }
 
     &--danger {
       color     : $color-danger-text;
       background: $color-danger-bg;
+      box-shadow: none;
 
       &:active {
-        background: $color-primary-100;
+        box-shadow: inset 2px 2px 5px rgba(0,0,0,0.18), inset -1px -1px 3px rgba(255,255,255,0.12);
       }
     }
   }

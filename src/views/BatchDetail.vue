@@ -16,11 +16,11 @@
           <div class="batch-detail__number">{{ folder.batchNumber }}</div>
           <div class="batch-detail__meta">
             {{ totalItems }} {{ totalItems === 1 ? 'producto' : 'productos' }} · vence {{ formatExpiry(folder.expiry) }}
-            <span :class="['badge', expiryBadgeClass(folder.expiry)]">
-              {{ expiryBadgeLabel(folder.expiry) }}
-            </span>
           </div>
         </div>
+        <span :class="['badge', expiryBadgeClass(folder.expiry)]" class="batch-detail__badge">
+          {{ expiryBadgeLabel(folder.expiry) }}
+        </span>
       </div>
 
       <!-- Buscador de marcas -->

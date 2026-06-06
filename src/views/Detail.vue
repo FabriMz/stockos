@@ -10,7 +10,7 @@
 
     <div class="scroll-content">
       <div class="detail__header">
-        <div class="detail__icon" :style="{ background: product.bg }">
+        <div class="detail__icon">
           <img v-if="product.img" :src="product.img" :alt="product.name" class="detail__icon-img">
           <i v-else :class="`ti ${product.ic}`" :style="{ color: product.col }" aria-hidden="true"></i>
         </div>
@@ -108,11 +108,11 @@
       <div class="spacer--xs"></div>
 
       <div class="detail__actions" v-if="!confirming">
-        <button class="btn btn--primary" @click="goEdit">
-          <i class="ti ti-edit" aria-hidden="true"></i>Editar
-        </button>
         <button class="btn btn--danger" @click="confirming = true">
           <i class="ti ti-trash" aria-hidden="true"></i>Eliminar
+        </button>
+        <button class="btn btn--primary" @click="goEdit">
+          <i class="ti ti-edit" aria-hidden="true"></i>Editar
         </button>
       </div>
       <div class="form-view__delete-confirm" v-else>

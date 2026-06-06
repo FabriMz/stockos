@@ -4,7 +4,7 @@
 .brand-toolbar {
   display: flex;
   gap    : $spacing-2;
-  margin : 0 $spacing-5 $spacing-4;
+  margin : $spacing-4 $spacing-5;
 
   &__btn {
     @include flex-row($spacing-2, center, center);

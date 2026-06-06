@@ -148,6 +148,12 @@
     align-items    : center;
     flex-shrink    : 0;
     gap            : $spacing-2;
+
+    .badge {
+      min-width  : 62px;
+      text-align : center;
+      justify-content: center;
+    }
   }
 
   &__alert-count {
@@ -155,8 +161,9 @@
     font-weight   : $font-weight-medium;
     letter-spacing: -1px;
     line-height   : 1;
-    min-width     : 1.5ch;
+    width         : 28px;
     text-align    : right;
+    flex-shrink   : 0;
 
     &--zero { color: $color-text-tertiary; }
   }

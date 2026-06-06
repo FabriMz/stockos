@@ -3,7 +3,7 @@
 // ─── CATALOG ACTION BAR ───────────────────────────────────────────────────────
 .catalog-action-bar {
   @include flex-row($spacing-2, center, stretch);
-  padding    : $spacing-3 $spacing-5 $spacing-2;
+  margin : $spacing-4 $spacing-5;
   flex-shrink: 0;
 
   &__btn {
