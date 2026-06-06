@@ -52,9 +52,12 @@
 
   &__count {
     @include font-mono($font-size-xs, $font-weight-medium);
-    background   : rgba(165, 180, 252, 0.1);
+    @include flex-center;
+    background   : rgba(165, 180, 252, 0.18);
     border-radius: $radius-full;
-    padding      : 2px $spacing-2;
+    min-width    : 20px;
+    height       : 20px;
+    padding      : 0 $spacing-2;
     color        : $color-text-secondary;
     flex-shrink  : 0;
   }
