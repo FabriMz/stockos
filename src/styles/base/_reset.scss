@@ -53,11 +53,9 @@ a {
   background: $color-neumorph-base;
 
   &__frame {
-    width: 360px;
-    height: auto;
-    border-radius: 10px;
+    width: 100%;
+    height: 100dvh;
     overflow: hidden;
-    box-shadow: $shadow-lg, 0 0 0 2px $color-copper-700;
     position: relative;
     flex-shrink: 0;
   }

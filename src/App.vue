@@ -1,8 +1,7 @@
 <template>
-  <div class="phone-shell">
-    <div class="phone-shell__frame">
-      <router-view />
-      <transition name="toast">
+  <div class="phone-shell__frame">
+    <router-view />
+    <transition name="toast">
         <div v-if="productsStore.pendingDelete" class="toast" role="alert" aria-live="assertive">
           <span class="toast__msg">Producto eliminado</span>
           <button class="toast__undo" @click="productsStore.undoDelete()">Deshacer</button>
@@ -43,7 +42,6 @@
           <button class="toast__undo" @click="catStore.undoMoveBrands()">Deshacer</button>
         </div>
       </transition>
-    </div>
   </div>
 </template>
 
