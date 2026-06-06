@@ -404,6 +404,7 @@ import { ref, computed, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useProductsStore }      from '../stores/products.js'
 import { useProductCatOpenStore } from '../stores/productCatOpen.js'
+import { useProductMigration }   from '../composables/useProductMigration.js'
 import TopBar     from '../components/layout/TopBar.vue'
 import BottomNav  from '../components/layout/BottomNav.vue'
 import ProductCard    from '../components/ui/ProductCard.vue'
@@ -510,76 +511,33 @@ function goNewProduct() {
 
 // ─── MIGRACIÓN DE PRODUCTOS ──────────────────────────────────────────────────
 
-const migratingCat       = ref(null)
-const selectedProductIds = ref(new Set())
-const showMigrateSheet   = ref(false)
-const migrateTarget      = ref(null)
-
-const migrationTargets = computed(() =>
-  existingCats.value.filter(c => c !== migratingCat.value)
-)
-
-const currentGroupItems = computed(() => {
-  if (!migratingCat.value) return []
-  const group = categorizedBatchItems.value.find(
-    g => (g.cat ?? '__sin_cat__') === migratingCat.value
-  )
-  return group?.items ?? []
+const {
+  migratingCat,
+  selectedProductIds,
+  showMigrateSheet,
+  migrateTarget,
+  migrationTargets,
+  currentGroupItems,
+  isAllSelected,
+  toggleSelectAll,
+  toggleMigrateMode,
+  cancelMigrate,
+  toggleProductSelect,
+  openMigrateSheet,
+  confirmMigrate,
+} = useProductMigration({
+  categorizedGroups: categorizedBatchItems,
+  existingCats,
+  onConfirmMigrate: (target, selectedIds) => {
+    const targetCat = target === '__sin_cat__' ? '' : target
+    for (const itemId of selectedIds) {
+      const item = batchItems.value.find(b => b.id === itemId)
+      if (!item) continue
+      const product = getProduct(item.productId)
+      if (product) product.category = targetCat
+    }
+  },
 })
-
-const isAllSelected = computed(() =>
-  currentGroupItems.value.length > 0 &&
-  currentGroupItems.value.every(item => selectedProductIds.value.has(item.id))
-)
-
-function toggleSelectAll() {
-  if (isAllSelected.value) {
-    selectedProductIds.value = new Set()
-  } else {
-    selectedProductIds.value = new Set(currentGroupItems.value.map(item => item.id))
-  }
-}
-
-function toggleMigrateMode(cat) {
-  if (migratingCat.value === cat) {
-    cancelMigrate()
-  } else {
-    migratingCat.value       = cat
-    selectedProductIds.value = new Set()
-  }
-}
-
-function cancelMigrate() {
-  migratingCat.value       = null
-  selectedProductIds.value = new Set()
-  showMigrateSheet.value   = false
-  migrateTarget.value      = null
-}
-
-function toggleProductSelect(itemId) {
-  const s = new Set(selectedProductIds.value)
-  if (s.has(itemId)) s.delete(itemId)
-  else s.add(itemId)
-  selectedProductIds.value = s
-}
-
-function openMigrateSheet() {
-  if (selectedProductIds.value.size === 0) return
-  migrateTarget.value    = null
-  showMigrateSheet.value = true
-}
-
-function confirmMigrate() {
-  if (!migrateTarget.value) return
-  const targetCat = migrateTarget.value === '__sin_cat__' ? '' : migrateTarget.value
-  for (const itemId of selectedProductIds.value) {
-    const item = batchItems.value.find(b => b.id === itemId)
-    if (!item) continue
-    const product = getProduct(item.productId)
-    if (product) product.category = targetCat
-  }
-  cancelMigrate()
-}
 
 function handleDeleteCat(cat) {
   store.markDeleteCategoryInBrand(brandId.value, cat)

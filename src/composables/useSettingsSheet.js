@@ -158,6 +158,85 @@ export function useSettingsSheet(store, catStore, options = {}) {
     }
   }
 
+  // ─── Inline creation ───────────────────────────────────────────────────────
+  const settingsCreatingCat    = ref(false)
+  const settingsNewCatValue    = ref('')
+  const settingsNewCatError    = ref('')
+  const settingsNewCatInputRef = ref(null)
+
+  const settingsCreatingBrand    = ref(false)
+  const settingsNewBrandValue    = ref('')
+  const settingsNewBrandError    = ref('')
+  const settingsNewBrandInputRef = ref(null)
+
+  function startSettingsCreateCat() {
+    cancelSettingsEdit()
+    settingsCreatingBrand.value  = false
+    settingsNewBrandValue.value  = ''
+    settingsNewBrandError.value  = ''
+    settingsCreatingCat.value    = true
+    settingsNewCatValue.value    = ''
+    settingsNewCatError.value    = ''
+    nextTick(() => settingsNewCatInputRef.value?.focus())
+  }
+
+  function cancelSettingsCreateCat() {
+    settingsCreatingCat.value = false
+    settingsNewCatValue.value = ''
+    settingsNewCatError.value = ''
+  }
+
+  function confirmSettingsCreateCat() {
+    const val = settingsNewCatValue.value.trim()
+    if (!val) {
+      settingsNewCatError.value = 'El nombre no puede quedar vacío'
+      return
+    }
+    const ok = typeof catStore.addCategory === 'function'
+      ? catStore.addCategory(val)
+      : false
+    if (!ok) {
+      settingsNewCatError.value = 'Ya existe un grupo con ese nombre'
+      return
+    }
+    settingsCreatingCat.value = false
+    settingsNewCatValue.value = ''
+    settingsNewCatError.value = ''
+  }
+
+  function startSettingsCreateBrand() {
+    cancelSettingsEdit()
+    cancelSettingsCreateCat()
+    settingsCreatingBrand.value = true
+    settingsNewBrandValue.value = ''
+    settingsNewBrandError.value = ''
+    nextTick(() => settingsNewBrandInputRef.value?.focus())
+  }
+
+  function cancelSettingsCreateBrand() {
+    settingsCreatingBrand.value = false
+    settingsNewBrandValue.value = ''
+    settingsNewBrandError.value = ''
+  }
+
+  function confirmSettingsCreateBrand() {
+    const val = settingsNewBrandValue.value.trim()
+    if (!val) {
+      settingsNewBrandError.value = 'El nombre no puede quedar vacío'
+      return
+    }
+    const id = typeof store.addBrand === 'function'
+      ? store.addBrand(val)
+      : null
+    if (!id) {
+      settingsNewBrandError.value = 'Ya existe una marca con ese nombre'
+      return
+    }
+    settingsCreatingBrand.value = false
+    settingsNewBrandValue.value = ''
+    settingsNewBrandError.value = ''
+  }
+
   return {
     // Visibility
     showSettingsSheet,
@@ -174,14 +253,29 @@ export function useSettingsSheet(store, catStore, options = {}) {
     settingsEditValue,
     settingsEditError,
     settingsInputRefs,
+    // Inline creation state
+    settingsCreatingCat,
+    settingsNewCatValue,
+    settingsNewCatError,
+    settingsNewCatInputRef,
+    settingsCreatingBrand,
+    settingsNewBrandValue,
+    settingsNewBrandError,
+    settingsNewBrandInputRef,
     // Category handlers
     startSettingsCatEdit,
     confirmSettingsCatRename,
     handleSettingsDeleteCat,
+    startSettingsCreateCat,
+    cancelSettingsCreateCat,
+    confirmSettingsCreateCat,
     // Brand handlers
     startSettingsBrandEdit,
     confirmSettingsBrandRename,
     handleSettingsDeleteBrand,
+    startSettingsCreateBrand,
+    cancelSettingsCreateBrand,
+    confirmSettingsCreateBrand,
     // Shared edit
     cancelSettingsEdit,
   }

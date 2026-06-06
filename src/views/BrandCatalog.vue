@@ -197,38 +197,14 @@
 
           <!-- Migrate mode: selectable brand rows -->
           <template v-else>
-            <div
+            <SelectableBrandRow
               v-for="bid in catEntry.bids"
               :key="bid"
-              class="brand-row brand-row--selectable"
-              :class="{ 'brand-row--selected': selectedBrandIds.has(bid) }"
-              role="checkbox"
-              :aria-checked="String(selectedBrandIds.has(bid))"
-              :aria-label="getBrand(bid)?.name"
-              tabindex="0"
-              @click="toggleBrandSelect(bid)"
-              @keydown.enter.prevent="toggleBrandSelect(bid)"
-              @keydown.space.prevent="toggleBrandSelect(bid)"
-            >
-              <div class="brand-row__body">
-                <div class="brand-row__header">
-                  <div class="brand-row__check">
-                    <i
-                      class="ti"
-                      :class="selectedBrandIds.has(bid) ? 'ti-circle-check' : 'ti-circle'"
-                      aria-hidden="true"
-                    ></i>
-                  </div>
-                  <div class="brand-row__icon" :style="{ background: getBrand(bid)?.bg }">
-                    <i :class="`ti ${getBrand(bid)?.ic}`" :style="{ color: getBrand(bid)?.col }" aria-hidden="true"></i>
-                  </div>
-                  <div class="brand-row__info">
-                    <div class="brand-row__name">{{ getBrand(bid)?.name }}</div>
-                    <div class="brand-row__meta">{{ getByBrand(bid).length === 0 ? 'Sin productos' : getByBrand(bid).length === 1 ? '1 producto' : `${getByBrand(bid).length} productos` }} · {{ getBrand(bid)?.origin }}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
+              :brand="getBrand(bid)"
+              :selected="selectedBrandIds.has(bid)"
+              :meta="`${getByBrand(bid).length === 0 ? 'Sin productos' : getByBrand(bid).length === 1 ? '1 producto' : `${getByBrand(bid).length} productos`} · ${getBrand(bid)?.origin}`"
+              @toggle="toggleBrandSelect(bid)"
+            />
           </template>
 
         </template>
@@ -265,38 +241,14 @@
 
           <!-- Migrate mode: selectable rows -->
           <template v-else>
-            <div
+            <SelectableBrandRow
               v-for="bid in uncategorizedBrands"
               :key="bid"
-              class="brand-row brand-row--selectable"
-              :class="{ 'brand-row--selected': selectedBrandIds.has(bid) }"
-              role="checkbox"
-              :aria-checked="String(selectedBrandIds.has(bid))"
-              :aria-label="getBrand(bid)?.name"
-              tabindex="0"
-              @click="toggleBrandSelect(bid)"
-              @keydown.enter.prevent="toggleBrandSelect(bid)"
-              @keydown.space.prevent="toggleBrandSelect(bid)"
-            >
-              <div class="brand-row__body">
-                <div class="brand-row__header">
-                  <div class="brand-row__check">
-                    <i
-                      class="ti"
-                      :class="selectedBrandIds.has(bid) ? 'ti-circle-check' : 'ti-circle'"
-                      aria-hidden="true"
-                    ></i>
-                  </div>
-                  <div class="brand-row__icon" :style="{ background: getBrand(bid)?.bg }">
-                    <i :class="`ti ${getBrand(bid)?.ic}`" :style="{ color: getBrand(bid)?.col }" aria-hidden="true"></i>
-                  </div>
-                  <div class="brand-row__info">
-                    <div class="brand-row__name">{{ getBrand(bid)?.name }}</div>
-                    <div class="brand-row__meta">{{ getByBrand(bid).length === 0 ? 'Sin productos' : getByBrand(bid).length === 1 ? '1 producto' : `${getByBrand(bid).length} productos` }} · {{ getBrand(bid)?.origin }}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
+              :brand="getBrand(bid)"
+              :selected="selectedBrandIds.has(bid)"
+              :meta="`${getByBrand(bid).length === 0 ? 'Sin productos' : getByBrand(bid).length === 1 ? '1 producto' : `${getByBrand(bid).length} productos`} · ${getBrand(bid)?.origin}`"
+              @toggle="toggleBrandSelect(bid)"
+            />
           </template>
         </template>
 
@@ -1037,8 +989,9 @@ import TopBar        from '../components/layout/TopBar.vue'
 import BottomNav     from '../components/layout/BottomNav.vue'
 import BrandRow      from '../components/ui/BrandRow.vue'
 import ProductCard   from '../components/ui/ProductCard.vue'
-import CloneSheet    from '../components/ui/CloneSheet.vue'
-import CatalogCatSep from '../components/ui/CatalogCatSep.vue'
+import CloneSheet        from '../components/ui/CloneSheet.vue'
+import CatalogCatSep     from '../components/ui/CatalogCatSep.vue'
+import SelectableBrandRow from '../components/ui/SelectableBrandRow.vue'
 
 const route    = useRoute()
 const router   = useRouter()
@@ -1158,7 +1111,7 @@ function handleRenameCat(id, newName) {
 const {
   showSettingsSheet,
   openSettingsSheet,
-  closeSettingsSheet: _closeSettingsSheet,
+  closeSettingsSheet,
   settingsSearchQuery,
   filteredSettingsCategories,
   filteredSettingsBrands,
@@ -1173,98 +1126,24 @@ const {
   startSettingsBrandEdit,
   confirmSettingsBrandRename,
   handleSettingsDeleteBrand,
+  startSettingsCreateCat,
+  cancelSettingsCreateCat,
+  confirmSettingsCreateCat,
+  settingsCreatingCat,
+  settingsNewCatValue,
+  settingsNewCatError,
+  settingsNewCatInputRef,
+  startSettingsCreateBrand,
+  cancelSettingsCreateBrand,
+  confirmSettingsCreateBrand,
+  settingsCreatingBrand,
+  settingsNewBrandValue,
+  settingsNewBrandError,
+  settingsNewBrandInputRef,
   cancelSettingsEdit,
 } = useSettingsSheet(store, catStore, {
   onDeleteCat: (id) => { if (migratingCatId.value === id) cancelMigrate() },
 })
-
-// ─── Nueva categoría inline (settings sheet) ─────────────────────────────────
-
-const settingsCreatingCat    = ref(false)
-const settingsNewCatValue    = ref('')
-const settingsNewCatError    = ref('')
-const settingsNewCatInputRef = ref(null)
-
-function closeSettingsSheet() {
-  _closeSettingsSheet()
-  settingsCreatingCat.value   = false
-  settingsNewCatValue.value   = ''
-  settingsNewCatError.value   = ''
-  settingsCreatingBrand.value = false
-  settingsNewBrandValue.value = ''
-  settingsNewBrandError.value = ''
-}
-
-function startSettingsCreateCat() {
-  cancelSettingsEdit()
-  settingsCreatingBrand.value = false
-  settingsNewBrandValue.value = ''
-  settingsNewBrandError.value = ''
-  settingsCreatingCat.value   = true
-  settingsNewCatValue.value   = ''
-  settingsNewCatError.value   = ''
-  nextTick(() => settingsNewCatInputRef.value?.focus())
-}
-
-function cancelSettingsCreateCat() {
-  settingsCreatingCat.value = false
-  settingsNewCatValue.value = ''
-  settingsNewCatError.value = ''
-}
-
-function confirmSettingsCreateCat() {
-  const n = settingsNewCatValue.value.trim()
-  if (!n) {
-    settingsNewCatError.value = 'El nombre no puede quedar vacío'
-    return
-  }
-  const ok = catStore.addCategory(n)
-  if (!ok) {
-    settingsNewCatError.value = 'Ya existe una categoría con ese nombre'
-    return
-  }
-  settingsCreatingCat.value = false
-  settingsNewCatValue.value = ''
-  settingsNewCatError.value = ''
-}
-
-// ─── Nueva marca inline (settings sheet) ─────────────────────────────────────
-
-const settingsCreatingBrand    = ref(false)
-const settingsNewBrandValue    = ref('')
-const settingsNewBrandError    = ref('')
-const settingsNewBrandInputRef = ref(null)
-
-function startSettingsCreateBrand() {
-  cancelSettingsEdit()
-  cancelSettingsCreateCat()
-  settingsCreatingBrand.value  = true
-  settingsNewBrandValue.value  = ''
-  settingsNewBrandError.value  = ''
-  nextTick(() => settingsNewBrandInputRef.value?.focus())
-}
-
-function cancelSettingsCreateBrand() {
-  settingsCreatingBrand.value = false
-  settingsNewBrandValue.value = ''
-  settingsNewBrandError.value = ''
-}
-
-function confirmSettingsCreateBrand() {
-  const n = settingsNewBrandValue.value.trim()
-  if (!n) {
-    settingsNewBrandError.value = 'El nombre no puede quedar vacío'
-    return
-  }
-  if (store.brands.some(b => b.name === n)) {
-    settingsNewBrandError.value = 'Ya existe una marca con ese nombre'
-    return
-  }
-  store.addBrand(n)
-  settingsCreatingBrand.value = false
-  settingsNewBrandValue.value = ''
-  settingsNewBrandError.value = ''
-}
 
 // ─── MIGRATE STATE ────────────────────────────────────────────────────────────
 

@@ -540,6 +540,7 @@ import BottomNav     from '../components/layout/BottomNav.vue'
 import ProductCard   from '../components/ui/ProductCard.vue'
 import CloneSheet    from '../components/ui/CloneSheet.vue'
 import CatalogCatSep from '../components/ui/CatalogCatSep.vue'
+import { useProductMigration } from '../composables/useProductMigration.js'
 
 const route    = useRoute()
 const router   = useRouter()
@@ -782,107 +783,41 @@ function handleRenameCat(oldName, newName) {
 
 // ─── Migración de productos ───────────────────────────────────────────────────
 
-const migratingCat       = ref(null)
-const selectedProductIds = ref(new Set())
-const showMigrateSheet   = ref(false)
-const migrateTarget      = ref(null)
-
-const migrateCreating       = ref(false)
-const migrateNewCatName     = ref('')
-const migrateNewCatError    = ref('')
-const migrateNewCatInputRef = ref(null)
-
-function startMigrateCreateCat() {
-  migrateNewCatName.value  = ''
-  migrateNewCatError.value = ''
-  migrateCreating.value    = true
-  nextTick(() => migrateNewCatInputRef.value?.focus())
-}
-
-function cancelMigrateCreateCat() {
-  migrateCreating.value    = false
-  migrateNewCatName.value  = ''
-  migrateNewCatError.value = ''
-}
-
-function handleMigrateCreateCat() {
-  const n = migrateNewCatName.value.trim()
-  if (!n) {
-    migrateNewCatError.value = 'El nombre no puede quedar vacío'
-    return
-  }
-  const ok = store.addCategoryToBrand(route.params.brandId, n)
-  if (!ok) {
-    migrateNewCatError.value = 'Ya existe una categoría con ese nombre'
-    return
-  }
-  migrateTarget.value = n
-  cancelMigrateCreateCat()
-}
-
-const migrationTargets = computed(() =>
-  existingCats.value.filter(c => c !== migratingCat.value)
-)
-
-const currentGroupItems = computed(() => {
-  if (!migratingCat.value) return []
-  const group = categorizedProducts.value.find(
-    g => (g.cat ?? '__sin_cat__') === migratingCat.value
-  )
-  return group?.items ?? []
+const {
+  migratingCat,
+  selectedProductIds,
+  showMigrateSheet,
+  migrateTarget,
+  migrationTargets,
+  currentGroupItems,
+  isAllSelected,
+  migrateCreating,
+  migrateNewCatName,
+  migrateNewCatError,
+  migrateNewCatInputRef,
+  toggleSelectAll,
+  toggleMigrateMode,
+  cancelMigrate,
+  toggleProductSelect,
+  openMigrateSheet,
+  startMigrateCreateCat,
+  cancelMigrateCreateCat,
+  handleMigrateCreateCat,
+  confirmMigrate,
+} = useProductMigration({
+  categorizedGroups: categorizedProducts,
+  existingCats,
+  onCreateCategory: n => {
+    const ok = store.addCategoryToBrand(route.params.brandId, n)
+    return ok ? n : false
+  },
+  onConfirmMigrate: (target, selectedIds) => {
+    const targetCat = target === '__sin_cat__' ? '' : target
+    products.value
+      .filter(p => selectedIds.has(p.id))
+      .forEach(p => { p.category = targetCat })
+  },
 })
-
-const isAllSelected = computed(() =>
-  currentGroupItems.value.length > 0 &&
-  currentGroupItems.value.every(p => selectedProductIds.value.has(p.id))
-)
-
-function toggleSelectAll() {
-  if (isAllSelected.value) {
-    selectedProductIds.value = new Set()
-  } else {
-    selectedProductIds.value = new Set(currentGroupItems.value.map(p => p.id))
-  }
-}
-
-function toggleMigrateMode(cat) {
-  if (migratingCat.value === cat) {
-    cancelMigrate()
-  } else {
-    migratingCat.value       = cat
-    selectedProductIds.value = new Set()
-  }
-}
-
-function cancelMigrate() {
-  migratingCat.value       = null
-  selectedProductIds.value = new Set()
-  showMigrateSheet.value   = false
-  migrateTarget.value      = null
-  cancelMigrateCreateCat()
-}
-
-function toggleProductSelect(id) {
-  const s = new Set(selectedProductIds.value)
-  if (s.has(id)) s.delete(id)
-  else s.add(id)
-  selectedProductIds.value = s
-}
-
-function openMigrateSheet() {
-  if (selectedProductIds.value.size === 0) return
-  migrateTarget.value    = null
-  showMigrateSheet.value = true
-}
-
-function confirmMigrate() {
-  if (!migrateTarget.value) return
-  const targetCat = migrateTarget.value === '__sin_cat__' ? '' : migrateTarget.value
-  products.value
-    .filter(p => selectedProductIds.value.has(p.id))
-    .forEach(p => { p.category = targetCat })
-  cancelMigrate()
-}
 
 // ─── Clone ────────────────────────────────────────────────────────────────────
 
