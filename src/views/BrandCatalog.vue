@@ -677,6 +677,14 @@
             <p class="settings-sheet__section-label">
               <i class="ti ti-folder" aria-hidden="true"></i>
               Categorías de marcas
+              <button
+                type="button"
+                class="settings-sheet__section-add-btn"
+                aria-label="Nueva categoría de marcas"
+                @click="startSettingsCreateCat"
+              >
+                <i class="ti ti-plus" aria-hidden="true"></i>
+              </button>
             </p>
             <div class="settings-sheet__list" role="list">
               <div
@@ -731,8 +739,32 @@
                   </div>
                 </template>
               </div>
-              <div v-if="filteredSettingsCategories.length === 0" class="settings-sheet__empty">
+              <div v-if="filteredSettingsCategories.length === 0 && !settingsCreatingCat" class="settings-sheet__empty">
                 No se encontraron categorías
+              </div>
+
+              <!-- fila de creación inline -->
+              <div v-if="settingsCreatingCat" class="settings-sheet__item" role="listitem">
+                <input
+                  id="settings-cat-new"
+                  name="settings-cat-new"
+                  class="settings-sheet__edit-input"
+                  v-model="settingsNewCatValue"
+                  placeholder="Nombre de categoría"
+                  autocomplete="off"
+                  :ref="el => { if (el) settingsNewCatInputRef = el }"
+                  @keydown.enter.prevent="confirmSettingsCreateCat"
+                  @keydown.escape="cancelSettingsCreateCat"
+                />
+                <span v-if="settingsNewCatError" class="settings-sheet__edit-error" role="alert">{{ settingsNewCatError }}</span>
+                <div class="settings-sheet__item-actions">
+                  <button class="settings-sheet__confirm-btn" aria-label="Confirmar" @click="confirmSettingsCreateCat">
+                    <i class="ti ti-check" aria-hidden="true"></i>
+                  </button>
+                  <button class="settings-sheet__cancel-btn" aria-label="Cancelar" @click="cancelSettingsCreateCat">
+                    <i class="ti ti-x" aria-hidden="true"></i>
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -740,6 +772,14 @@
             <p class="settings-sheet__section-label settings-sheet__section-label--mt">
               <i class="ti ti-building-store" aria-hidden="true"></i>
               Marcas
+              <button
+                type="button"
+                class="settings-sheet__section-add-btn"
+                aria-label="Nueva marca"
+                @click="startSettingsCreateBrand"
+              >
+                <i class="ti ti-plus" aria-hidden="true"></i>
+              </button>
             </p>
             <div class="settings-sheet__list" role="list">
               <div
@@ -796,8 +836,32 @@
                   </div>
                 </template>
               </div>
-              <div v-if="filteredSettingsBrands.length === 0" class="settings-sheet__empty">
+              <div v-if="filteredSettingsBrands.length === 0 && !settingsCreatingBrand" class="settings-sheet__empty">
                 No se encontraron marcas
+              </div>
+
+              <!-- fila de creación inline -->
+              <div v-if="settingsCreatingBrand" class="settings-sheet__item" role="listitem">
+                <input
+                  id="settings-brand-new"
+                  name="settings-brand-new"
+                  class="settings-sheet__edit-input"
+                  v-model="settingsNewBrandValue"
+                  placeholder="Nombre de marca"
+                  autocomplete="off"
+                  :ref="el => { if (el) settingsNewBrandInputRef = el }"
+                  @keydown.enter.prevent="confirmSettingsCreateBrand"
+                  @keydown.escape="cancelSettingsCreateBrand"
+                />
+                <span v-if="settingsNewBrandError" class="settings-sheet__edit-error" role="alert">{{ settingsNewBrandError }}</span>
+                <div class="settings-sheet__item-actions">
+                  <button class="settings-sheet__confirm-btn" aria-label="Confirmar" @click="confirmSettingsCreateBrand">
+                    <i class="ti ti-check" aria-hidden="true"></i>
+                  </button>
+                  <button class="settings-sheet__cancel-btn" aria-label="Cancelar" @click="cancelSettingsCreateBrand">
+                    <i class="ti ti-x" aria-hidden="true"></i>
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -1056,7 +1120,7 @@ function handleRenameCat(id, newName) {
 const {
   showSettingsSheet,
   openSettingsSheet,
-  closeSettingsSheet,
+  closeSettingsSheet: _closeSettingsSheet,
   settingsSearchQuery,
   filteredSettingsCategories,
   filteredSettingsBrands,
@@ -1075,6 +1139,94 @@ const {
 } = useSettingsSheet(store, catStore, {
   onDeleteCat: (id) => { if (migratingCatId.value === id) cancelMigrate() },
 })
+
+// ─── Nueva categoría inline (settings sheet) ─────────────────────────────────
+
+const settingsCreatingCat    = ref(false)
+const settingsNewCatValue    = ref('')
+const settingsNewCatError    = ref('')
+const settingsNewCatInputRef = ref(null)
+
+function closeSettingsSheet() {
+  _closeSettingsSheet()
+  settingsCreatingCat.value   = false
+  settingsNewCatValue.value   = ''
+  settingsNewCatError.value   = ''
+  settingsCreatingBrand.value = false
+  settingsNewBrandValue.value = ''
+  settingsNewBrandError.value = ''
+}
+
+function startSettingsCreateCat() {
+  cancelSettingsEdit()
+  settingsCreatingBrand.value = false
+  settingsNewBrandValue.value = ''
+  settingsNewBrandError.value = ''
+  settingsCreatingCat.value   = true
+  settingsNewCatValue.value   = ''
+  settingsNewCatError.value   = ''
+  nextTick(() => settingsNewCatInputRef.value?.focus())
+}
+
+function cancelSettingsCreateCat() {
+  settingsCreatingCat.value = false
+  settingsNewCatValue.value = ''
+  settingsNewCatError.value = ''
+}
+
+function confirmSettingsCreateCat() {
+  const n = settingsNewCatValue.value.trim()
+  if (!n) {
+    settingsNewCatError.value = 'El nombre no puede quedar vacío'
+    return
+  }
+  const ok = catStore.addCategory(n)
+  if (!ok) {
+    settingsNewCatError.value = 'Ya existe una categoría con ese nombre'
+    return
+  }
+  settingsCreatingCat.value = false
+  settingsNewCatValue.value = ''
+  settingsNewCatError.value = ''
+}
+
+// ─── Nueva marca inline (settings sheet) ─────────────────────────────────────
+
+const settingsCreatingBrand    = ref(false)
+const settingsNewBrandValue    = ref('')
+const settingsNewBrandError    = ref('')
+const settingsNewBrandInputRef = ref(null)
+
+function startSettingsCreateBrand() {
+  cancelSettingsEdit()
+  cancelSettingsCreateCat()
+  settingsCreatingBrand.value  = true
+  settingsNewBrandValue.value  = ''
+  settingsNewBrandError.value  = ''
+  nextTick(() => settingsNewBrandInputRef.value?.focus())
+}
+
+function cancelSettingsCreateBrand() {
+  settingsCreatingBrand.value = false
+  settingsNewBrandValue.value = ''
+  settingsNewBrandError.value = ''
+}
+
+function confirmSettingsCreateBrand() {
+  const n = settingsNewBrandValue.value.trim()
+  if (!n) {
+    settingsNewBrandError.value = 'El nombre no puede quedar vacío'
+    return
+  }
+  if (store.brands.some(b => b.name === n)) {
+    settingsNewBrandError.value = 'Ya existe una marca con ese nombre'
+    return
+  }
+  store.addBrand(n)
+  settingsCreatingBrand.value = false
+  settingsNewBrandValue.value = ''
+  settingsNewBrandError.value = ''
+}
 
 // ─── MIGRATE STATE ────────────────────────────────────────────────────────────
 
