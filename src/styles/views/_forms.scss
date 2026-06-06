@@ -161,6 +161,7 @@
   cursor: pointer;
   box-shadow: $shadow-neumorph-inset;
   transition: border-color $transition-fast, background $transition-fast;
+  overflow: hidden;
 
   i {
     font-size: $icon-2xl;
