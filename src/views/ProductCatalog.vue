@@ -69,13 +69,10 @@
           <span>Colapsar</span>
         </button>
         <button
-          ref="brandGearRef"
           class="brand-toolbar__btn"
-          :class="{ 'brand-toolbar__btn--active': brandMenuOpen }"
+          :class="{ 'brand-toolbar__btn--active': showCatSettingsSheet }"
           aria-label="Ajustes de categorías"
-          :aria-expanded="String(brandMenuOpen)"
-          :aria-haspopup="true"
-          @click.stop="toggleBrandMenu"
+          @click="openCatSettingsSheet"
         >
           <i class="ti ti-settings" aria-hidden="true"></i>
           <span>Ajustes</span>
@@ -239,113 +236,148 @@
 
     <BottomNav />
 
-    <!-- Menú ruedita de marca -->
-    <Teleport to="body">
-      <div v-if="brandMenuOpen" class="cat-sep-backdrop" @click="brandMenuOpen = false" aria-hidden="true"></div>
-      <Transition name="cat-sep-menu">
-        <div
-          v-if="brandMenuOpen"
-          class="cat-sep-menu"
-          :style="brandMenuStyle"
-          role="menu"
-          @click.stop
-          :aria-label="`Opciones de ${brand?.name}`"
-        >
-          <div class="cat-sep-menu__item">
-            <button
-              class="cat-sep-menu__btn"
-              role="menuitem"
-              aria-label="Nueva categoría"
-              @click="openNewCatSheet"
-            >
-              <i class="ti ti-folder-plus" aria-hidden="true"></i>
-              <span>Nueva categoría</span>
-            </button>
-          </div>
-          <div class="cat-sep-menu__item">
-            <button
-              class="cat-sep-menu__btn cat-sep-menu__btn--danger"
-              role="menuitem"
-              aria-label="Eliminar categorías"
-              :disabled="existingCats.length === 0"
-              @click="openDeleteCatsPanel"
-            >
-              <i class="ti ti-trash" aria-hidden="true"></i>
-              <span>Eliminar categorías</span>
-            </button>
-          </div>
-        </div>
-      </Transition>
-    </Teleport>
-
-    <!-- Sheet: nueva categoría -->
+    <!-- Sheet: ajustes de categorías de la marca -->
     <Transition name="sheet">
       <div
-        v-if="showNewCatSheet"
+        v-if="showCatSettingsSheet"
         class="sheet-overlay"
         role="dialog"
-        aria-label="Nueva categoría"
-        @click.self="closeNewCatSheet"
+        aria-label="Ajustes de categorías"
+        @click.self="closeCatSettingsSheet"
       >
-        <div class="sheet">
+        <div class="sheet sheet--tall">
           <div class="sheet__handle" aria-hidden="true"></div>
           <div class="sheet__header">
-            <div class="sheet__title">Nueva categoría</div>
-            <div class="sheet__sub">Se creará dentro de {{ brand?.name }}</div>
+            <div class="sheet__title">Ajustes</div>
+            <div class="sheet__sub">Renombra o elimina categorías de {{ brand?.name }}</div>
           </div>
-          <div class="sheet__body">
-            <div
-              v-for="(entry, idx) in newCatEntries"
-              :key="entry.id"
-              class="form-group"
-            >
-              <label class="form-label" :for="`pc-new-cat-name-${entry.id}`">
-                {{ newCatEntries.length > 1 ? `Categoría ${idx + 1}` : 'Nombre' }}
-              </label>
-              <div class="new-cat-row">
-                <input
-                  :id="`pc-new-cat-name-${entry.id}`"
-                  :name="`pc-new-cat-name-${entry.id}`"
-                  class="form-input"
-                  v-model="entry.value"
-                  placeholder="Ej: Aceites"
-                  autocomplete="off"
-                  :ref="el => { if (el && idx === newCatEntries.length - 1) newCatInputRef = el }"
-                  @keydown.enter.prevent="idx === newCatEntries.length - 1 ? addNewCatEntry() : focusEntry(idx + 1)"
-                  @keydown.escape="closeNewCatSheet"
-                />
-                <button
-                  v-if="newCatEntries.length > 1"
-                  type="button"
-                  class="new-cat-row__remove"
-                  :aria-label="`Quitar categoría ${idx + 1}`"
-                  @click="removeNewCatEntry(idx)"
-                >
-                  <i class="ti ti-x" aria-hidden="true"></i>
-                </button>
-              </div>
-              <span v-if="entry.error" class="form-hint form-hint--error" role="alert">{{ entry.error }}</span>
+
+          <div class="sheet__body sheet__body--scroll">
+
+            <div class="topbar__search settings-sheet__search">
+              <i class="ti ti-search" aria-hidden="true"></i>
+              <input
+                id="cat-settings-search"
+                name="cat-settings-search"
+                type="search"
+                v-model="catSettingsSearchQuery"
+                placeholder="Buscar categorías…"
+                aria-label="Buscar categorías"
+              />
+              <button
+                v-if="catSettingsSearchQuery"
+                class="topbar__search-clear"
+                type="button"
+                @click="catSettingsSearchQuery = ''"
+                aria-label="Limpiar búsqueda"
+              >
+                <i class="ti ti-x" aria-hidden="true"></i>
+              </button>
             </div>
 
-            <button
-              type="button"
-              class="btn btn--ghost btn--sm new-cat-add-btn"
-              @click="addNewCatEntry"
-            >
-              <i class="ti ti-plus" aria-hidden="true"></i>
-              Agregar otra
-            </button>
+            <p class="settings-sheet__section-label">
+              <i class="ti ti-folder" aria-hidden="true"></i>
+              Categorías
+            </p>
+            <div class="settings-sheet__list" role="list">
+              <div
+                v-for="cat in filteredCatSettings"
+                :key="cat"
+                class="settings-sheet__item"
+                role="listitem"
+              >
+                <template v-if="catSettingsEditingId === cat">
+                  <input
+                    :id="`cat-settings-edit-${cat}`"
+                    :name="`cat-settings-edit-${cat}`"
+                    class="settings-sheet__edit-input"
+                    v-model="catSettingsEditValue"
+                    autocomplete="off"
+                    :ref="el => { if (el) catSettingsInputRef = el }"
+                    @keydown.enter.prevent="confirmCatSettingsRename(cat)"
+                    @keydown.escape="cancelCatSettingsEdit"
+                  />
+                  <span v-if="catSettingsEditError" class="settings-sheet__edit-error" role="alert">{{ catSettingsEditError }}</span>
+                  <div class="settings-sheet__item-actions">
+                    <button class="settings-sheet__confirm-btn" aria-label="Confirmar" @click="confirmCatSettingsRename(cat)">
+                      <i class="ti ti-check" aria-hidden="true"></i>
+                    </button>
+                    <button class="settings-sheet__cancel-btn" aria-label="Cancelar" @click="cancelCatSettingsEdit">
+                      <i class="ti ti-x" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                </template>
+                <template v-else>
+                  <div class="settings-sheet__item-icon settings-sheet__item-icon--cat">
+                    <i class="ti ti-folder" aria-hidden="true"></i>
+                  </div>
+                  <div class="settings-sheet__item-info">
+                    <span class="settings-sheet__item-name">{{ cat }}</span>
+                    <span class="settings-sheet__item-meta">
+                      {{ getCatProductCount(cat) === 0 ? 'Sin productos' : getCatProductCount(cat) === 1 ? '1 producto' : `${getCatProductCount(cat)} productos` }}
+                    </span>
+                  </div>
+                  <div class="settings-sheet__item-actions">
+                    <button
+                      class="settings-sheet__action-btn"
+                      :aria-label="`Renombrar ${cat}`"
+                      @click="startCatSettingsEdit(cat)"
+                    >
+                      <i class="ti ti-pencil" aria-hidden="true"></i>
+                    </button>
+                    <button
+                      class="settings-sheet__action-btn settings-sheet__action-btn--danger"
+                      :aria-label="`Eliminar ${cat}`"
+                      @click="handleCatSettingsDelete(cat)"
+                    >
+                      <i class="ti ti-trash" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                </template>
+              </div>
+              <div v-if="filteredCatSettings.length === 0 && !catSettingsCreating" class="settings-sheet__empty">
+                No se encontraron categorías
+              </div>
+
+              <!-- fila de creación inline -->
+              <div v-if="catSettingsCreating" class="settings-sheet__item" role="listitem">
+                <input
+                  id="cat-settings-new"
+                  name="cat-settings-new"
+                  class="settings-sheet__edit-input"
+                  v-model="catSettingsNewValue"
+                  placeholder="Nombre de categoría"
+                  autocomplete="off"
+                  :ref="el => { if (el) catSettingsNewInputRef = el }"
+                  @keydown.enter.prevent="confirmCatSettingsCreate"
+                  @keydown.escape="cancelCatSettingsCreate"
+                />
+                <span v-if="catSettingsNewError" class="settings-sheet__edit-error" role="alert">{{ catSettingsNewError }}</span>
+                <div class="settings-sheet__item-actions">
+                  <button class="settings-sheet__confirm-btn" aria-label="Confirmar" @click="confirmCatSettingsCreate">
+                    <i class="ti ti-check" aria-hidden="true"></i>
+                  </button>
+                  <button class="settings-sheet__cancel-btn" aria-label="Cancelar" @click="cancelCatSettingsCreate">
+                    <i class="ti ti-x" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
           </div>
+
           <div class="btn-group btn-group--row">
-            <button class="btn btn--secondary" @click="closeNewCatSheet">Cancelar</button>
-            <button class="btn btn--primary" @click="handleCreateCat">
-              <i class="ti ti-plus" aria-hidden="true"></i>
-              {{ newCatEntries.length > 1 ? `Crear ${newCatEntries.length}` : 'Crear categoría' }}
+            <button class="btn btn--primary" @click="startCatSettingsCreate">
+              <i class="ti ti-folder-plus" aria-hidden="true"></i>
+              Nueva categoría
             </button>
+            <button class="btn btn--secondary" @click="closeCatSettingsSheet">Cerrar</button>
           </div>
         </div>
       </div>
     </Transition>
+
+
 
     <!-- Sheet: eliminar categorías (selección múltiple) -->
     <Transition name="sheet">
@@ -570,98 +602,114 @@ function collapseAll() {
   catOpen.setAllForBrand(route.params.brandId, allCatKeys(), false)
 }
 
-// ─── Ruedita de marca ─────────────────────────────────────────────────────────
+// ─── Sheet de ajustes de categorías ──────────────────────────────────────────
 
-const brandGearRef   = ref(null)
-const brandMenuOpen  = ref(false)
-const brandMenuStyle = ref({})
+const showCatSettingsSheet    = ref(false)
+const catSettingsSearchQuery  = ref('')
+const catSettingsEditingId    = ref(null)
+const catSettingsEditValue    = ref('')
+const catSettingsEditError    = ref('')
+const catSettingsInputRef     = ref(null)
 
-function toggleBrandMenu() {
-  if (brandMenuOpen.value) {
-    brandMenuOpen.value = false
+const filteredCatSettings = computed(() => {
+  const q = catSettingsSearchQuery.value.trim().toLowerCase()
+  if (!q) return existingCats.value
+  return existingCats.value.filter(cat => cat.toLowerCase().includes(q))
+})
+
+function getCatProductCount(cat) {
+  return products.value.filter(p => p.category?.trim() === cat).length
+}
+
+function openCatSettingsSheet() {
+  catSettingsSearchQuery.value = ''
+  catSettingsEditingId.value   = null
+  catSettingsEditValue.value   = ''
+  catSettingsEditError.value   = ''
+  showCatSettingsSheet.value   = true
+}
+
+function closeCatSettingsSheet() {
+  showCatSettingsSheet.value  = false
+  catSettingsSearchQuery.value = ''
+  catSettingsEditingId.value   = null
+  catSettingsEditValue.value   = ''
+  catSettingsEditError.value   = ''
+  catSettingsCreating.value    = false
+  catSettingsNewValue.value    = ''
+  catSettingsNewError.value    = ''
+}
+
+function startCatSettingsEdit(cat) {
+  catSettingsEditingId.value  = cat
+  catSettingsEditValue.value  = cat
+  catSettingsEditError.value  = ''
+  nextTick(() => catSettingsInputRef.value?.focus())
+}
+
+function cancelCatSettingsEdit() {
+  catSettingsEditingId.value = null
+  catSettingsEditValue.value = ''
+  catSettingsEditError.value = ''
+}
+
+function confirmCatSettingsRename(oldName) {
+  const val = catSettingsEditValue.value.trim()
+  if (!val) {
+    catSettingsEditError.value = 'El nombre no puede quedar vacío'
     return
   }
-  const btn = brandGearRef.value
-  if (!btn) return
-  const rect = btn.getBoundingClientRect()
-  brandMenuStyle.value = {
-    top  : `${rect.bottom + 6}px`,
-    right: `${window.innerWidth - rect.right}px`,
+  if (val === oldName) { cancelCatSettingsEdit(); return }
+  if (existingCats.value.some(c => c !== oldName && c === val)) {
+    catSettingsEditError.value = 'Ya existe una categoría con ese nombre'
+    return
   }
-  brandMenuOpen.value = true
+  store.renameCategoryInBrand(route.params.brandId, oldName, val)
+  catSettingsEditingId.value = null
+  catSettingsEditError.value = ''
 }
 
-// ─── Nueva categoría ─────────────────────────────────────────────────────────
-
-let _entryCtr = 0
-function makeEntry() { return { id: ++_entryCtr, value: '', error: '' } }
-
-const showNewCatSheet = ref(false)
-const newCatEntries   = ref([makeEntry()])
-const newCatInputRef  = ref(null)
-
-function openNewCatSheet() {
-  brandMenuOpen.value   = false
-  newCatEntries.value   = [makeEntry()]
-  showNewCatSheet.value = true
-  nextTick(() => newCatInputRef.value?.focus())
+function handleCatSettingsDelete(cat) {
+  store.markDeleteCategoryInBrand(route.params.brandId, cat)
+  if (migratingCat.value === cat) cancelMigrate()
+  catSettingsEditingId.value = null
 }
 
-function closeNewCatSheet() {
-  showNewCatSheet.value = false
-  newCatEntries.value   = [makeEntry()]
+// ─── Nueva categoría (inline en settings sheet) ──────────────────────────────
+
+const catSettingsCreating     = ref(false)
+const catSettingsNewValue     = ref('')
+const catSettingsNewError     = ref('')
+const catSettingsNewInputRef  = ref(null)
+
+function startCatSettingsCreate() {
+  catSettingsEditingId.value  = null
+  catSettingsCreating.value   = true
+  catSettingsNewValue.value   = ''
+  catSettingsNewError.value   = ''
+  nextTick(() => catSettingsNewInputRef.value?.focus())
 }
 
-function addNewCatEntry() {
-  newCatEntries.value.push(makeEntry())
-  nextTick(() => newCatInputRef.value?.focus())
+function cancelCatSettingsCreate() {
+  catSettingsCreating.value  = false
+  catSettingsNewValue.value  = ''
+  catSettingsNewError.value  = ''
 }
 
-function removeNewCatEntry(idx) {
-  newCatEntries.value.splice(idx, 1)
-}
-
-function focusEntry(idx) {
-  // focus next input via DOM — refs array pattern not used here
-  const inputs = document.querySelectorAll('[id^="pc-new-cat-name-"]')
-  inputs[idx]?.focus()
-}
-
-function handleCreateCat() {
-  let hasError = false
-  for (const entry of newCatEntries.value) {
-    entry.error = ''
-    const n = entry.value.trim()
-    if (!n) {
-      entry.error = 'El nombre no puede quedar vacío'
-      hasError = true
-    }
+function confirmCatSettingsCreate() {
+  const n = catSettingsNewValue.value.trim()
+  if (!n) {
+    catSettingsNewError.value = 'El nombre no puede quedar vacío'
+    return
   }
-  if (hasError) return
-
-  // Detect duplicates within the batch
-  const names = newCatEntries.value.map(e => e.value.trim())
-  const seen  = new Set()
-  for (let i = 0; i < newCatEntries.value.length; i++) {
-    const n = names[i]
-    if (seen.has(n)) {
-      newCatEntries.value[i].error = 'Nombre duplicado en la lista'
-      hasError = true
-    }
-    seen.add(n)
+  const ok = store.addCategoryToBrand(route.params.brandId, n)
+  if (!ok) {
+    catSettingsNewError.value = 'Ya existe una categoría con ese nombre'
+    return
   }
-  if (hasError) return
-
-  for (let i = 0; i < newCatEntries.value.length; i++) {
-    const ok = store.addCategoryToBrand(route.params.brandId, names[i])
-    if (!ok) {
-      newCatEntries.value[i].error = 'Ya existe una categoría con ese nombre'
-      hasError = true
-    }
-  }
-  if (hasError) return
-
-  closeNewCatSheet()
+  catSettingsCreating.value = false
+  catSettingsNewValue.value = ''
+  catSettingsNewError.value = ''
 }
 
 // ─── Eliminar categorías (múltiple) ──────────────────────────────────────────
@@ -670,7 +718,6 @@ const showDeleteCatsPanel = ref(false)
 const catsToDelete        = ref(new Set())
 
 function openDeleteCatsPanel() {
-  brandMenuOpen.value       = false
   catsToDelete.value        = new Set()
   showDeleteCatsPanel.value = true
 }
