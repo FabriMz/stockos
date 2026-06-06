@@ -3,7 +3,6 @@
 .form-view {
   &__preview {
     @include flex-col($spacing-2, center, center);
-    @include card-base;
     margin: $spacing-4 $spacing-5 0;
     padding: $spacing-5;
     text-align: center;
@@ -154,9 +153,9 @@
 
 .form-view__photo-trigger {
   @include flex-center;
-  width: 72px;
-  height: 72px;
-  border-radius: $radius-full;
+  width: 80px;
+  height: 80px;
+  border-radius: $radius-3xl;
   background: $color-neumorph-base;
   cursor: pointer;
   box-shadow: $shadow-neumorph-inset;
