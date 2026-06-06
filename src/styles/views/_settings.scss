@@ -35,25 +35,21 @@
     @include flex-list;
     width: calc(100% - #{$spacing-5 * 2});
     margin: 0 $spacing-5;
-    border: $border;
-    border-radius: $radius-xl;
-    overflow: hidden;
+    gap: $spacing-2;
   }
 
   &__item {
     @include flex-between;
     width: 100%;
-    background: $color-bg-primary;
-    padding: $spacing-4;
-    cursor: pointer;
-    transition: background $transition-fast;
-
-    & + & {
-      border-top: $border;
-    }
+    background   : $color-neumorph-base;
+    box-shadow   : 4px 4px 10px #C8C5BF, -4px -4px 10px #FFFFFF;
+    border-radius: $radius-xl;
+    padding      : $spacing-4;
+    cursor       : pointer;
+    transition   : box-shadow $transition-fast;
 
     &:active {
-      background: $color-bg-secondary;
+      box-shadow: $shadow-neumorph-pressed;
     }
 
     &--danger {
@@ -72,12 +68,13 @@
   }
 
   &__item-icon {
-    width        : 28px;
-    height       : 28px;
-    border-radius: $radius-sm;
+    width        : 34px;
+    height       : 34px;
+    border-radius: 10px;
     background   : $color-neumorph-base;
+    box-shadow   : inset 2px 2px 5px #C8C5BF, inset -2px -2px 5px #FFFFFF;
     @include flex-center;
-    box-shadow   : $shadow-neumorph-inset;
+    flex-shrink  : 0;
 
     i {
       font-size: $icon-md;
@@ -245,13 +242,17 @@
 
   // ─── SUBLISTA (acordeón de marcas / categorías) ───────────────────────────
   &__sublist {
-    background: $color-bg-secondary;
-    border-top: $border;
+    background   : $color-neumorph-base;
+    border-radius: $radius-xl;
+    box-shadow   : inset 2px 2px 6px #C8C5BF, inset -2px -2px 6px #FFFFFF;
+    margin       : 0 $spacing-5;
+    width        : calc(100% - #{$spacing-5 * 2});
+    overflow     : hidden;
 
     &-item {
       @include flex-between;
       padding: $spacing-3 $spacing-4 $spacing-3 $spacing-7;
-      border-top: $border;
+      border-top: 1px solid rgba(0,0,0,0.06);
       position: relative;
 
       &:first-child {

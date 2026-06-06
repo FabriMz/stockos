@@ -9,7 +9,7 @@
 
     <div class="scroll-content">
       <div v-if="brand" class="brand-summary">
-        <div class="brand-summary__icon" :style="{ background: brand.bg }">
+        <div class="brand-summary__icon">
           <i :class="`ti ${brand.ic}`" :style="{ color: brand.col }" aria-hidden="true"></i>
         </div>
         <div>
@@ -180,7 +180,7 @@
                       aria-hidden="true"
                     ></i>
                   </div>
-                  <div class="brand-row__icon" :style="{ background: store.getBrand(p.bid)?.bg }">
+                  <div class="brand-row__icon">
                     <img
                       v-if="p.img"
                       :src="p.img"
