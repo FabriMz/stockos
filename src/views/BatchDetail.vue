@@ -669,7 +669,19 @@ const {
   confirmSettingsBrandRename,
   handleSettingsDeleteBrand,
   cancelSettingsEdit,
-} = useSettingsSheet(store, batchCatAdapter, {
+} = useSettingsSheet({
+  categories: batchCatAdapter.categories,
+  sortedCategories: batchCatAdapter.sortedCategories,
+  brands: store.sortedBrands,
+  sortedBrands: store.sortedBrands,
+  getBrand: store.getBrand,
+  addCategory: (name) => store.addBatchCategory(batchNumber.value, name),
+  renameCategory: (id, name) => store.renameBatchCategory(batchNumber.value, id, name),
+  deleteCategory: (id) => store.deleteBatchCategory(batchNumber.value, id),
+  addBrand: store.addBrand,
+  editBrandName: store.editBrandName,
+  deleteBrand: store.markDeleteBrand,
+}, {
   batchBrandIds,
   onRenameCat: (id, val) => store.renameBatchCategory(batchNumber.value, id, val),
   onDeleteCat: (id) => store.deleteBatchCategory(batchNumber.value, id),

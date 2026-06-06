@@ -4,17 +4,39 @@ import { ref, computed, nextTick } from 'vue'
  * Encapsulates the state and logic of the catalog Settings sheet:
  * search, rename and delete of brand categories and brands.
  *
- * @param store         - useProductsStore instance
- * @param catStore      - useBrandCategoriesStore instance OR a batch-local adapter
- *                        with { categories, sortedCategories }
+ * @param config        - configuration object with arrays and handlers:
+ *                        { categories, sortedCategories, brands, sortedBrands,
+ *                          getBrand, addCategory, renameCategory, deleteCategory,
+ *                          addBrand, editBrandName, deleteBrand,
+ *                          getCategoryForBrand?, moveBrands? }
  * @param options       - {
  *                          onDeleteCat?:  (id) => void      — side-effect adicional al borrar (batch mode)
  *                          onRenameCat?:  (id, val) => err  — override rename (batch mode)
  *                          batchBrandIds?: ComputedRef<string[]>  — filter to batch brands
  *                        }
  */
-export function useSettingsSheet(store, catStore, options = {}) {
+export function useSettingsSheet(config, options = {}) {
+  const {
+    categories,
+    sortedCategories,
+    brands,
+    sortedBrands,
+    getBrand,
+    addCategory,
+    renameCategory,
+    deleteCategory,
+    addBrand,
+    editBrandName,
+    deleteBrand,
+    getCategoryForBrand,
+    moveBrands,
+  } = config
   const { onDeleteCat, onRenameCat, batchBrandIds = null } = options
+
+  const categoriesArray = computed(() => categories?.value ?? categories ?? [])
+  const sortedCategoriesArray = computed(() => sortedCategories?.value ?? sortedCategories ?? categoriesArray.value)
+  const brandsArray = computed(() => brands?.value ?? brands ?? [])
+  const sortedBrandsArray = computed(() => sortedBrands?.value ?? sortedBrands ?? brandsArray.value)
 
   // ─── Visibility & search ──────────────────────────────────────────────────
   const showSettingsSheet   = ref(false)
@@ -30,19 +52,17 @@ export function useSettingsSheet(store, catStore, options = {}) {
   // ─── Filtered computeds ───────────────────────────────────────────────────
   const filteredSettingsCategories = computed(() => {
     const q = settingsSearchQuery.value.trim().toLowerCase()
-    // En modo batch, catStore ya es el adaptador del lote → todas sus categorías son relevantes
-    // En modo global, filtrar por marcas del lote si se pasa batchBrandIds
     const batchIds = batchBrandIds?.value ?? null
     const baseCats = (batchIds && !onRenameCat)
-      ? catStore.sortedCategories.filter(cat =>
+      ? sortedCategoriesArray.value.filter(cat =>
           cat.brandIds.some(bid => batchIds.includes(bid))
         )
-      : catStore.sortedCategories
+      : sortedCategoriesArray.value
     if (!q) return baseCats
     return baseCats.filter(cat => {
       if (cat.name.toLowerCase().includes(q)) return true
       return cat.brandIds.some(bid => {
-        const brand = store.getBrand(bid)
+        const brand = getBrand?.(bid)
         return brand?.name.toLowerCase().includes(q)
       })
     })
@@ -52,8 +72,8 @@ export function useSettingsSheet(store, catStore, options = {}) {
     const q = settingsSearchQuery.value.trim().toLowerCase()
     const batchIds = batchBrandIds?.value ?? null
     const baseBrands = batchIds
-      ? store.sortedBrands.filter(b => batchIds.includes(b.id))
-      : store.sortedBrands
+      ? sortedBrandsArray.value.filter(b => batchIds.includes(b.id))
+      : sortedBrandsArray.value
     if (!q) return baseBrands
     return baseBrands.filter(brand => brand.name.toLowerCase().includes(q))
   })
@@ -94,17 +114,17 @@ export function useSettingsSheet(store, catStore, options = {}) {
       settingsEditError.value = 'El nombre no puede quedar vacío'
       return
     }
-    const cats = Array.isArray(catStore.categories)
-      ? catStore.categories
-      : catStore.sortedCategories
+    const cats = Array.isArray(categoriesArray.value)
+      ? categoriesArray.value
+      : sortedCategoriesArray.value
     const cat = cats.find(c => c.id === id)
     if (!cat) return
     if (val === cat.name) { cancelSettingsEdit(); return }
 
-    // Usar override si está en modo batch, si no usar catStore.renameCategory
+    // Usar override si está en modo batch, si no usar renameCategory
     const err = onRenameCat
       ? onRenameCat(id, val)
-      : catStore.renameCategory(id, val)
+      : renameCategory?.(id, val)
     if (err) {
       settingsEditError.value = err
       return
@@ -114,9 +134,7 @@ export function useSettingsSheet(store, catStore, options = {}) {
   }
 
   function handleSettingsDeleteCat(id) {
-    // Siempre ejecutar el borrado real en el store
-    catStore.markDeleteCat(id)
-    // Ejecutar el side-effect adicional si existe (ej: cancelar migración en batch mode)
+    if (deleteCategory) deleteCategory(id)
     if (onDeleteCat) onDeleteCat(id)
     settingsEditingCatId.value = null
   }
@@ -136,25 +154,24 @@ export function useSettingsSheet(store, catStore, options = {}) {
       settingsEditError.value = 'El nombre no puede quedar vacío'
       return
     }
-    const brand = store.brands.find(b => b.id === id)
+    const brand = brandsArray.value.find(b => b.id === id)
     if (!brand) return
     if (val === brand.name) { cancelSettingsEdit(); return }
-    if (store.brands.some(b => b.id !== id && b.name === val)) {
+    if (brandsArray.value.some(b => b.id !== id && b.name === val)) {
       settingsEditError.value = 'Ya existe una marca con ese nombre'
       return
     }
-    store.editBrandName(id, val)
+    editBrandName?.(id, val)
     settingsEditingBrandId.value = null
     settingsEditError.value      = ''
   }
 
   function handleSettingsDeleteBrand(id) {
-    store.markDeleteBrand(id)
+    if (deleteBrand) deleteBrand(id)
     settingsEditingBrandId.value = null
-    // En modo global, limpiar la categoría global también
-    if (!onRenameCat && catStore.getCategoryForBrand) {
-      const cat = catStore.getCategoryForBrand(id)
-      if (cat) catStore.moveBrands([id], cat.id, null)
+    if (!onRenameCat && getCategoryForBrand) {
+      const cat = getCategoryForBrand(id)
+      if (cat && moveBrands) moveBrands([id], cat.id, null)
     }
   }
 
@@ -192,9 +209,7 @@ export function useSettingsSheet(store, catStore, options = {}) {
       settingsNewCatError.value = 'El nombre no puede quedar vacío'
       return
     }
-    const ok = typeof catStore.addCategory === 'function'
-      ? catStore.addCategory(val)
-      : false
+    const ok = addCategory?.(val)
     if (!ok) {
       settingsNewCatError.value = 'Ya existe un grupo con ese nombre'
       return
@@ -225,9 +240,7 @@ export function useSettingsSheet(store, catStore, options = {}) {
       settingsNewBrandError.value = 'El nombre no puede quedar vacío'
       return
     }
-    const id = typeof store.addBrand === 'function'
-      ? store.addBrand(val)
-      : null
+    const id = addBrand?.(val)
     if (!id) {
       settingsNewBrandError.value = 'Ya existe una marca con ese nombre'
       return

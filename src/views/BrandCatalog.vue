@@ -1141,7 +1141,21 @@ const {
   settingsNewBrandError,
   settingsNewBrandInputRef,
   cancelSettingsEdit,
-} = useSettingsSheet(store, catStore, {
+} = useSettingsSheet({
+  categories: catStore.categories,
+  sortedCategories: catStore.sortedCategories,
+  brands: store.sortedBrands,
+  sortedBrands: store.sortedBrands,
+  getBrand: store.getBrand,
+  addCategory: catStore.addCategory,
+  renameCategory: catStore.renameCategory,
+  deleteCategory: catStore.markDeleteCat,
+  addBrand: store.addBrand,
+  editBrandName: store.editBrandName,
+  deleteBrand: store.markDeleteBrand,
+  getCategoryForBrand: catStore.getCategoryForBrand,
+  moveBrands: catStore.moveBrands,
+}, {
   onDeleteCat: (id) => { if (migratingCatId.value === id) cancelMigrate() },
 })
 
