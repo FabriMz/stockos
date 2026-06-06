@@ -125,12 +125,13 @@
   }
 
   &__icon {
-    width: $brand-icon-size;
-    height: $brand-icon-size;
+    width     : $brand-icon-size;
+    height    : $brand-icon-size;
     border-radius: $radius-md;
     @include flex-center;
     flex-shrink: 0;
-    margin: $spacing-4 0 $spacing-4 $spacing-4;
+    margin    : $spacing-4 0 $spacing-4 $spacing-4;
+    box-shadow: $shadow-neumorph-inset;
 
     i {
       font-size: $icon-lg;

@@ -158,9 +158,9 @@
   height: 72px;
   border-radius: $radius-full;
   border: $border-width-md dashed $color-border-strong;
-  background: $color-bg-secondary;
+  background: $color-neumorph-base;
   cursor: pointer;
-  overflow: hidden;
+  box-shadow: $shadow-neumorph-inset;
   transition: border-color $transition-fast, background $transition-fast;
 
   i {

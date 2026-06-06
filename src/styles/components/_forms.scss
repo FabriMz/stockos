@@ -193,17 +193,18 @@
     width: 34px;
     height: 34px;
     border-radius: $radius-md;
-    border: $border;
-    background: $color-bg-primary;
+    border: none;
+    background: $color-neumorph-base;
+    box-shadow: $shadow-neumorph-raised;
     font-size: $font-size-xl;
     color: $color-text-primary;
     cursor: pointer;
     font-family: $font-mono;
-    transition: background $transition-fast;
+    transition: box-shadow $transition-fast;
     flex-shrink: 0;
 
     &:active {
-      background: $color-bg-secondary;
+      box-shadow: $shadow-neumorph-pressed;
     }
   }
 
@@ -211,15 +212,16 @@
     flex: 1;
     height: 34px;
     border-radius: $radius-md;
-    border: $border;
-    background: $color-bg-primary;
+    border: none;
+    background: $color-neumorph-base;
+    box-shadow: $shadow-neumorph-inset;
     @include font-mono($font-size-lg, $font-weight-medium);
     color: $color-text-primary;
     text-align: center;
     outline: none;
 
     &:focus {
-      border-color: $color-primary;
+      box-shadow: $shadow-neumorph-inset, 0 0 0 2px rgba(192, 57, 43, 0.20);
     }
 
     &--error {
