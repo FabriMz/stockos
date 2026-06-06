@@ -8,7 +8,7 @@
       <div class="settings__group">
         <div class="settings__item">
           <div class="settings__item-left">
-            <div class="settings__item-icon" style="background: #E7F3FF">
+            <div class="settings__item-icon">
               <i class="ti ti-calendar" style="color: #2563EB" aria-hidden="true"></i>
             </div>
             <div>
@@ -76,7 +76,7 @@
       <div class="settings__group">
         <div class="settings__item">
           <div class="settings__item-left">
-            <div class="settings__item-icon" style="background: #F5E8E8">
+            <div class="settings__item-icon">
               <i class="ti ti-alert-triangle" style="color: #791132" aria-hidden="true"></i>
             </div>
             <div class="settings__item-label">Alertas de stock bajo</div>
@@ -85,7 +85,7 @@
         </div>
         <div class="settings__item">
           <div class="settings__item-left">
-            <div class="settings__item-icon" style="background: #FAEEDA">
+            <div class="settings__item-icon">
               <i class="ti ti-calendar-event" style="color: #C07828" aria-hidden="true"></i>
             </div>
             <div class="settings__item-label">Vencimientos próximos</div>

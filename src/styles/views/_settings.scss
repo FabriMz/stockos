@@ -72,11 +72,12 @@
   }
 
   &__item-icon {
-    width     : 28px;
-    height    : 28px;
+    width        : 28px;
+    height       : 28px;
     border-radius: $radius-sm;
+    background   : $color-neumorph-base;
     @include flex-center;
-    box-shadow: $shadow-neumorph-inset;
+    box-shadow   : $shadow-neumorph-inset;
 
     i {
       font-size: $icon-sm;
