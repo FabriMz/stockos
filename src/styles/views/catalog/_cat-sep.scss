@@ -138,6 +138,50 @@
     @include flex-row($spacing-2);
   }
 
+  &__migrate-dest-header {
+    @include flex-between;
+    align-items: center;
+    margin-bottom: $spacing-1;
+  }
+
+  &__migrate-dest-add-btn {
+    @include flex-center;
+    width        : 26px;
+    height       : 26px;
+    border-radius: $radius-sm;
+    border       : none;
+    background   : transparent;
+    color        : $color-text-tertiary;
+    cursor       : pointer;
+    flex-shrink  : 0;
+    transition   : color $transition-fast, background $transition-fast;
+
+    i {
+      font-size: $icon-sm;
+    }
+
+    &:active {
+      color      : $color-primary-900;
+      background : $color-primary-50;
+    }
+  }
+
+  &__migrate-inline-create {
+    @include flex-col($spacing-2);
+    margin-bottom: $spacing-3;
+  }
+
+  &__migrate-dest-empty {
+    @include flex-center;
+    padding      : $spacing-5;
+    color        : $color-text-tertiary;
+    @include font-mono($font-size-sm);
+    text-align   : center;
+    border       : $border;
+    border-radius: $radius-xl;
+    width        : 100%;
+  }
+
   &__migrate-dest-list {
     @include flex-col;
     border       : $border;

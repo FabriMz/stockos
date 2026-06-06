@@ -599,7 +599,39 @@
             </div>
           </div>
           <div class="sheet__body">
-            <p class="sheet__section-label">Destino</p>
+            <div class="catalog__migrate-dest-header">
+              <p class="sheet__section-label">Categorías</p>
+              <button
+                class="catalog__migrate-dest-add-btn"
+                aria-label="Nueva categoría"
+                @click="startMigrateCreateCat"
+              >
+                <i class="ti ti-plus" aria-hidden="true"></i>
+              </button>
+            </div>
+            <template v-if="migrateCreating">
+              <div class="catalog__migrate-inline-create">
+                <input
+                  id="migrate-new-cat-brand"
+                  name="migrate-new-cat-brand"
+                  class="form-input"
+                  v-model="migrateNewCatName"
+                  placeholder="Nombre de la categoría"
+                  autocomplete="off"
+                  ref="migrateNewCatInputRef"
+                  @keydown.enter.prevent="handleMigrateCreateCat"
+                  @keydown.escape="cancelMigrateCreateCat"
+                />
+                <span v-if="migrateNewCatError" class="form-hint form-hint--error" role="alert">{{ migrateNewCatError }}</span>
+                <div class="btn-group btn-group--row">
+                  <button class="btn btn--secondary btn--sm" @click="cancelMigrateCreateCat">Cancelar</button>
+                  <button class="btn btn--primary btn--sm" @click="handleMigrateCreateCat">
+                    <i class="ti ti-check" aria-hidden="true"></i>
+                    Crear
+                  </button>
+                </div>
+              </div>
+            </template>
             <div class="catalog__migrate-dest-list" role="listbox" aria-label="Categoría destino">
               <button
                 v-for="cat in migrationTargets"
@@ -617,6 +649,12 @@
                   aria-hidden="true"
                 ></i>
               </button>
+              <div
+                v-if="migrationTargets.length === 0 && !migrateCreating"
+                class="catalog__migrate-dest-empty"
+              >
+                Sin categorías. Usá el + para crear una.
+              </div>
             </div>
           </div>
           <div class="btn-group btn-group--row">
@@ -1235,6 +1273,40 @@ const selectedBrandIds = ref(new Set())
 const showMigrateSheet = ref(false)
 const migrateTargetId  = ref(null)
 
+const migrateCreating        = ref(false)
+const migrateNewCatName      = ref('')
+const migrateNewCatError     = ref('')
+const migrateNewCatInputRef  = ref(null)
+
+function startMigrateCreateCat() {
+  migrateNewCatName.value  = ''
+  migrateNewCatError.value = ''
+  migrateCreating.value    = true
+  nextTick(() => migrateNewCatInputRef.value?.focus())
+}
+
+function cancelMigrateCreateCat() {
+  migrateCreating.value    = false
+  migrateNewCatName.value  = ''
+  migrateNewCatError.value = ''
+}
+
+function handleMigrateCreateCat() {
+  const n = migrateNewCatName.value.trim()
+  if (!n) {
+    migrateNewCatError.value = 'El nombre no puede quedar vacío'
+    return
+  }
+  const ok = catStore.addCategory(n)
+  if (!ok) {
+    migrateNewCatError.value = 'Ya existe un grupo con ese nombre'
+    return
+  }
+  const created = catStore.categories.find(c => c.name === n)
+  if (created) migrateTargetId.value = created.id
+  cancelMigrateCreateCat()
+}
+
 const migratingCatName = computed(() => {
   if (migratingCatId.value === '__sin_categoria__') return 'Sin categoría'
   return catStore.categories.find(c => c.id === migratingCatId.value)?.name ?? ''
@@ -1277,6 +1349,7 @@ function cancelMigrate() {
   selectedBrandIds.value = new Set()
   showMigrateSheet.value = false
   migrateTargetId.value  = null
+  cancelMigrateCreateCat()
 }
 
 function toggleBrandSelect(bid) {
