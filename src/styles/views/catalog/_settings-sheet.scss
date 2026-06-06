@@ -76,24 +76,22 @@
     width        : 30px;
     height       : 30px;
     border-radius: $radius-md;
+    background   : $color-neumorph-base;
+    box-shadow   : $shadow-neumorph-inset;
     @include flex-center;
     flex-shrink: 0;
 
     i {
-      font-size: $icon-sm;
+      font-size: $icon-md;
     }
 
     &--cat {
-      background: rgba(165, 180, 252, 0.1);
-
       i {
         color: $color-primary-900;
       }
     }
 
     &--batch {
-      background: $color-expiry-bg;
-
       i {
         color: $color-expiry-text;
       }
@@ -126,23 +124,22 @@
 
   &__action-btn {
     @include icon-btn;
-    background: transparent;
     border    : none;
     color     : $color-text-tertiary;
-    transition: background $transition-fast, color $transition-fast;
+    transition: box-shadow $transition-fast, color $transition-fast;
 
     i {
       font-size: $icon-sm;
     }
 
     &:active {
-      background: $color-bg-secondary;
+      box-shadow: $shadow-neumorph-pressed;
       color     : $color-text-secondary;
     }
 
     &--danger {
       &:active {
-        background: $color-danger-bg;
+        box-shadow: $shadow-neumorph-pressed;
         color     : $color-danger-text;
       }
     }

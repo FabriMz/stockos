@@ -131,7 +131,7 @@
               :key="brand.id"
               :brand="brand"
               :to="`/catalog/${brand.id}`"
-              :meta="`${getByBrand(brand.id).length} productos · ${brand.origin}`"
+              :meta="`${getByBrand(brand.id).length} ${getByBrand(brand.id).length === 1 ? 'producto' : 'productos'} · ${brand.origin}`"
               :stripe="brandStripe(brand.id)"
             >
               <template #badges>
@@ -184,7 +184,7 @@
               :key="bid"
               :brand="getBrand(bid)"
               :to="`/catalog/${bid}`"
-              :meta="`${getByBrand(bid).length} productos · ${getBrand(bid).origin}`"
+              :meta="`${getByBrand(bid).length} ${getByBrand(bid).length === 1 ? 'producto' : 'productos'} · ${getBrand(bid).origin}`"
               :stripe="brandStripe(bid)"
             >
               <template #badges>
@@ -224,7 +224,7 @@
                   </div>
                   <div class="brand-row__info">
                     <div class="brand-row__name">{{ getBrand(bid)?.name }}</div>
-                    <div class="brand-row__meta">{{ getByBrand(bid).length }} productos · {{ getBrand(bid)?.origin }}</div>
+                    <div class="brand-row__meta">{{ getByBrand(bid).length }} {{ getByBrand(bid).length === 1 ? 'producto' : 'productos' }} · {{ getBrand(bid)?.origin }}</div>
                   </div>
                 </div>
               </div>
@@ -252,7 +252,7 @@
               :key="bid"
               :brand="getBrand(bid)"
               :to="`/catalog/${bid}`"
-              :meta="`${getByBrand(bid).length} productos · ${getBrand(bid).origin}`"
+              :meta="`${getByBrand(bid).length} ${getByBrand(bid).length === 1 ? 'producto' : 'productos'} · ${getBrand(bid).origin}`"
               :stripe="brandStripe(bid)"
             >
               <template #badges>
@@ -292,7 +292,7 @@
                   </div>
                   <div class="brand-row__info">
                     <div class="brand-row__name">{{ getBrand(bid)?.name }}</div>
-                    <div class="brand-row__meta">{{ getByBrand(bid).length }} productos · {{ getBrand(bid)?.origin }}</div>
+                    <div class="brand-row__meta">{{ getByBrand(bid).length }} {{ getByBrand(bid).length === 1 ? 'producto' : 'productos' }} · {{ getBrand(bid)?.origin }}</div>
                   </div>
                 </div>
               </div>
@@ -771,13 +771,12 @@
                 <template v-else>
                   <div
                     class="settings-sheet__item-icon"
-                    :style="{ background: brand.bg }"
                   >
                     <i :class="`ti ${brand.ic}`" :style="{ color: brand.col }" aria-hidden="true"></i>
                   </div>
                   <div class="settings-sheet__item-info">
                     <span class="settings-sheet__item-name">{{ brand.name }}</span>
-                    <span class="settings-sheet__item-meta">{{ getByBrand(brand.id).length }} productos</span>
+                    <span class="settings-sheet__item-meta">{{ getByBrand(brand.id).length }} {{ getByBrand(brand.id).length === 1 ? 'producto' : 'productos' }}</span>
                   </div>
                   <div class="settings-sheet__item-actions">
                     <button
