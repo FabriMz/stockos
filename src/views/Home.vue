@@ -3,6 +3,7 @@
     <TopBar
       variant="home"
       :show-search="true"
+      :show-company-edit="true"
       v-model="searchQuery"
       search-id="home-product-search"
       search-placeholder="Buscar producto…"

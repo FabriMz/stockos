@@ -10,6 +10,7 @@
           <div class="topbar__subtitle">
             <span class="topbar__company-name">{{ store.companyName }}</span>
             <button
+              v-if="showCompanyEdit"
               class="topbar__company-edit"
               @click="emit('edit-company')"
               aria-label="Editar nombre de empresa"
@@ -107,6 +108,7 @@ const props = defineProps({
   searchPlaceholder: { type: String, default: 'Buscar…' },
   modelValue:        { type: String, default: '' },
   showSearch:        { type: Boolean, default: true },
+  showCompanyEdit:   { type: Boolean, default: false },
 })
 
 const emit          = defineEmits(['update:modelValue', 'back', 'edit-company'])

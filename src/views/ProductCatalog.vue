@@ -478,7 +478,8 @@
               </button>
             </div>
           </div>
-          <div class="btn-group">
+          <div class="btn-group btn-group--row">
+            <button class="btn btn--secondary" @click="showMigrateSheet = false">Cancelar</button>
             <button
               class="btn btn--primary"
               :disabled="!migrateTarget"
@@ -487,7 +488,6 @@
               <i class="ti ti-arrows-exchange" aria-hidden="true"></i>
               Mover productos
             </button>
-            <button class="btn btn--secondary" @click="showMigrateSheet = false">Cancelar</button>
           </div>
         </div>
       </div>
