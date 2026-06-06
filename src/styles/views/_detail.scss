@@ -120,7 +120,8 @@
     text-align: center;
     padding: $spacing-3;
     border-radius: $radius-md;
-    background: $color-bg-secondary;
+    background: $color-neumorph-base;
+    box-shadow: 5px 5px 12px #C8C5BF, -5px -5px 12px #FFFFFF;
   }
 
   &__saved-currency {
