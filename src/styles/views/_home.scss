@@ -144,10 +144,10 @@
 
   &__alert-right {
     display        : flex;
-    flex-direction : column;
-    align-items    : flex-end;
+    flex-direction : row;
+    align-items    : center;
     flex-shrink    : 0;
-    text-align     : right;
+    gap            : $spacing-2;
   }
 
   &__alert-count {
@@ -155,6 +155,8 @@
     font-weight   : $font-weight-medium;
     letter-spacing: -1px;
     line-height   : 1;
+    min-width     : 1.5ch;
+    text-align    : right;
 
     &--zero { color: $color-text-tertiary; }
   }
@@ -166,7 +168,6 @@
   &__alert-ok {
     font-size : 11px;
     color     : #B8A898;
-    margin-top: 3px;
   }
 
   // ─── Product search ────────────────────────────────────────────────────────
