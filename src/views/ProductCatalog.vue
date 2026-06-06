@@ -278,6 +278,14 @@
             <p class="settings-sheet__section-label">
               <i class="ti ti-folder" aria-hidden="true"></i>
               Categorías
+              <button
+                type="button"
+                class="settings-sheet__section-add-btn"
+                aria-label="Nueva categoría"
+                @click="startCatSettingsCreate"
+              >
+                <i class="ti ti-plus" aria-hidden="true"></i>
+              </button>
             </p>
             <div class="settings-sheet__list" role="list">
               <div
@@ -366,11 +374,7 @@
 
           </div>
 
-          <div class="btn-group btn-group--row">
-            <button class="btn btn--primary" @click="startCatSettingsCreate">
-              <i class="ti ti-folder-plus" aria-hidden="true"></i>
-              Nueva categoría
-            </button>
+          <div class="btn-group">
             <button class="btn btn--secondary" @click="closeCatSettingsSheet">Cerrar</button>
           </div>
         </div>
