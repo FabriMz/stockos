@@ -60,7 +60,7 @@
       <div class="product-card__bottom">
         <div>
           <div class="product-card__price-label">Costo IVA inc.</div>
-          <div class="product-card__price">{{ currencyStore.formatProductPrice(product.cost) }}</div>
+          <div class="product-card__price">{{ currencyStore.formatProductPriceWithCurrency(product.cost, product.priceCurrency) }}</div>
           <div class="product-card__pvp">Lote: {{ batchContext?.batchNum || product.batch || 'S/N' }}</div>
         </div>
         <div class="product-card__stock-info">
