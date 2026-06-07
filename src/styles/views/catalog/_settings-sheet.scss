@@ -14,9 +14,23 @@
       flex      : 1;
       padding   : 0 $spacing-5 $spacing-4;
 
-      // Thin scrollbar
+      // Thin scrollbar (Firefox/Chrome)
       scrollbar-width: thin;
       scrollbar-color: $color-border-strong transparent;
+
+      // Safari fallback
+      &::-webkit-scrollbar {
+        width: 3px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background    : $color-border-strong;
+        border-radius : $radius-full;
+      }
     }
   }
 }
