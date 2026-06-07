@@ -4,8 +4,8 @@ import { ref, computed, nextTick } from 'vue'
  * Encapsulates the state and logic of the catalog Settings sheet:
  * search, rename and delete of brand categories and brands.
  *
- * @param config        - configuration object with arrays and handlers:
- *                        { categories, sortedCategories, brands, sortedBrands,
+ * @param config        - configuration object with getter functions and handlers:
+ *                        { getCategories, getSortedCategories, getSortedBrands,
  *                          getBrand, addCategory, renameCategory, deleteCategory,
  *                          addBrand, editBrandName, deleteBrand,
  *                          getCategoryForBrand?, moveBrands? }
@@ -17,10 +17,9 @@ import { ref, computed, nextTick } from 'vue'
  */
 export function useSettingsSheet(config, options = {}) {
   const {
-    categories,
-    sortedCategories,
-    brands,
-    sortedBrands,
+    getCategories,
+    getSortedCategories,
+    getSortedBrands,
     getBrand,
     addCategory,
     renameCategory,
@@ -32,11 +31,6 @@ export function useSettingsSheet(config, options = {}) {
     moveBrands,
   } = config
   const { onDeleteCat, onRenameCat, batchBrandIds = null } = options
-
-  const categoriesArray = computed(() => categories?.value ?? categories ?? [])
-  const sortedCategoriesArray = computed(() => sortedCategories?.value ?? sortedCategories ?? categoriesArray.value)
-  const brandsArray = computed(() => brands?.value ?? brands ?? [])
-  const sortedBrandsArray = computed(() => sortedBrands?.value ?? sortedBrands ?? brandsArray.value)
 
   // ─── Visibility & search ──────────────────────────────────────────────────
   const showSettingsSheet   = ref(false)
@@ -54,10 +48,10 @@ export function useSettingsSheet(config, options = {}) {
     const q = settingsSearchQuery.value.trim().toLowerCase()
     const batchIds = batchBrandIds?.value ?? null
     const baseCats = (batchIds && !onRenameCat)
-      ? sortedCategoriesArray.value.filter(cat =>
+      ? getSortedCategories().filter(cat =>
           cat.brandIds.some(bid => batchIds.includes(bid))
         )
-      : sortedCategoriesArray.value
+      : getSortedCategories()
     if (!q) return baseCats
     return baseCats.filter(cat => {
       if (cat.name.toLowerCase().includes(q)) return true
@@ -72,8 +66,8 @@ export function useSettingsSheet(config, options = {}) {
     const q = settingsSearchQuery.value.trim().toLowerCase()
     const batchIds = batchBrandIds?.value ?? null
     const baseBrands = batchIds
-      ? sortedBrandsArray.value.filter(b => batchIds.includes(b.id))
-      : sortedBrandsArray.value
+      ? getSortedBrands().filter(b => batchIds.includes(b.id))
+      : getSortedBrands()
     if (!q) return baseBrands
     return baseBrands.filter(brand => brand.name.toLowerCase().includes(q))
   })
@@ -114,10 +108,7 @@ export function useSettingsSheet(config, options = {}) {
       settingsEditError.value = 'El nombre no puede quedar vacío'
       return
     }
-    const cats = Array.isArray(categoriesArray.value)
-      ? categoriesArray.value
-      : sortedCategoriesArray.value
-    const cat = cats.find(c => c.id === id)
+    const cat = getCategories().find(c => c.id === id)
     if (!cat) return
     if (val === cat.name) { cancelSettingsEdit(); return }
 
@@ -154,10 +145,11 @@ export function useSettingsSheet(config, options = {}) {
       settingsEditError.value = 'El nombre no puede quedar vacío'
       return
     }
-    const brand = brandsArray.value.find(b => b.id === id)
+    const allBrands = getSortedBrands()
+    const brand = allBrands.find(b => b.id === id)
     if (!brand) return
     if (val === brand.name) { cancelSettingsEdit(); return }
-    if (brandsArray.value.some(b => b.id !== id && b.name === val)) {
+    if (allBrands.some(b => b.id !== id && b.name === val)) {
       settingsEditError.value = 'Ya existe una marca con ese nombre'
       return
     }

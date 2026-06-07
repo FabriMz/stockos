@@ -644,12 +644,6 @@ const batchBrandIds = computed(() =>
   folder.value ? folder.value.brandGroups.map(g => g.brand.id) : []
 )
 
-// Adaptador que expone las categorías del lote con la interfaz que espera useSettingsSheet
-const batchCatAdapter = {
-  get categories() { return store.getBatchSortedCategories(batchNumber.value) },
-  get sortedCategories() { return store.getBatchSortedCategories(batchNumber.value) },
-}
-
 const {
   showSettingsSheet,
   openSettingsSheet,
@@ -670,17 +664,16 @@ const {
   handleSettingsDeleteBrand,
   cancelSettingsEdit,
 } = useSettingsSheet({
-  categories: batchCatAdapter.categories,
-  sortedCategories: batchCatAdapter.sortedCategories,
-  brands: store.sortedBrands,
-  sortedBrands: store.sortedBrands,
-  getBrand: store.getBrand,
-  addCategory: (name) => store.addBatchCategory(batchNumber.value, name),
-  renameCategory: (id, name) => store.renameBatchCategory(batchNumber.value, id, name),
-  deleteCategory: (id) => store.deleteBatchCategory(batchNumber.value, id),
-  addBrand: store.addBrand,
-  editBrandName: store.editBrandName,
-  deleteBrand: store.markDeleteBrand,
+  getCategories:       () => store.getBatchSortedCategories(batchNumber.value),
+  getSortedCategories: () => store.getBatchSortedCategories(batchNumber.value),
+  getSortedBrands:     () => store.sortedBrands,
+  getBrand:            store.getBrand,
+  addCategory:         (name) => store.addBatchCategory(batchNumber.value, name),
+  renameCategory:      (id, name) => store.renameBatchCategory(batchNumber.value, id, name),
+  deleteCategory:      (id) => store.deleteBatchCategory(batchNumber.value, id),
+  addBrand:            store.addBrand,
+  editBrandName:       store.editBrandName,
+  deleteBrand:         store.markDeleteBrand,
 }, {
   batchBrandIds,
   onRenameCat: (id, val) => store.renameBatchCategory(batchNumber.value, id, val),
