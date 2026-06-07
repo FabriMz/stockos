@@ -4,6 +4,15 @@
   @include badge-base;
   box-shadow: $shadow-neumorph-inset;
 
+  &--ok,
+  &--low,
+  &--out,
+  &--expiry,
+  &--venc {
+    min-width: 82px;
+    justify-content: center;
+  }
+
   &--ok {
     background: $color-success-bg;
     color     : $color-success-text;
