@@ -1143,9 +1143,9 @@ const {
   cancelSettingsEdit,
 } = useSettingsSheet({
   categories: catStore.categories,
-  sortedCategories: catStore.sortedCategories,
-  brands: store.sortedBrands,
-  sortedBrands: store.sortedBrands,
+  sortedCategories: computed(() => catStore.sortedCategories),
+  brands: computed(() => store.sortedBrands),
+  sortedBrands: computed(() => store.sortedBrands),
   getBrand: store.getBrand,
   addCategory: catStore.addCategory,
   renameCategory: catStore.renameCategory,

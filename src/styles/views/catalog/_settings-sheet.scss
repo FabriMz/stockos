@@ -167,9 +167,9 @@
 
   &__confirm-btn {
     @include icon-btn;
-    background   : $color-primary-50;
+    background   : $color-success-bg;
     border       : none;
-    color        : $color-primary-900;
+    color        : $color-success-text;
     border-radius: $radius-sm;
 
     i {
@@ -177,7 +177,7 @@
     }
 
     &:active {
-      background: $color-primary-100;
+      background: $color-success-border;
     }
   }
 
