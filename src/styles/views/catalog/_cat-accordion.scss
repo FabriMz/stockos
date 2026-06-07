@@ -32,7 +32,7 @@
     @include font-mono($font-size-xs, $font-weight-medium);
     letter-spacing: $letter-spacing-widest;
     text-transform: uppercase;
-    color         : $color-text-primary;
+    color         : $color-text-tertiary;
     white-space   : nowrap;
     flex-shrink   : 0;
   }

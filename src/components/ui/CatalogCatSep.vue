@@ -126,6 +126,14 @@
         @keydown.enter.prevent="confirmRename"
         @keydown.escape="cancelEdit"
       />
+      <button
+        type="button"
+        class="catalog__cat-confirm-btn"
+        :aria-label="`Confirmar renombrar ${catName}`"
+        @click.stop="confirmRename"
+      >
+        <i class="ti ti-check" aria-hidden="true"></i>
+      </button>
       <p
         v-if="editError"
         :id="`cat-edit-error-${catId}`"
@@ -134,9 +142,10 @@
       >{{ editError }}</p>
     </template>
     <span v-else class="catalog__cat-label">{{ catName }}</span>
-    <span class="catalog__cat-dots" aria-hidden="true"></span>
+    <span v-if="!isEditing" class="catalog__cat-dots" aria-hidden="true"></span>
 
     <button
+      v-if="!isEditing"
       ref="gearBtnRef"
       class="catalog__cat-gear-btn"
       :class="{ 'catalog__cat-gear-btn--active': isMigrating || isEditing, 'catalog__cat-gear-btn--open': menuOpen }"

@@ -95,6 +95,28 @@
     outline       : none;
   }
 
+  &__cat-confirm-btn {
+    @include flex-center;
+    width        : 28px;
+    height       : 28px;
+    flex-shrink  : 0;
+    border       : none;
+    border-radius: $radius-sm;
+    background   : $color-success-bg;
+    color        : $color-success-text;
+    cursor       : pointer;
+    box-shadow   : $shadow-neumorph-raised;
+    margin-left  : $spacing-2;
+    transition   : background $transition-fast, box-shadow $transition-fast;
+
+    i { font-size: $icon-sm; }
+
+    &:active {
+      background: $color-success-border;
+      box-shadow: $shadow-neumorph-pressed;
+    }
+  }
+
   &__cat-edit-error {
     position     : absolute;
     left         : $spacing-5;
