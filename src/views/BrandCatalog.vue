@@ -986,6 +986,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useProductsStore }        from '../stores/products.js'
 import { useBrandCategoriesStore } from '../stores/brandCategories.js'
 import { useSettingsSheet }         from '../composables/useSettingsSheet.js'
+import { useBatchSettingsSheet }    from '../composables/useBatchSettingsSheet.js'
 import { formatExpiry, expiryBadgeClass, expiryBadgeLabel } from '../utils/alerts.js'
 import TopBar        from '../components/layout/TopBar.vue'
 import BottomNav     from '../components/layout/BottomNav.vue'
@@ -1438,63 +1439,28 @@ const brandStripe   = bid => {
 
 // ─── AJUSTES DE LOTES SHEET ──────────────────────────────────────────────
 
-const showBatchSettingsSheet   = ref(false)
-const batchSettingsSearchQuery = ref('')
-const batchSettingsEditingId   = ref(null)
-const batchSettingsEditValue   = ref('')
-const batchSettingsEditError   = ref('')
-const batchSettingsInputRefs   = ref({})
-
-const filteredBatchSettingsFolders = computed(() => {
-  const q = batchSettingsSearchQuery.value.trim().toLowerCase()
-  const ordered = sortedBatchGroups.value.flatMap(g => g.folders)
-  if (!q) return ordered
-  return ordered.filter(f => f.batchNumber.toLowerCase().includes(q))
+const {
+  showBatchSettingsSheet,
+  openBatchSettingsSheet,
+  closeBatchSettingsSheet,
+  batchSettingsSearchQuery,
+  filteredBatchSettingsFolders,
+  batchSettingsEditingId,
+  batchSettingsEditValue,
+  batchSettingsEditError,
+  batchSettingsInputRefs,
+  startBatchSettingsEdit,
+  cancelBatchSettingsEdit,
+  confirmBatchSettingsRename,
+  handleBatchSettingsDelete,
+} = useBatchSettingsSheet({
+  getSortedFolders: () => sortedBatchGroups.value.flatMap(g => g.folders),
+  getFoldersMeta:   () => store.batchFoldersMeta,
+  renameFolder:     store.editBatchFolder,
+  deleteFolder:     store.markDeleteBatchFolder,
+}, {
+  onDelete: (batchNumber) => {
+    if (selectedFolder.value?.batchNumber === batchNumber) selectedFolder.value = null
+  },
 })
-
-function openBatchSettingsSheet() {
-  showBatchSettingsSheet.value = true
-}
-
-function closeBatchSettingsSheet() {
-  showBatchSettingsSheet.value  = false
-  batchSettingsSearchQuery.value = ''
-  cancelBatchSettingsEdit()
-}
-
-function startBatchSettingsEdit(folder) {
-  batchSettingsEditingId.value  = folder.batchNumber
-  batchSettingsEditValue.value  = folder.batchNumber
-  batchSettingsEditError.value  = ''
-  nextTick(() => batchSettingsInputRefs.value[folder.batchNumber]?.focus())
-}
-
-function cancelBatchSettingsEdit() {
-  batchSettingsEditingId.value = null
-  batchSettingsEditValue.value = ''
-  batchSettingsEditError.value = ''
-}
-
-function confirmBatchSettingsRename(oldBatchNumber) {
-  const val = batchSettingsEditValue.value.trim()
-  if (!val) {
-    batchSettingsEditError.value = 'El nombre no puede quedar vacío'
-    return
-  }
-  if (val === oldBatchNumber) { cancelBatchSettingsEdit(); return }
-  if (store.batchFoldersMeta.some(f => f.batchNumber === val)) {
-    batchSettingsEditError.value = 'Ya existe un lote con ese nombre'
-    return
-  }
-  const folder = allBatchFolders.value.find(f => f.batchNumber === oldBatchNumber)
-  if (!folder) return
-  store.editBatchFolder(oldBatchNumber, { batchNumber: val, expiry: folder.expiry })
-  cancelBatchSettingsEdit()
-}
-
-function handleBatchSettingsDelete(batchNumber) {
-  if (selectedFolder.value?.batchNumber === batchNumber) selectedFolder.value = null
-  store.markDeleteBatchFolder(batchNumber)
-  batchSettingsEditingId.value = null
-}
 </script>

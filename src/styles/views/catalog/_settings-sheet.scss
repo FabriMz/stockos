@@ -1,40 +1,5 @@
 @use '../../abstracts' as *;
 
-// ─── AJUSTES SHEET ────────────────────────────────────────────────────────────
-.sheet {
-  &--tall {
-    max-height    : 85vh;
-    display       : flex;
-    flex-direction: column;
-  }
-
-  &__body {
-    &--scroll {
-      overflow-y: auto;
-      flex      : 1;
-      padding   : 0 $spacing-5 $spacing-4;
-
-      // Thin scrollbar (Firefox/Chrome)
-      scrollbar-width: thin;
-      scrollbar-color: $color-border-strong transparent;
-
-      // Safari fallback
-      &::-webkit-scrollbar {
-        width: 3px;
-      }
-
-      &::-webkit-scrollbar-track {
-        background: transparent;
-      }
-
-      &::-webkit-scrollbar-thumb {
-        background    : $color-border-strong;
-        border-radius : $radius-full;
-      }
-    }
-  }
-}
-
 .settings-sheet {
   &__section-label {
     @include flex-row($spacing-2, center);

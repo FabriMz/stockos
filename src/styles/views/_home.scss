@@ -79,6 +79,7 @@
     display       : flex;
     flex-direction: column;
     gap           : 10px;
+    padding       : 0 22px;
   }
 
   // ─── Alert items ───────────────────────────────────────────────────────────
@@ -284,10 +285,6 @@
     margin        : 0 0 10px;
     padding       : 0 22px;
     border-bottom : none;
-  }
-
-  &__alert-list {
-    padding: 0 22px;
   }
 
 

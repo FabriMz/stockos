@@ -103,6 +103,12 @@
         background: $color-primary-100;
       }
     }
+
+    // Variante para sheets con lista scrolleable (sin gap entre items, padding lateral uniforme)
+    &--scroll {
+      @include flex-col(0);
+      padding: 0 $spacing-5 $spacing-4;
+    }
   }
 
   &__section-label {
