@@ -30,7 +30,7 @@
             </div>
             <div class="brand-row__divider" aria-hidden="true"></div>
             <div class="brand-row__badges">
-              <span :class="config.badgeClass"><i :class="`ti ${config.badgeIcon}`"></i>{{ config.badgeLabel }}</span>
+              <span :class="config.badgeClass"><i :class="`ti ${config.badgeIcon}`" aria-hidden="true"></i>{{ config.badgeLabel }}</span>
             </div>
           </div>
         </div>
@@ -57,7 +57,7 @@
             :stripe="config.stripe"
           >
             <template #badges>
-              <span :class="config.badgeClass"><i :class="`ti ${config.badgeIcon}`"></i>{{ config.badgeLabel }}</span>
+              <span :class="config.badgeClass"><i :class="`ti ${config.badgeIcon}`" aria-hidden="true"></i>{{ config.badgeLabel }}</span>
             </template>
           </BrandRow>
         </template>
@@ -72,7 +72,7 @@
           :stripe="config.stripe"
         >
           <template #badges>
-            <span :class="config.badgeClass"><i :class="`ti ${config.badgeIcon}`"></i>{{ config.badgeLabel }}</span>
+            <span :class="config.badgeClass"><i :class="`ti ${config.badgeIcon}`" aria-hidden="true"></i>{{ config.badgeLabel }}</span>
           </template>
         </BrandRow>
 

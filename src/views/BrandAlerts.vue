@@ -29,9 +29,9 @@
             </div>
             <div class="brand-row__divider" aria-hidden="true"></div>
             <div class="brand-row__badges">
-              <span v-if="store.isOutOfStock(p)"  class="badge badge--out"><i class="ti ti-ban"></i>Sin stock</span>
-              <span v-else-if="store.isLowStock(p)" class="badge badge--low"><i class="ti ti-alert-circle"></i>Stock bajo</span>
-              <span v-else-if="store.isExpiring(p)" class="badge badge--venc"><i class="ti ti-clock"></i>Por vencer</span>
+              <span v-if="store.isOutOfStock(p)"  class="badge badge--out"><i class="ti ti-ban" aria-hidden="true"></i>Sin stock</span>
+              <span v-else-if="store.isLowStock(p)" class="badge badge--low"><i class="ti ti-alert-circle" aria-hidden="true"></i>Stock bajo</span>
+              <span v-else-if="store.isExpiring(p)" class="badge badge--venc"><i class="ti ti-clock" aria-hidden="true"></i>Por vencer</span>
             </div>
           </div>
         </div>

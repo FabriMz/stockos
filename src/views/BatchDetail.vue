@@ -313,6 +313,7 @@
                 <template v-if="settingsEditingCatId === cat.id">
                   <input
                     :id="`batch-settings-cat-${cat.id}`"
+                    :name="`batch-settings-cat-${cat.id}`"
                     class="settings-sheet__edit-input"
                     v-model="settingsEditValue"
                     autocomplete="off"
@@ -376,6 +377,7 @@
                 <template v-if="settingsEditingBrandId === brand.id">
                   <input
                     :id="`batch-settings-brand-${brand.id}`"
+                    :name="`batch-settings-brand-${brand.id}`"
                     class="settings-sheet__edit-input"
                     v-model="settingsEditValue"
                     autocomplete="off"

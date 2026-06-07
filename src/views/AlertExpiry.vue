@@ -66,7 +66,7 @@
               stripe="#534AB7"
             >
               <template #badges>
-                <span class="badge badge--expiry"><i class="ti ti-clock"></i>Por vencer</span>
+                <span class="badge badge--expiry"><i class="ti ti-clock" aria-hidden="true"></i>Por vencer</span>
               </template>
             </BrandRow>
           </div>

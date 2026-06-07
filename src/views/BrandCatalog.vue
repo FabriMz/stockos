@@ -7,7 +7,7 @@
       v-model="searchQuery"
     />
 
-    <div v-if="!searchQuery.trim()" class="catalog-tabs" role="tablist">
+    <div v-if="!searchQuery.trim()" class="catalog-tabs" role="tablist" aria-label="Vistas del catálogo">
       <button
         id="tab-brands"
         class="catalog-tabs__tab"
@@ -135,9 +135,9 @@
               :stripe="brandStripe(brand.id)"
             >
               <template #badges>
-                <span v-if="hasOutOfStock(brand.id)" class="badge badge--out"><i class="ti ti-ban"></i>Sin stock</span>
-                <span v-if="hasLowStock(brand.id)" class="badge badge--low"><i class="ti ti-alert-circle"></i>Stock bajo</span>
-                <span v-if="hasExpiry(brand.id)" class="badge badge--venc"><i class="ti ti-clock"></i>Por vencer</span>
+                <span v-if="hasOutOfStock(brand.id)" class="badge badge--out"><i class="ti ti-ban" aria-hidden="true"></i>Sin stock</span>
+                <span v-if="hasLowStock(brand.id)" class="badge badge--low"><i class="ti ti-alert-circle" aria-hidden="true"></i>Stock bajo</span>
+                <span v-if="hasExpiry(brand.id)" class="badge badge--venc"><i class="ti ti-clock" aria-hidden="true"></i>Por vencer</span>
               </template>
             </BrandRow>
           </template>
@@ -154,7 +154,7 @@
         </template>
       </template>
 
-      <template v-else-if="activeTab === 'brands'" id="panel-brands" role="tabpanel" aria-labelledby="tab-brands">
+      <div v-else-if="activeTab === 'brands'" id="panel-brands" role="tabpanel" aria-labelledby="tab-brands">
 
         <template v-for="catEntry in sortedBrandCat" :key="catEntry.id">
 
@@ -188,9 +188,9 @@
               :stripe="brandStripe(bid)"
             >
               <template #badges>
-                <span v-if="hasOutOfStock(bid)" class="badge badge--out"><i class="ti ti-ban"></i>Sin stock</span>
-                <span v-if="hasLowStock(bid)"   class="badge badge--low"><i class="ti ti-alert-circle"></i>Stock bajo</span>
-                <span v-if="hasExpiry(bid)"     class="badge badge--venc"><i class="ti ti-clock"></i>Por vencer</span>
+                <span v-if="hasOutOfStock(bid)" class="badge badge--out"><i class="ti ti-ban" aria-hidden="true"></i>Sin stock</span>
+                <span v-if="hasLowStock(bid)"   class="badge badge--low"><i class="ti ti-alert-circle" aria-hidden="true"></i>Stock bajo</span>
+                <span v-if="hasExpiry(bid)"     class="badge badge--venc"><i class="ti ti-clock" aria-hidden="true"></i>Por vencer</span>
               </template>
             </BrandRow>
           </template>
@@ -232,9 +232,9 @@
               :stripe="brandStripe(bid)"
             >
               <template #badges>
-                <span v-if="hasOutOfStock(bid)" class="badge badge--out"><i class="ti ti-ban"></i>Sin stock</span>
-                <span v-if="hasLowStock(bid)"   class="badge badge--low"><i class="ti ti-alert-circle"></i>Stock bajo</span>
-                <span v-if="hasExpiry(bid)"     class="badge badge--venc"><i class="ti ti-clock"></i>Por vencer</span>
+                <span v-if="hasOutOfStock(bid)" class="badge badge--out"><i class="ti ti-ban" aria-hidden="true"></i>Sin stock</span>
+                <span v-if="hasLowStock(bid)"   class="badge badge--low"><i class="ti ti-alert-circle" aria-hidden="true"></i>Stock bajo</span>
+                <span v-if="hasExpiry(bid)"     class="badge badge--venc"><i class="ti ti-clock" aria-hidden="true"></i>Por vencer</span>
               </template>
             </BrandRow>
           </template>
@@ -264,7 +264,7 @@
           />
         </template>
 
-      </template>
+      </div>
 
       <div v-else id="panel-batches" class="batch-panel" role="tabpanel" aria-labelledby="tab-batches">
         <div v-if="allBatchFolders.length === 0" class="batch-empty">
@@ -686,6 +686,7 @@
                 <template v-if="settingsEditingCatId === cat.id">
                   <input
                     :id="`settings-cat-${cat.id}`"
+                    :name="`settings-cat-${cat.id}`"
                     class="settings-sheet__edit-input"
                     v-model="settingsEditValue"
                     autocomplete="off"
@@ -781,6 +782,7 @@
                 <template v-if="settingsEditingBrandId === brand.id">
                   <input
                     :id="`settings-brand-${brand.id}`"
+                    :name="`settings-brand-${brand.id}`"
                     class="settings-sheet__edit-input"
                     v-model="settingsEditValue"
                     autocomplete="off"
