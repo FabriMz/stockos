@@ -88,6 +88,14 @@
             @keydown.enter.prevent="confirmRename"
             @keydown.escape="cancelEdit"
           />
+          <button
+            type="button"
+            class="cat-sep-rename-overlay__confirm-btn"
+            :aria-label="`Confirmar renombrar ${catName}`"
+            @click.stop="confirmRename"
+          >
+            <i class="ti ti-check" aria-hidden="true"></i>
+          </button>
           <p
             v-if="editError"
             :id="`cat-edit-error-${catId}`"
@@ -255,6 +263,22 @@ function handleMigrate() {
 function startEdit() {
   editValue.value = props.catName
   editError.value = ''
+
+  if (props.variant === 'icon-only') {
+    const btn    = gearBtnRef.value
+    const header = btn?.closest('.cat-accordion__header')
+    const anchor = header ?? btn
+    if (anchor) {
+      const rect = anchor.getBoundingClientRect()
+      menuStyle.value = {
+        top   : `${rect.top}px`,
+        left  : `${rect.left}px`,
+        width : `${rect.width}px`,
+        height: `${rect.height}px`,
+      }
+    }
+  }
+
   isEditing.value = true
   nextTick(() => inputRef.value?.focus())
 }
