@@ -8,7 +8,8 @@
   &--low,
   &--out,
   &--expiry,
-  &--venc {
+  &--venc,
+  &--none {
     min-width: 82px;
     justify-content: center;
   }
@@ -36,5 +37,10 @@
   &--venc {
     background: $color-expiry-bg;
     color     : $color-expiry-text;
+  }
+
+  &--none {
+    background: $color-neumorph-base;
+    color     : $color-text-tertiary;
   }
 }

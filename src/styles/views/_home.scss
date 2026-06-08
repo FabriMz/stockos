@@ -173,10 +173,6 @@
   &__alert-item--low   &__alert-count:not(&__alert-count--zero) { color: #A07010; }
   &__alert-item--expiry &__alert-count:not(&__alert-count--zero) { color: $color-expiry; }
 
-  &__alert-ok {
-    font-size : 11px;
-    color     : #B8A898;
-  }
 
   // ─── Product search ────────────────────────────────────────────────────────
 

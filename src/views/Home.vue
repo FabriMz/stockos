@@ -114,7 +114,7 @@
               :class="{ 'home__alert-count--zero': outOfStockCount === 0 }"
             >{{ outOfStockCount }}</span>
             <span v-if="outOfStockCount > 0" class="badge badge--out">Crítica</span>
-            <span v-else class="home__alert-ok">Sin alertas</span>
+            <span v-else class="badge badge--none">Sin alertas</span>
           </div>
         </div>
 
@@ -143,7 +143,7 @@
               :class="{ 'home__alert-count--zero': lowStockCount === 0 }"
             >{{ lowStockCount }}</span>
             <span v-if="lowStockCount > 0" class="badge badge--low">Atención</span>
-            <span v-else class="home__alert-ok">Sin alertas</span>
+            <span v-else class="badge badge--none">Sin alertas</span>
           </div>
         </div>
 
@@ -172,7 +172,7 @@
               :class="{ 'home__alert-count--zero': expiryCount === 0 }"
             >{{ expiryCount }}</span>
             <span v-if="expiryCount > 0" class="badge badge--expiry">Próximo</span>
-            <span v-else class="home__alert-ok">Sin alertas</span>
+            <span v-else class="badge badge--none">Sin alertas</span>
           </div>
         </div>
       </div>

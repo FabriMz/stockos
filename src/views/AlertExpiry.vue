@@ -1,6 +1,18 @@
 <template>
   <div class="screen">
-    <TopBar variant="breadcrumb" :title="title" :breadcrumbs="breadcrumbs" />
+    <TopBar variant="breadcrumb" :title="title" :breadcrumbs="breadcrumbs">
+      <template #actions>
+        <button
+          v-if="backTo"
+          class="topbar__back"
+          :aria-label="`Volver a ${backLabel}`"
+          @click="$router.push(backTo)"
+        >
+          <i class="ti ti-chevron-left" aria-hidden="true"></i>
+          {{ backLabel }}
+        </button>
+      </template>
+    </TopBar>
 
     <AlertSearchBar v-model="searchQuery" input-id="alerts-expiry-search" />
 
@@ -166,6 +178,20 @@ const brand    = computed(() => store.getBrand(brandId.value))
 const products = computed(() => {
   if (!year.value || !monthParam.value || !brandId.value) return []
   return store.expiryProducts(year.value, monthParam.value, brandId.value)
+})
+
+const backTo = computed(() => {
+  if (level.value === 'years')    return '/alerts'
+  if (level.value === 'months')   return '/alerts/expiry'
+  if (level.value === 'brands')   return `/alerts/expiry/${year.value}`
+  return `/alerts/expiry/${year.value}/${monthParam.value}`
+})
+
+const backLabel = computed(() => {
+  if (level.value === 'years')    return 'Alertas'
+  if (level.value === 'months')   return 'Años'
+  if (level.value === 'brands')   return String(year.value)
+  return `${monthLabel(monthNum.value)} ${year.value}`
 })
 
 const title = computed(() => {
