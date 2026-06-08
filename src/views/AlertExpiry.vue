@@ -71,6 +71,18 @@
             </BrandRow>
           </div>
         </template>
+
+        <div v-if="filteredUnbranded.length" class="alerts__folder-list alerts__folder-list--unbranded">
+          <AlertFolderRow
+            :to="`/alerts/expiry/${year}/${monthParam}/${store.UNBRANDED_KEY}`"
+            label="Sin marca"
+            :meta="`${filteredUnbranded.length} producto${filteredUnbranded.length > 1 ? 's' : ''}`"
+            icon="ti-tag-off"
+            icon-bg="#EDE8F5"
+            icon-color="#534AB7"
+            stripe="#534AB7"
+          />
+        </div>
       </template>
 
       <!-- Products -->
@@ -81,6 +93,12 @@
           </div>
           <div>
             <div class="brand-summary__name">{{ brand.name }} · {{ brand.origin }}</div>
+            <div class="brand-summary__meta">{{ monthLabel(monthNum) }} {{ year }}</div>
+          </div>
+        </div>
+        <div v-else-if="brandId === store.UNBRANDED_KEY" class="brand-summary">
+          <div>
+            <div class="brand-summary__name">Sin marca</div>
             <div class="brand-summary__meta">{{ monthLabel(monthNum) }} {{ year }}</div>
           </div>
         </div>
@@ -145,16 +163,16 @@ const brands   = computed(() =>
   year.value && monthParam.value ? store.expiryBrands(year.value, monthParam.value) : []
 )
 const brand    = computed(() => store.getBrand(brandId.value))
-const products = computed(() =>
-  year.value && monthParam.value && brandId.value
-    ? store.expiryProducts(year.value, monthParam.value, brandId.value)
-    : []
-)
+const products = computed(() => {
+  if (!year.value || !monthParam.value || !brandId.value) return []
+  return store.expiryProducts(year.value, monthParam.value, brandId.value)
+})
 
 const title = computed(() => {
   if (level.value === 'years')   return 'Vencimientos'
   if (level.value === 'months')  return String(year.value)
   if (level.value === 'brands')  return `${monthLabel(monthNum.value)} ${year.value}`
+  if (brandId.value === store.UNBRANDED_KEY) return 'Sin marca'
   return brand.value?.name ?? 'Productos'
 })
 
@@ -175,7 +193,10 @@ const breadcrumbs = computed(() => {
     { label: 'Alertas', to: '/alerts' },
     { label: 'Años',    to: '/alerts/expiry' },
     { label: `${monthLabel(monthNum.value)} ${year.value}`, to: `/alerts/expiry/${year.value}` },
-    { label: brand.value?.name ?? brandId.value,           to: `/alerts/expiry/${year.value}/${monthParam.value}` },
+    {
+      label: brandId.value === store.UNBRANDED_KEY ? 'Sin marca' : (brand.value?.name ?? brandId.value),
+      to: `/alerts/expiry/${year.value}/${monthParam.value}`,
+    },
   ]
 })
 
@@ -197,6 +218,19 @@ const filteredBrands = computed(() => {
   return brands.value.filter(b =>
     matchesBrandSearch(b, q, store.expiryProducts(year.value, monthParam.value, b.id))
   )
+})
+
+const unbrandedProducts = computed(() => {
+  if (!year.value || !monthParam.value) return []
+  return store.expiryHasUnbranded(year.value, monthParam.value)
+    ? store.expiryProducts(year.value, monthParam.value, store.UNBRANDED_KEY)
+    : []
+})
+
+const filteredUnbranded = computed(() => {
+  const q = searchQuery.value.trim()
+  if (!q) return unbrandedProducts.value
+  return unbrandedProducts.value.filter(p => matchesProductSearch(p, q))
 })
 
 const filteredBrandsByCat = computed(() => {
@@ -226,7 +260,7 @@ const filteredProducts = computed(() => {
 const isEmpty = computed(() => {
   if (level.value === 'years')    return !filteredYears.value.length
   if (level.value === 'months')   return !filteredMonths.value.length
-  if (level.value === 'brands')   return !filteredBrands.value.length
+  if (level.value === 'brands')   return !filteredBrands.value.length && !filteredUnbranded.value.length
   return !filteredProducts.value.length
 })
 
@@ -269,9 +303,18 @@ function yearMeta(y) {
 }
 
 function monthMeta(y, m) {
-  const key        = monthKey(m)
-  const n          = Object.values(store.expiryTree[y]?.[key] ?? {}).flat().length
-  const brandCount = Object.keys(store.expiryTree[y]?.[key] ?? {}).length
+  const key      = monthKey(m)
+  const byBrand  = store.expiryTree[y]?.[key] ?? {}
+  const n        = Object.values(byBrand).flat().length
+  const hasUnbranded = store.UNBRANDED_KEY in byBrand
+  const brandCount   = Object.keys(byBrand).filter(k => k !== store.UNBRANDED_KEY).length
+
+  if (brandCount === 0 && hasUnbranded) {
+    return `${n} producto${n > 1 ? 's' : ''} sin marca`
+  }
+  if (hasUnbranded) {
+    return `${n} producto${n > 1 ? 's' : ''} · ${brandCount} marca${brandCount > 1 ? 's' : ''} + sin marca`
+  }
   return `${n} producto${n > 1 ? 's' : ''} · ${brandCount} marca${brandCount > 1 ? 's' : ''}`
 }
 

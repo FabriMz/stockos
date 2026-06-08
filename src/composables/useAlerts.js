@@ -41,16 +41,19 @@ export function useAlerts(products, brands) {
   const lowStockUnbranded   = computed(() => lowStockAlerts.value.filter(p => !p.bid))
 
   // ─── Árbol de vencimientos ───────────────────────────────────────────────────
+  const UNBRANDED_KEY = '__unbranded__'
+
   const expiryTree = computed(() => {
     const tree = {}
     for (const p of expiryAlerts.value) {
       const parsed = parseExpiry(p.expiry)
       if (!parsed) continue
       const { year, monthKey } = parsed
+      const key = p.bid ?? UNBRANDED_KEY
       tree[year] ??= {}
       tree[year][monthKey] ??= {}
-      tree[year][monthKey][p.bid] ??= []
-      tree[year][monthKey][p.bid].push(p)
+      tree[year][monthKey][key] ??= []
+      tree[year][monthKey][key].push(p)
     }
     return tree
   })
@@ -75,8 +78,13 @@ export function useAlerts(products, brands) {
       .sort((a, b) => a.name.localeCompare(b.name, 'es'))
   }
 
+  function expiryHasUnbranded(year, monthKey) {
+    return UNBRANDED_KEY in (expiryTree.value[year]?.[monthKey] ?? {})
+  }
+
   function expiryProducts(year, monthKey, brandId) {
-    return expiryTree.value[year]?.[monthKey]?.[brandId] ?? []
+    const key = brandId === UNBRANDED_KEY || !brandId ? UNBRANDED_KEY : brandId
+    return expiryTree.value[year]?.[monthKey]?.[key] ?? []
   }
 
   return {
@@ -84,6 +92,7 @@ export function useAlerts(products, brands) {
     alerts, outOfStockAlerts, lowStockAlerts, expiryAlerts,
     alertBrands, outOfStockBrands, lowStockBrands,
     outOfStockUnbranded, lowStockUnbranded,
-    expiryTree, expiryYears, expiryMonths, expiryBrands, expiryProducts,
+    expiryTree, expiryYears, expiryMonths, expiryBrands, expiryHasUnbranded, expiryProducts,
+    UNBRANDED_KEY,
   }
 }
