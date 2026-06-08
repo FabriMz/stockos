@@ -43,7 +43,7 @@
                   <span class="sheet__batch-option-name">{{ batch.batchNumber }}</span>
                   <span class="sheet__batch-option-meta">vence {{ formatExpiry(batch.expiry) }}</span>
                 </div>
-                <span :class="['badge', expiryBadgeClass(batch.expiry)]">{{ expiryBadgeLabel(batch.expiry) }}</span>
+                <span :class="['badge', expiryBadgeClass(batch.expiry)]"><i :class="`ti ${expiryBadgeIcon(batch.expiry)}`" aria-hidden="true"></i>{{ expiryBadgeLabel(batch.expiry) }}</span>
               </button>
 
               <button
@@ -122,7 +122,7 @@
 import { ref, computed, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useProductsStore } from '../../stores/products.js'
-import { formatExpiry, expiryBadgeClass, expiryBadgeLabel } from '../../utils/alerts.js'
+import { formatExpiry, expiryBadgeClass, expiryBadgeLabel, expiryBadgeIcon } from '../../utils/alerts.js'
 
 const props = defineProps({
   modelValue: { type: Boolean, default: false },

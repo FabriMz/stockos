@@ -23,19 +23,18 @@ export function useAlerts(products, brands) {
   const lowStockAlerts   = computed(() => products.value.filter(isLowStock))
   const expiryAlerts     = computed(() => products.value.filter(isExpiring))
 
-  const alertProductIds = computed(() => new Set(alerts.value.map(p => p.id)))
-  const outOfStockIds   = computed(() => new Set(outOfStockAlerts.value.map(p => p.id)))
-  const lowStockIds     = computed(() => new Set(lowStockAlerts.value.map(p => p.id)))
-
-  const alertBrands = computed(() =>
-    brands.value.filter(b => b.prods.some(id => alertProductIds.value.has(Number(id))))
-  )
-  const outOfStockBrands = computed(() =>
-    brands.value.filter(b => b.prods.some(id => outOfStockIds.value.has(Number(id))))
-  )
-  const lowStockBrands = computed(() =>
-    brands.value.filter(b => b.prods.some(id => lowStockIds.value.has(Number(id))))
-  )
+  const alertBrands = computed(() => {
+    const bids = new Set(alerts.value.map(p => p.bid).filter(Boolean))
+    return brands.value.filter(b => bids.has(b.id))
+  })
+  const outOfStockBrands = computed(() => {
+    const bids = new Set(outOfStockAlerts.value.map(p => p.bid).filter(Boolean))
+    return brands.value.filter(b => bids.has(b.id))
+  })
+  const lowStockBrands = computed(() => {
+    const bids = new Set(lowStockAlerts.value.map(p => p.bid).filter(Boolean))
+    return brands.value.filter(b => bids.has(b.id))
+  })
 
   // ─── Árbol de vencimientos ───────────────────────────────────────────────────
   const expiryTree = computed(() => {

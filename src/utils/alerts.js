@@ -94,3 +94,19 @@ export function expiryBadgeLabel(yyyymm) {
   if (diffDays < 180) return 'Próximo'
   return 'OK'
 }
+
+/**
+ * Devuelve el icono Tabler correspondiente al badge de vencimiento.
+ * @param {string} yyyymm
+ * @returns {string}  clase CSS del icono (ej: 'ti-clock-x')
+ */
+export function expiryBadgeIcon(yyyymm) {
+  if (!yyyymm) return 'ti-clock'
+  const expiry   = new Date(`${yyyymm}-01`)
+  const now      = new Date()
+  const diffDays = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24))
+  if (diffDays < 0)   return 'ti-clock-x'
+  if (diffDays < 60)  return 'ti-clock-exclamation'
+  if (diffDays < 180) return 'ti-clock'
+  return 'ti-clock-check'
+}

@@ -19,6 +19,7 @@
           </div>
         </div>
         <span :class="['badge', expiryBadgeClass(folder.expiry)]" class="batch-detail__badge">
+          <i :class="`ti ${expiryBadgeIcon(folder.expiry)}`" aria-hidden="true"></i>
           {{ expiryBadgeLabel(folder.expiry) }}
         </span>
       </div>
@@ -492,7 +493,7 @@ import { ref, computed, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useProductsStore }        from '../stores/products.js'
 import { useSettingsSheet }        from '../composables/useSettingsSheet.js'
-import { formatExpiry, expiryBadgeClass, expiryBadgeLabel } from '../utils/alerts.js'
+import { formatExpiry, expiryBadgeClass, expiryBadgeLabel, expiryBadgeIcon } from '../utils/alerts.js'
 import TopBar        from '../components/layout/TopBar.vue'
 import BottomNav     from '../components/layout/BottomNav.vue'
 import BrandRow      from '../components/ui/BrandRow.vue'
