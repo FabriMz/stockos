@@ -551,39 +551,39 @@
             </div>
           </div>
           <div class="sheet__body">
-            <div class="catalog__migrate-dest-header">
-              <p class="sheet__section-label">Categorías</p>
+            <p class="settings-sheet__section-label">
+              Categorías
               <button
-                class="catalog__migrate-dest-add-btn"
+                v-if="!migrateCreating"
+                class="settings-sheet__section-add-btn"
                 aria-label="Nueva categoría"
                 @click="startMigrateCreateCat"
               >
                 <i class="ti ti-plus" aria-hidden="true"></i>
               </button>
-            </div>
-            <template v-if="migrateCreating">
-              <div class="catalog__migrate-inline-create">
-                <input
-                  id="migrate-new-cat-brand"
-                  name="migrate-new-cat-brand"
-                  class="form-input"
-                  v-model="migrateNewCatName"
-                  placeholder="Nombre de la categoría"
-                  autocomplete="off"
-                  ref="migrateNewCatInputRef"
-                  @keydown.enter.prevent="handleMigrateCreateCat"
-                  @keydown.escape="cancelMigrateCreateCat"
-                />
-                <span v-if="migrateNewCatError" class="form-hint form-hint--error" role="alert">{{ migrateNewCatError }}</span>
-                <div class="btn-group btn-group--row">
-                  <button class="btn btn--secondary btn--sm" @click="cancelMigrateCreateCat">Cancelar</button>
-                  <button class="btn btn--primary btn--sm" @click="handleMigrateCreateCat">
-                    <i class="ti ti-check" aria-hidden="true"></i>
-                    Crear
-                  </button>
-                </div>
+            </p>
+            <div v-if="migrateCreating" class="settings-sheet__item" role="listitem">
+              <input
+                id="migrate-new-cat-brand"
+                name="migrate-new-cat-brand"
+                class="settings-sheet__edit-input"
+                v-model="migrateNewCatName"
+                placeholder="Nombre de la categoría"
+                autocomplete="off"
+                ref="migrateNewCatInputRef"
+                @keydown.enter.prevent="handleMigrateCreateCat"
+                @keydown.escape="cancelMigrateCreateCat"
+              />
+              <span v-if="migrateNewCatError" class="settings-sheet__edit-error" role="alert">{{ migrateNewCatError }}</span>
+              <div class="settings-sheet__item-actions">
+                <button class="settings-sheet__confirm-btn" aria-label="Confirmar" @click="handleMigrateCreateCat">
+                  <i class="ti ti-check" aria-hidden="true"></i>
+                </button>
+                <button class="settings-sheet__cancel-btn" aria-label="Cancelar" @click="cancelMigrateCreateCat">
+                  <i class="ti ti-x" aria-hidden="true"></i>
+                </button>
               </div>
-            </template>
+            </div>
             <div class="catalog__migrate-dest-list" role="listbox" aria-label="Categoría destino">
               <button
                 v-for="cat in migrationTargets"
