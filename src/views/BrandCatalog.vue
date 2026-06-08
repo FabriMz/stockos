@@ -325,7 +325,7 @@
         <div v-if="allBatchFolders.length === 0" class="batch-empty">
           <i class="ti ti-folder-off" aria-hidden="true"></i>
           <p>Sin lotes registrados</p>
-          <span>Creá un lote nuevo o clonalo desde el catálogo de una marca</span>
+          <span>Crea un lote nuevo o clónalo desde el catálogo de una marca</span>
         </div>
 
         <template v-else>

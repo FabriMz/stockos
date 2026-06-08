@@ -181,11 +181,11 @@ const sheetTitle = computed(() => {
 })
 
 const sheetSub = computed(() => {
-  if (isEditMode.value)  return 'Modificá el número o la fecha de vencimiento'
+  if (isEditMode.value)  return 'Modifica el número o la fecha de vencimiento'
   if (isCloneMode.value) return batchFoldersMeta.value.length > 0
-    ? 'Elegí un lote existente o creá uno nuevo'
-    : 'Asigná el lote de la carga que llegó'
-  return 'Creá un lote vacío y asignale productos después'
+    ? 'Elige un lote existente o crea uno nuevo'
+    : 'Asigna el lote de la carga que llegó'
+  return 'Crea un lote vacío y asígnale productos después'
 })
 
 const sheetAriaLabel = computed(() => {
