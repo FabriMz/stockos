@@ -157,6 +157,12 @@
 
       <div v-else-if="activeTab === 'brands'" id="panel-brands" role="tabpanel" aria-labelledby="tab-brands">
 
+        <div v-if="totalBrands === 0" class="batch-empty">
+          <i class="ti ti-building-store" aria-hidden="true"></i>
+          <p>Sin marcas registradas</p>
+          <span>Crea una marca nueva o agrega una categoría para organizar tu catálogo</span>
+        </div>
+
         <template v-for="catEntry in sortedBrandCat" :key="catEntry.id">
 
           <CatalogCatSep

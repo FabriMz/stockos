@@ -1,7 +1,8 @@
 @use '../../abstracts' as *;
 
-// ─── BATCH PANEL ──────────────────────────────────────────────────────────────
-.batch-panel {
+// ─── BRAND & BATCH PANELS ─────────────────────────────────────────────────────
+.batch-panel,
+#panel-brands {
   display       : flex;
   flex-direction: column;
   height        : 100%;
