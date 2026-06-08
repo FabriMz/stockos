@@ -165,9 +165,14 @@ watch(() => props.modelValue, open => {
   if (!open) return
   showErrors.value = false
   if (isEditMode.value) {
+    const rawExpiry = props.editBatch.expiry ?? ''
+    // Si ya tiene día (YYYY-MM-DD) lo usamos directo; si es legado YYYY-MM añadimos -01
+    const dateInputValue = rawExpiry && rawExpiry.split('-').length === 2
+      ? rawExpiry + '-01'
+      : rawExpiry
     form.value = {
       batchNumber: props.editBatch.batchNumber,
-      expiry:      props.editBatch.expiry ? props.editBatch.expiry + '-01' : '',
+      expiry:      dateInputValue,
       stock:       0,
     }
   } else {
@@ -225,7 +230,7 @@ function handleConfirm() {
   }
 
   if (isEditMode.value) {
-    emit('confirm', { batchNumber: form.value.batchNumber, expiry: form.value.expiry.slice(0, 7) })
+    emit('confirm', { batchNumber: form.value.batchNumber, expiry: form.value.expiry })
     return
   }
 
@@ -235,13 +240,13 @@ function handleConfirm() {
     } else {
       emit('confirm', {
         batchNumber: form.value.batchNumber,
-        expiry:      form.value.expiry.slice(0, 7),
+        expiry:      form.value.expiry,
         stock:       form.value.stock,
       })
     }
     return
   }
 
-  emit('confirm', { batchNumber: form.value.batchNumber, expiry: form.value.expiry.slice(0, 7) })
+  emit('confirm', { batchNumber: form.value.batchNumber, expiry: form.value.expiry })
 }
 </script>

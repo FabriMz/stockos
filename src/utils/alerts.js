@@ -53,29 +53,39 @@ export function matchesBrandSearch(brand, q, productsInBrand) {
 }
 
 /**
- * Formatea un string YYYY-MM a MM/YYYY.
- * @param {string} yyyymm
+ * Formatea una fecha de vencimiento para mostrar.
+ * YYYY-MM-DD → DD/MM/YYYY
+ * YYYY-MM    → MM/YYYY (legado, sin día)
+ * @param {string} expiry
  * @returns {string}
  */
-export function formatExpiry(yyyymm) {
-  if (!yyyymm) return ''
-  const [year, month] = yyyymm.split('-')
+export function formatExpiry(expiry) {
+  if (!expiry) return ''
+  const parts = expiry.split('-')
+  if (parts.length === 3) {
+    const [year, month, day] = parts
+    return `${day}/${month}/${year}`
+  }
+  const [year, month] = parts
   return `${month}/${year}`
 }
 
 /**
- * Calcula días hasta el último día del mes de vencimiento.
+ * Calcula días hasta la fecha de vencimiento.
+ * Si el valor tiene día (YYYY-MM-DD) usa la fecha exacta.
+ * Si solo tiene mes (YYYY-MM, legado) usa el último día del mes.
  * Usa medianoche del día actual para que el resultado no varíe según la hora.
- * @param {string} yyyymm - Formato YYYY-MM
+ * @param {string} expiry - Formato YYYY-MM-DD o YYYY-MM (legado)
  * @returns {number} días restantes (negativo si ya venció)
  */
-function daysUntilExpiry(yyyymm) {
-  const [y, m] = yyyymm.split('-').map(Number)
-  // new Date(y, m, 0) = último día del mes m (índices 1-based) → correcto
-  const expiry = new Date(y, m, 0)
-  const today  = new Date()
+function daysUntilExpiry(expiry) {
+  const parts = expiry.split('-').map(Number)
+  const [y, m, d] = parts
+  // Con día explícito usamos la fecha exacta; sin día, último día del mes (legado)
+  const expiryDate = d ? new Date(y, m - 1, d) : new Date(y, m, 0)
+  const today = new Date()
   today.setHours(0, 0, 0, 0)
-  return Math.ceil((expiry - today) / (1000 * 60 * 60 * 24))
+  return Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24))
 }
 
 /**
@@ -101,7 +111,7 @@ export function expiryBadgeLabel(yyyymm) {
   if (!yyyymm) return 'S/F'
   const diffDays = daysUntilExpiry(yyyymm)
   if (diffDays < 0)   return 'Vencido'
-  if (diffDays < 60)  return `${diffDays}d`
+  if (diffDays < 60)  return `${diffDays} ${diffDays === 1 ? 'día' : 'días'}`
   if (diffDays < 180) return 'Próximo'
   return 'OK'
 }
