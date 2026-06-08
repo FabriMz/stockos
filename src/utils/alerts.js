@@ -70,7 +70,8 @@ export function formatExpiry(yyyymm) {
  */
 export function expiryBadgeClass(yyyymm) {
   if (!yyyymm) return 'badge--ok'
-  const expiry   = new Date(`${yyyymm}-01`)
+  const [y, m]   = yyyymm.split('-').map(Number)
+  const expiry   = new Date(y, m, 0)
   const now      = new Date()
   const diffDays = (expiry - now) / (1000 * 60 * 60 * 24)
   if (diffDays < 0)   return 'badge--out'
@@ -86,7 +87,8 @@ export function expiryBadgeClass(yyyymm) {
  */
 export function expiryBadgeLabel(yyyymm) {
   if (!yyyymm) return 'S/F'
-  const expiry   = new Date(`${yyyymm}-01`)
+  const [y, m]   = yyyymm.split('-').map(Number)
+  const expiry   = new Date(y, m, 0)
   const now      = new Date()
   const diffDays = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24))
   if (diffDays < 0)   return 'Vencido'
@@ -102,7 +104,8 @@ export function expiryBadgeLabel(yyyymm) {
  */
 export function expiryBadgeIcon(yyyymm) {
   if (!yyyymm) return 'ti-clock'
-  const expiry   = new Date(`${yyyymm}-01`)
+  const [y, m]   = yyyymm.split('-').map(Number)
+  const expiry   = new Date(y, m, 0)
   const now      = new Date()
   const diffDays = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24))
   if (diffDays < 0)   return 'ti-clock-x'
