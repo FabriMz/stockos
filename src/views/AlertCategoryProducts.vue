@@ -173,13 +173,17 @@ const TYPE_CONFIG = {
   },
 }
 
-const config = computed(() => TYPE_CONFIG[route.meta.alertType] ?? TYPE_CONFIG['out-of-stock'])
-const brand  = computed(() => store.getBrand(route.params.brandId))
+const config     = computed(() => TYPE_CONFIG[route.meta.alertType] ?? TYPE_CONFIG['out-of-stock'])
+const isSinMarca = computed(() => route.params.brandId === '__sin_marca__')
+const brand      = computed(() => store.getBrand(route.params.brandId))
 
-// Todos los productos de la marca que pasan el filtro de alerta
-const alertProducts = computed(() =>
-  store.getByBrand(route.params.brandId).filter(config.value.filter)
-)
+// Todos los productos de la marca (o sin marca) que pasan el filtro de alerta
+const alertProducts = computed(() => {
+  if (isSinMarca.value) {
+    return store.products.filter(p => !p.bid && config.value.filter(p))
+  }
+  return store.getByBrand(route.params.brandId).filter(config.value.filter)
+})
 
 // Agrupados por categoría, con búsqueda opcional
 const categorizedAlertProducts = computed(() => {

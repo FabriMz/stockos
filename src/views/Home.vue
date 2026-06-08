@@ -104,7 +104,7 @@
             <div class="home__alert-info">
               <span class="home__alert-type">Sin stock</span>
               <span class="home__alert-name">
-                {{ outOfStockBrandsCount }} marca{{ outOfStockBrandsCount !== 1 ? 's' : '' }} afectada{{ outOfStockBrandsCount !== 1 ? 's' : '' }}
+                {{ outOfStockBrandsCount }} marca{{ outOfStockBrandsCount !== 1 ? 's' : '' }} afectada{{ outOfStockBrandsCount !== 1 ? 's' : '' }}{{ store.outOfStockUnbranded.length > 0 ? ` · ${store.outOfStockUnbranded.length} sin marca` : '' }}
               </span>
             </div>
           </div>
@@ -133,7 +133,7 @@
             <div class="home__alert-info">
               <span class="home__alert-type">Stock bajo</span>
               <span class="home__alert-name">
-                {{ lowStockBrandsCount }} marca{{ lowStockBrandsCount !== 1 ? 's' : '' }} afectada{{ lowStockBrandsCount !== 1 ? 's' : '' }}
+                {{ lowStockBrandsCount }} marca{{ lowStockBrandsCount !== 1 ? 's' : '' }} afectada{{ lowStockBrandsCount !== 1 ? 's' : '' }}{{ store.lowStockUnbranded.length > 0 ? ` · ${store.lowStockUnbranded.length} sin marca` : '' }}
               </span>
             </div>
           </div>
@@ -162,7 +162,7 @@
             <div class="home__alert-info">
               <span class="home__alert-type">Vencimiento</span>
               <span class="home__alert-name">
-                {{ expiryBrandsCount }} marca{{ expiryBrandsCount !== 1 ? 's' : '' }} afectada{{ expiryBrandsCount !== 1 ? 's' : '' }}
+                {{ expiryBrandsCount }} marca{{ expiryBrandsCount !== 1 ? 's' : '' }} afectada{{ expiryBrandsCount !== 1 ? 's' : '' }}{{ expiryUnbrandedCount > 0 ? ` · ${expiryUnbrandedCount} sin marca` : '' }}
               </span>
             </div>
           </div>
@@ -203,11 +203,12 @@ const totalProds = computed(() => store.products.length)
 const inStock    = computed(() => store.products.filter(p => p.stock > 0).length)
 
 const outOfStockCount       = computed(() => store.outOfStockAlerts.length)
-const outOfStockBrandsCount = computed(() => store.outOfStockBrands.length + (store.outOfStockUnbranded.length > 0 ? 1 : 0))
+const outOfStockBrandsCount = computed(() => store.outOfStockBrands.length)
 const lowStockCount         = computed(() => store.lowStockAlerts.length)
-const lowStockBrandsCount   = computed(() => store.lowStockBrands.length + (store.lowStockUnbranded.length > 0 ? 1 : 0))
+const lowStockBrandsCount   = computed(() => store.lowStockBrands.length)
 const expiryCount           = computed(() => store.expiryAlerts.length)
-const expiryBrandsCount     = computed(() => new Set(store.expiryAlerts.map(p => p.bid)).size)
+const expiryBrandsCount     = computed(() => new Set(store.expiryAlerts.map(p => p.bid).filter(Boolean)).size)
+const expiryUnbrandedCount  = computed(() => store.expiryAlerts.filter(p => !p.bid).length)
 const catalogExpiryLabel    = computed(() => {
   const [year, month] = String(store.catalogExpiry || '').split('-')
   if (!year || !month) return 'Sin fecha'
