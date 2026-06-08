@@ -64,16 +64,28 @@ export function formatExpiry(yyyymm) {
 }
 
 /**
+ * Calcula días hasta el último día del mes de vencimiento.
+ * Usa medianoche del día actual para que el resultado no varíe según la hora.
+ * @param {string} yyyymm - Formato YYYY-MM
+ * @returns {number} días restantes (negativo si ya venció)
+ */
+function daysUntilExpiry(yyyymm) {
+  const [y, m] = yyyymm.split('-').map(Number)
+  // new Date(y, m, 0) = último día del mes m (índices 1-based) → correcto
+  const expiry = new Date(y, m, 0)
+  const today  = new Date()
+  today.setHours(0, 0, 0, 0)
+  return Math.ceil((expiry - today) / (1000 * 60 * 60 * 24))
+}
+
+/**
  * Devuelve la clase CSS de badge según los días hasta el vencimiento.
  * @param {string} yyyymm
  * @returns {'badge--ok' | 'badge--expiry' | 'badge--low' | 'badge--out'}
  */
 export function expiryBadgeClass(yyyymm) {
   if (!yyyymm) return 'badge--ok'
-  const [y, m]   = yyyymm.split('-').map(Number)
-  const expiry   = new Date(y, m, 0)
-  const now      = new Date()
-  const diffDays = (expiry - now) / (1000 * 60 * 60 * 24)
+  const diffDays = daysUntilExpiry(yyyymm)
   if (diffDays < 0)   return 'badge--out'
   if (diffDays < 60)  return 'badge--expiry'
   if (diffDays < 180) return 'badge--low'
@@ -87,10 +99,7 @@ export function expiryBadgeClass(yyyymm) {
  */
 export function expiryBadgeLabel(yyyymm) {
   if (!yyyymm) return 'S/F'
-  const [y, m]   = yyyymm.split('-').map(Number)
-  const expiry   = new Date(y, m, 0)
-  const now      = new Date()
-  const diffDays = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24))
+  const diffDays = daysUntilExpiry(yyyymm)
   if (diffDays < 0)   return 'Vencido'
   if (diffDays < 60)  return `${diffDays}d`
   if (diffDays < 180) return 'Próximo'
@@ -104,10 +113,7 @@ export function expiryBadgeLabel(yyyymm) {
  */
 export function expiryBadgeIcon(yyyymm) {
   if (!yyyymm) return 'ti-clock'
-  const [y, m]   = yyyymm.split('-').map(Number)
-  const expiry   = new Date(y, m, 0)
-  const now      = new Date()
-  const diffDays = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24))
+  const diffDays = daysUntilExpiry(yyyymm)
   if (diffDays < 0)   return 'ti-clock-x'
   if (diffDays < 60)  return 'ti-clock-exclamation'
   if (diffDays < 180) return 'ti-clock'

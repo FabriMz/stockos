@@ -84,6 +84,7 @@
                   type="date"
                   class="form-input"
                   v-model="form.expiry"
+                  :min="todayIso"
                 />
                 <span v-if="showErrors && !form.expiry" class="form-hint form-hint--error">Requerido</span>
               </div>
@@ -138,6 +139,9 @@ const { batchFoldersMeta } = storeToRefs(store)
 const isCloneMode  = computed(() => !!props.product && !props.editBatch)
 const isCreateMode = computed(() => !props.product && !props.editBatch)
 const isEditMode   = computed(() => !!props.editBatch)
+
+// Fecha mínima para el input de vencimiento (hoy en YYYY-MM-DD local)
+const todayIso = new Date().toLocaleDateString('en-CA')
 
 const selectedOption = ref('_new')
 const form           = ref({ batchNumber: '', expiry: '', stock: 0 })

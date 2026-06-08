@@ -333,7 +333,7 @@
         <div class="expiry-block__row">
           <div class="form-group">
             <label class="form-label" for="ep-expiry">Fecha</label>
-            <input class="form-input" id="ep-expiry" name="ep-expiry" type="date" v-model="form.expiry" />
+            <input class="form-input" id="ep-expiry" name="ep-expiry" type="date" v-model="form.expiry" :min="todayIso" />
           </div>
           <div class="form-group">
             <label class="form-label" for="ep-batch">Nro. de lote</label>
@@ -611,12 +611,24 @@ function cancelNewCategory() {
   newCategory.value = ''
 }
 
+// Fecha mínima para el input (hoy en formato YYYY-MM-DD)
+const todayIso = new Date().toLocaleDateString('en-CA') // 'en-CA' produce YYYY-MM-DD con hora local
+
+// Calcula días restantes usando constructor local para evitar desfase de zona horaria
+function daysFromExpiry(dateStr) {
+  if (!dateStr) return null
+  const [y, m, d] = dateStr.split('-').map(Number)
+  const expiry = new Date(y, m - 1, d)
+  const today  = new Date(); today.setHours(0, 0, 0, 0)
+  return Math.ceil((expiry - today) / (1000 * 60 * 60 * 24))
+}
+
 const expiryLevel = computed(() => {
-  if (!form.expiry) return 'ok'
-  const diff = Math.ceil((new Date(form.expiry) - new Date()) / (1000 * 60 * 60 * 24))
-  if (diff < 0)                    return 'critico'
-  if (diff < 30)                   return 'atencion'
-  if (diff < form.alertDays)       return 'aviso'
+  const diff = daysFromExpiry(form.expiry)
+  if (diff === null)              return 'ok'
+  if (diff < 0)                   return 'critico'
+  if (diff < 30)                  return 'atencion'
+  if (diff < form.alertDays)      return 'aviso'
   return 'ok'
 })
 
@@ -627,9 +639,10 @@ const expiryLevelIcon = computed(() => ({
 }[expiryLevel.value] ?? ''))
 
 const expiryLevelMessage = computed(() => {
-  if (!form.expiry) return ''
-  const diff = Math.ceil((new Date(form.expiry) - new Date()) / (1000 * 60 * 60 * 24))
-  if (diff < 0)  return `Vencido`
+  const diff = daysFromExpiry(form.expiry)
+  if (diff === null) return ''
+  if (diff < 0)      return 'Vencido'
+  if (diff === 0)    return 'Vence hoy'
   return `Vence en ${diff} día${diff === 1 ? '' : 's'}`
 })
 
