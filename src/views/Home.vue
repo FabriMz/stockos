@@ -203,9 +203,9 @@ const totalProds = computed(() => store.products.length)
 const inStock    = computed(() => store.products.filter(p => p.stock > 0).length)
 
 const outOfStockCount       = computed(() => store.outOfStockAlerts.length)
-const outOfStockBrandsCount = computed(() => store.outOfStockBrands.length)
+const outOfStockBrandsCount = computed(() => store.outOfStockBrands.length + (store.outOfStockUnbranded.length > 0 ? 1 : 0))
 const lowStockCount         = computed(() => store.lowStockAlerts.length)
-const lowStockBrandsCount   = computed(() => store.lowStockBrands.length)
+const lowStockBrandsCount   = computed(() => store.lowStockBrands.length + (store.lowStockUnbranded.length > 0 ? 1 : 0))
 const expiryCount           = computed(() => store.expiryAlerts.length)
 const expiryBrandsCount     = computed(() => new Set(store.expiryAlerts.map(p => p.bid)).size)
 const catalogExpiryLabel    = computed(() => {

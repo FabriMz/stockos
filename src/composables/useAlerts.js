@@ -36,6 +36,10 @@ export function useAlerts(products, brands) {
     return brands.value.filter(b => bids.has(b.id))
   })
 
+  // Productos sin marca con alerta de stock
+  const outOfStockUnbranded = computed(() => outOfStockAlerts.value.filter(p => !p.bid))
+  const lowStockUnbranded   = computed(() => lowStockAlerts.value.filter(p => !p.bid))
+
   // ─── Árbol de vencimientos ───────────────────────────────────────────────────
   const expiryTree = computed(() => {
     const tree = {}
@@ -79,6 +83,7 @@ export function useAlerts(products, brands) {
     pct, isOutOfStock, isLowStock, isExpiring, hasAlert, stockColor,
     alerts, outOfStockAlerts, lowStockAlerts, expiryAlerts,
     alertBrands, outOfStockBrands, lowStockBrands,
+    outOfStockUnbranded, lowStockUnbranded,
     expiryTree, expiryYears, expiryMonths, expiryBrands, expiryProducts,
   }
 }

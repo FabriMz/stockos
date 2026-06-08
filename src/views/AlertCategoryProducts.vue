@@ -1,6 +1,6 @@
 <template>
-  <div class="screen" v-if="brand">
-    <TopBar variant="back" :back-label="config.title" :back-to="config.basePath" :title="brand.name" />
+  <div class="screen" v-if="brand || isSinMarca">
+    <TopBar variant="back" :back-label="config.title" :back-to="config.basePath" :title="isSinMarca ? 'Sin marca' : brand.name" />
 
     <AlertSearchBar
       v-model="searchQuery"
@@ -11,11 +11,11 @@
     <div class="scroll-content">
       <!-- Cabecera de marca -->
       <div class="brand-summary">
-        <div class="brand-summary__icon" :style="{ background: brand.bg }">
-          <i :class="`ti ${brand.ic}`" :style="{ color: brand.col }" aria-hidden="true"></i>
+        <div class="brand-summary__icon" :style="isSinMarca ? {} : { background: brand.bg }">
+          <i :class="`ti ${isSinMarca ? 'ti-box' : brand.ic}`" :style="isSinMarca ? {} : { color: brand.col }" aria-hidden="true"></i>
         </div>
         <div>
-          <div class="brand-summary__name">{{ brand.name }} · {{ brand.origin }}</div>
+          <div class="brand-summary__name">{{ isSinMarca ? 'Sin marca' : `${brand.name} · ${brand.origin}` }}</div>
           <div class="brand-summary__meta">
             {{ totalAlertProducts }} producto{{ totalAlertProducts !== 1 ? 's' : '' }}
           </div>
@@ -93,7 +93,7 @@
               <div class="brand-row__stripe" :style="{ background: config.stripe }"></div>
               <div class="brand-row__body">
                 <div class="brand-row__header">
-                  <div class="brand-row__icon" :style="{ background: brand.bg }">
+                  <div class="brand-row__icon" :style="isSinMarca ? {} : { background: brand.bg }">
                     <img
                       v-if="p.img"
                       :src="p.img"
@@ -102,8 +102,8 @@
                     />
                     <i
                       v-else
-                      :class="`ti ${brand.ic}`"
-                      :style="{ color: brand.col }"
+                      :class="`ti ${isSinMarca ? 'ti-box' : brand.ic}`"
+                      :style="isSinMarca ? {} : { color: brand.col }"
                       aria-hidden="true"
                     ></i>
                   </div>

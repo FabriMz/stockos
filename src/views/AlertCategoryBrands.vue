@@ -76,7 +76,40 @@
           </template>
         </BrandRow>
 
-        <p v-if="!filteredCategories.length && !uncategorizedAlertBrandIds.length" class="home__empty">
+        <!-- Productos sin marca con alerta -->
+        <template v-if="!searchQuery.trim() && unbrandedAlertProducts.length">
+          <div class="catalog__cat-sep catalog__cat-sep--no-actions">
+            <span class="catalog__cat-label">Sin marca</span>
+          </div>
+          <div
+            class="brand-row"
+            role="button"
+            tabindex="0"
+            aria-label="Ver productos sin marca"
+            @click="$router.push(`${config.basePath}/__sin_marca__`)"
+            @keydown.enter="$router.push(`${config.basePath}/__sin_marca__`)"
+          >
+            <div class="brand-row__stripe" :style="{ background: config.stripe }"></div>
+            <div class="brand-row__body">
+              <div class="brand-row__header">
+                <div class="brand-row__icon">
+                  <i class="ti ti-box" aria-hidden="true"></i>
+                </div>
+                <div class="brand-row__info">
+                  <div class="brand-row__name">Sin marca</div>
+                  <div class="brand-row__meta">{{ unbrandedAlertProducts.length }} producto{{ unbrandedAlertProducts.length !== 1 ? 's' : '' }}</div>
+                </div>
+                <i class="ti ti-chevron-right brand-row__chevron" aria-hidden="true"></i>
+              </div>
+              <div class="brand-row__divider" aria-hidden="true"></div>
+              <div class="brand-row__badges">
+                <span :class="config.badgeClass"><i :class="`ti ${config.badgeIcon}`" aria-hidden="true"></i>{{ config.badgeLabel }}</span>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <p v-if="!filteredCategories.length && !uncategorizedAlertBrandIds.length && !unbrandedAlertProducts.length" class="home__empty">
           Sin productos en esta carpeta
         </p>
       </template>
@@ -133,6 +166,12 @@ const TYPE_CONFIG = {
 }
 
 const config = computed(() => TYPE_CONFIG[route.meta.alertType] ?? TYPE_CONFIG['out-of-stock'])
+
+const unbrandedAlertProducts = computed(() =>
+  route.meta.alertType === 'out-of-stock'
+    ? store.outOfStockUnbranded
+    : store.lowStockUnbranded
+)
 
 const alertBrandIds = computed(() => new Set(config.value.brands().map(b => b.id)))
 
