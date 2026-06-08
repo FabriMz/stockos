@@ -38,7 +38,7 @@
           <button class="toast__undo" @click="catStore.undoDeleteCat()">Deshacer</button>
         </div>
         <div v-else-if="catStore.pendingMoveBrands" class="toast" role="alert" aria-live="assertive">
-          <span class="toast__msg">Marcas movidas</span>
+          <span class="toast__msg">{{ catStore.pendingMoveBrands.brandIds.length === 1 ? 'Marca movida' : 'Marcas movidas' }}</span>
           <button class="toast__undo" @click="catStore.undoMoveBrands()">Deshacer</button>
         </div>
       </transition>

@@ -151,8 +151,8 @@ const product       = computed(() => store.getProduct(route.params.id))
 const confirming = ref(false)
 
 const alertBack = computed(() => resolveAlertBack(route.query, product.value))
-const backTo    = computed(() => alertBack.value?.to ?? `/catalog/${product.value?.bid}`)
-const backLabel = computed(() => alertBack.value?.label ?? product.value?.brand ?? 'Atrás')
+const backTo    = computed(() => alertBack.value?.to ?? (product.value?.bid ? `/catalog/${product.value.bid}` : '/catalog'))
+const backLabel = computed(() => alertBack.value?.label ?? (product.value?.bid ? (product.value?.brand ?? 'Atrás') : 'Catálogo'))
 
 // Margen calculado como fallback para productos sin margin guardado
 const margenCalc = computed(() => {
@@ -176,7 +176,7 @@ function remove() {
   } else {
     const bid = product.value.bid
     store.markDelete(product.value.id)
-    router.push(`/catalog/${bid}`)
+    router.push(bid ? `/catalog/${bid}` : '/catalog')
   }
 }
 

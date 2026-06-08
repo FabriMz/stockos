@@ -235,6 +235,21 @@ export const useProductsStore = defineStore('products', () => {
     })
   }
 
+  /**
+   * Asigna una marca existente a una lista de productos sin marca.
+   * Muta bid y brand en cada producto afectado.
+   */
+  function assignBrandToProducts(productIds, brandId) {
+    const brand = brands.value.find(b => b.id === brandId)
+    if (!brand) return
+    products.value.forEach(p => {
+      if (productIds.has(p.id)) {
+        p.bid   = brandId
+        p.brand = brand.name
+      }
+    })
+  }
+
   const sortedBrands = computed(() =>
     [...brands.value].sort((a, b) => a.name.localeCompare(b.name, 'es'))
   )
@@ -590,7 +605,7 @@ export const useProductsStore = defineStore('products', () => {
     // Alertas (de useAlerts)
     ...alertHelpers,
     // Marcas
-    addBrand, deleteBrand, editBrandName, sortedBrands,
+    addBrand, deleteBrand, editBrandName, assignBrandToProducts, sortedBrands,
     pendingDeleteBrand, markDeleteBrand, undoDeleteBrand, confirmDeleteBrand,
     // Productos CRUD
     updateStock, addProduct, editProduct,

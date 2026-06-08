@@ -254,14 +254,68 @@
 
         <!-- Products with no brand -->
         <template v-if="unbrandedProducts.length">
-          <div class="catalog__cat-sep catalog__cat-sep--no-actions">
-            <span class="catalog__cat-label">Sin marca</span>
-          </div>
-          <ProductCard
-            v-for="p in unbrandedProducts"
-            :key="p.id"
-            :product="p"
+          <CatalogCatSep
+            cat-id="__sin_marca__"
+            cat-name="Sin marca"
+            :show-migrate="true"
+            :show-delete="false"
+            :show-edit="false"
+            migrate-label="Migrar sin marca"
+            :is-migrating="migratingUnbrandedMode"
+            @toggle-migrate="toggleUnbrandedMigrateMode"
           />
+
+          <!-- Modo normal -->
+          <template v-if="!migratingUnbrandedMode">
+            <ProductCard
+              v-for="p in unbrandedProducts"
+              :key="p.id"
+              :product="p"
+            />
+          </template>
+
+          <!-- Modo migración: selección de productos sin marca -->
+          <template v-else>
+            <div
+              v-for="p in unbrandedProducts"
+              :key="p.id"
+              class="brand-row brand-row--selectable"
+              :class="{ 'brand-row--selected': selectedUnbrandedIds.has(p.id) }"
+              role="checkbox"
+              :aria-checked="String(selectedUnbrandedIds.has(p.id))"
+              :aria-label="p.name"
+              tabindex="0"
+              @click="toggleUnbrandedSelect(p.id)"
+              @keydown.enter.prevent="toggleUnbrandedSelect(p.id)"
+              @keydown.space.prevent="toggleUnbrandedSelect(p.id)"
+            >
+              <div class="brand-row__body">
+                <div class="brand-row__header">
+                  <div class="brand-row__check">
+                    <i
+                      class="ti"
+                      :class="selectedUnbrandedIds.has(p.id) ? 'ti-circle-check' : 'ti-circle'"
+                      aria-hidden="true"
+                    ></i>
+                  </div>
+                  <div class="brand-row__icon">
+                    <img
+                      v-if="p.img"
+                      :src="p.img"
+                      :alt="p.name"
+                      class="brand-row__icon-img"
+                      @error="$event.target.style.display = 'none'"
+                    />
+                    <i v-else class="ti ti-box" aria-hidden="true"></i>
+                  </div>
+                  <div class="brand-row__info">
+                    <div class="brand-row__name">{{ p.name }}</div>
+                    <div class="brand-row__meta">{{ p.size }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
         </template>
 
       </div>
@@ -375,7 +429,7 @@
       <div class="spacer--sm"></div>
     </div>
 
-    <!-- Migrate action bar -->
+    <!-- Migrate action bar (marcas entre categorías) -->
     <Transition name="fab-menu">
       <div v-if="migratingCatId" class="catalog__migrate-bar">
         <span class="catalog__migrate-count">
@@ -395,6 +449,33 @@
             class="btn btn--primary btn--sm"
             :disabled="selectedBrandIds.size === 0"
             @click="openMigrateSheet"
+          >
+            Migrar
+          </button>
+        </div>
+      </div>
+    </Transition>
+
+    <!-- Migrate action bar (productos sin marca) -->
+    <Transition name="fab-menu">
+      <div v-if="migratingUnbrandedMode" class="catalog__migrate-bar">
+        <span class="catalog__migrate-count">
+          {{ selectedUnbrandedIds.size }} producto{{ selectedUnbrandedIds.size !== 1 ? 's' : '' }}
+        </span>
+        <div class="catalog__migrate-actions">
+          <button
+            class="btn btn--ghost btn--sm"
+            :aria-label="isAllUnbrandedSelected ? 'Deseleccionar todos' : 'Seleccionar todos'"
+            @click="toggleSelectAllUnbranded"
+          >
+            <i class="ti" :class="isAllUnbrandedSelected ? 'ti-square-minus' : 'ti-select-all'" aria-hidden="true"></i>
+            {{ isAllUnbrandedSelected ? 'Ninguno' : 'Todos' }}
+          </button>
+          <button class="btn btn--secondary btn--sm" @click="cancelUnbrandedMigrate">Cancelar</button>
+          <button
+            class="btn btn--primary btn--sm"
+            :disabled="selectedUnbrandedIds.size === 0"
+            @click="openUnbrandedMigrateSheet"
           >
             Migrar
           </button>
@@ -618,6 +699,98 @@
             >
               <i class="ti ti-arrows-exchange" aria-hidden="true"></i>
               Mover marcas
+            </button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
+    <!-- Sheet: asignar marca a productos sin marca -->
+    <Transition name="sheet">
+      <div
+        v-if="showUnbrandedMigrateSheet"
+        class="sheet-overlay"
+        role="dialog"
+        aria-label="Asignar marca"
+        @click.self="showUnbrandedMigrateSheet = false"
+      >
+        <div class="sheet">
+          <div class="sheet__handle" aria-hidden="true"></div>
+          <div class="sheet__header">
+            <div class="sheet__title">Asignar marca</div>
+            <div class="sheet__sub">
+              {{ selectedUnbrandedIds.size }} producto{{ selectedUnbrandedIds.size !== 1 ? 's' : '' }} sin marca
+              pasarán a la marca que elijas.
+            </div>
+          </div>
+          <div class="sheet__body">
+            <p class="settings-sheet__section-label">
+              Marcas
+              <button
+                v-if="!unbrandedMigrateCreating"
+                class="settings-sheet__section-add-btn"
+                aria-label="Nueva marca"
+                @click="startUnbrandedCreateBrand"
+              >
+                <i class="ti ti-plus" aria-hidden="true"></i>
+              </button>
+            </p>
+            <div v-if="unbrandedMigrateCreating" class="settings-sheet__item" role="listitem">
+              <input
+                id="unbranded-migrate-new-brand"
+                name="unbranded-migrate-new-brand"
+                class="settings-sheet__edit-input"
+                v-model="unbrandedNewBrandName"
+                placeholder="Nombre de la marca"
+                autocomplete="off"
+                ref="unbrandedNewBrandInputRef"
+                @keydown.enter.prevent="handleUnbrandedCreateBrand"
+                @keydown.escape="cancelUnbrandedCreateBrand"
+              />
+              <span v-if="unbrandedNewBrandError" class="settings-sheet__edit-error" role="alert">{{ unbrandedNewBrandError }}</span>
+              <div class="settings-sheet__item-actions">
+                <button class="settings-sheet__confirm-btn" aria-label="Confirmar" @click="handleUnbrandedCreateBrand">
+                  <i class="ti ti-check" aria-hidden="true"></i>
+                </button>
+                <button class="settings-sheet__cancel-btn" aria-label="Cancelar" @click="cancelUnbrandedCreateBrand">
+                  <i class="ti ti-x" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+            <div class="catalog__migrate-dest-list" role="listbox" aria-label="Marca destino">
+              <button
+                v-for="brand in store.sortedBrands"
+                :key="brand.id"
+                class="catalog__migrate-dest-item"
+                :class="{ 'catalog__migrate-dest-item--selected': unbrandedMigrateTargetId === brand.id }"
+                role="option"
+                :aria-selected="unbrandedMigrateTargetId === brand.id"
+                @click="unbrandedMigrateTargetId = brand.id"
+              >
+                <span>{{ brand.name }}</span>
+                <i
+                  v-if="unbrandedMigrateTargetId === brand.id"
+                  class="ti ti-check"
+                  aria-hidden="true"
+                ></i>
+              </button>
+              <div
+                v-if="store.sortedBrands.length === 0 && !unbrandedMigrateCreating"
+                class="catalog__migrate-dest-empty"
+              >
+                Sin marcas. Usá el + para crear una.
+              </div>
+            </div>
+          </div>
+          <div class="btn-group btn-group--row">
+            <button class="btn btn--secondary" @click="showUnbrandedMigrateSheet = false">Cancelar</button>
+            <button
+              class="btn btn--primary"
+              :disabled="!unbrandedMigrateTargetId"
+              @click="confirmUnbrandedMigrate"
+            >
+              <i class="ti ti-arrows-exchange" aria-hidden="true"></i>
+              Asignar marca
             </button>
           </div>
         </div>
@@ -1271,6 +1444,97 @@ function confirmMigrate() {
   migratingCatId.value   = null
   selectedBrandIds.value = new Set()
   migrateTargetId.value  = null
+}
+
+// ─── MIGRATE UNBRANDED PRODUCTS STATE ─────────────────────────────────────────
+
+const migratingUnbrandedMode       = ref(false)
+const selectedUnbrandedIds         = ref(new Set())
+const showUnbrandedMigrateSheet    = ref(false)
+const unbrandedMigrateTargetId     = ref(null)
+const unbrandedMigrateCreating     = ref(false)
+const unbrandedNewBrandName        = ref('')
+const unbrandedNewBrandError       = ref('')
+const unbrandedNewBrandInputRef    = ref(null)
+
+const isAllUnbrandedSelected = computed(() =>
+  unbrandedProducts.value.length > 0 &&
+  unbrandedProducts.value.every(p => selectedUnbrandedIds.value.has(p.id))
+)
+
+function toggleUnbrandedMigrateMode() {
+  if (migratingUnbrandedMode.value) {
+    cancelUnbrandedMigrate()
+  } else {
+    migratingUnbrandedMode.value = true
+    selectedUnbrandedIds.value   = new Set()
+  }
+}
+
+function cancelUnbrandedMigrate() {
+  migratingUnbrandedMode.value    = false
+  selectedUnbrandedIds.value      = new Set()
+  showUnbrandedMigrateSheet.value = false
+  unbrandedMigrateTargetId.value  = null
+  cancelUnbrandedCreateBrand()
+}
+
+function toggleUnbrandedSelect(id) {
+  const s = new Set(selectedUnbrandedIds.value)
+  if (s.has(id)) s.delete(id)
+  else s.add(id)
+  selectedUnbrandedIds.value = s
+}
+
+function toggleSelectAllUnbranded() {
+  if (isAllUnbrandedSelected.value) {
+    selectedUnbrandedIds.value = new Set()
+  } else {
+    selectedUnbrandedIds.value = new Set(unbrandedProducts.value.map(p => p.id))
+  }
+}
+
+function openUnbrandedMigrateSheet() {
+  if (selectedUnbrandedIds.value.size === 0) return
+  unbrandedMigrateTargetId.value  = null
+  showUnbrandedMigrateSheet.value = true
+}
+
+function startUnbrandedCreateBrand() {
+  unbrandedNewBrandName.value  = ''
+  unbrandedNewBrandError.value = ''
+  unbrandedMigrateCreating.value = true
+  nextTick(() => unbrandedNewBrandInputRef.value?.focus())
+}
+
+function cancelUnbrandedCreateBrand() {
+  unbrandedMigrateCreating.value = false
+  unbrandedNewBrandName.value    = ''
+  unbrandedNewBrandError.value   = ''
+}
+
+function handleUnbrandedCreateBrand() {
+  const n = unbrandedNewBrandName.value.trim()
+  if (!n) {
+    unbrandedNewBrandError.value = 'El nombre no puede quedar vacío'
+    return
+  }
+  const id = store.addBrand(n)
+  if (!id) {
+    unbrandedNewBrandError.value = 'Ya existe una marca con ese nombre'
+    return
+  }
+  unbrandedMigrateTargetId.value = id
+  cancelUnbrandedCreateBrand()
+}
+
+function confirmUnbrandedMigrate() {
+  if (!unbrandedMigrateTargetId.value) return
+  store.assignBrandToProducts(selectedUnbrandedIds.value, unbrandedMigrateTargetId.value)
+  showUnbrandedMigrateSheet.value = false
+  migratingUnbrandedMode.value    = false
+  selectedUnbrandedIds.value      = new Set()
+  unbrandedMigrateTargetId.value  = null
 }
 
 // ─── BATCH HANDLERS ───────────────────────────────────────────────────────────
