@@ -85,6 +85,8 @@
                   class="form-input"
                   v-model="form.expiry"
                   :min="todayIso"
+                  :max="MAX_EXPIRY_ISO"
+                  @change="form.expiry = clampExpiry(form.expiry)"
                 />
                 <span v-if="showErrors && !form.expiry" class="form-hint form-hint--error">Requerido</span>
               </div>
@@ -142,6 +144,21 @@ const isEditMode   = computed(() => !!props.editBatch)
 
 // Fecha mínima para el input de vencimiento (hoy en YYYY-MM-DD local)
 const todayIso = new Date().toLocaleDateString('en-CA')
+
+// Fecha máxima permitida: año 2100
+const MAX_EXPIRY_YEAR = 2100
+const MAX_EXPIRY_ISO  = `${MAX_EXPIRY_YEAR}-12-31`
+
+/**
+ * Si el año de la fecha supera MAX_EXPIRY_YEAR, lo clampea a MAX_EXPIRY_ISO.
+ * Devuelve el valor original si está dentro del rango.
+ */
+function clampExpiry(value) {
+  if (!value) return value
+  const year = parseInt(value.split('-')[0], 10)
+  if (year > MAX_EXPIRY_YEAR) return MAX_EXPIRY_ISO
+  return value
+}
 
 const selectedOption = ref('_new')
 const form           = ref({ batchNumber: '', expiry: '', stock: 0 })
@@ -228,6 +245,9 @@ function handleConfirm() {
     showErrors.value = true
     return
   }
+
+  // Clampear el año si el usuario ingresó un valor fuera de rango por teclado
+  form.value.expiry = clampExpiry(form.value.expiry)
 
   if (isEditMode.value) {
     emit('confirm', { batchNumber: form.value.batchNumber, expiry: form.value.expiry })
