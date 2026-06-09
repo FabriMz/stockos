@@ -12,6 +12,12 @@
                 </span>
                 <span class="fab-sheet__action-label">Nuevo lote</span>
               </button>
+              <button class="fab-sheet__action" aria-label="Nueva marca" @click="goNewBrand">
+                <span class="fab-sheet__action-icon">
+                  <i class="ti ti-building-store" aria-hidden="true"></i>
+                </span>
+                <span class="fab-sheet__action-label">Nueva marca</span>
+              </button>
               <button class="fab-sheet__action" aria-label="Nuevo producto" @click="goNewProduct">
                 <span class="fab-sheet__action-icon">
                   <i class="ti ti-box" aria-hidden="true"></i>
@@ -80,6 +86,11 @@ const isActive = to => {
 function goNewProduct() {
   fabOpen.value = false
   router.push('/product/new')
+}
+
+function goNewBrand() {
+  fabOpen.value = false
+  router.push({ path: '/catalog', query: { tab: 'brands', newBrand: '1' } })
 }
 
 function goNewBatch() {

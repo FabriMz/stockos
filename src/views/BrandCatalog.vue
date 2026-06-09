@@ -886,6 +886,14 @@ const newCatName = ref('')
 const newCatError = ref('')
 const newCatInputRef = ref(null)
 
+watch(() => route.query.newBrand, (val) => {
+  if (val === '1') {
+    activeTab.value = 'brands'
+    openNewBrandSheet()
+    router.replace({ query: { tab: 'brands' } })
+  }
+}, { immediate: true })
+
 watch(() => route.query.newCategory, (val) => {
   if (val === '1') {
     activeTab.value = 'brands'
