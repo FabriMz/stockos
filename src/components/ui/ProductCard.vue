@@ -50,10 +50,6 @@
           <div class="product-card__pvp">Lote: {{ batchContext?.batchNum || product.batch || 'S/N' }}</div>
         </div>
         <div class="product-card__stock-info">
-          <div class="stock-bar">
-            <div class="stock-bar__fill" :class="stockFillClass" :style="{ width: store.pct(product) + '%' }"
-              role="progressbar" :aria-valuenow="store.pct(product)" aria-valuemin="0" aria-valuemax="100"></div>
-          </div>
           <div class="product-card__units">{{ product.stock }} uds.</div>
           <div class="product-card__min">mín. {{ product.unitsPerBox }}/caja</div>
         </div>
@@ -125,12 +121,6 @@ function navigateToEdit() {
   const q = batchQuery()
   router.push(q ? { path: `/product/${props.product.id}/edit`, query: q } : `/product/${props.product.id}/edit`)
 }
-
-const stockFillClass = computed(() => {
-  if (props.product.stock === 0) return 'stock-bar__fill--out'
-  if (store.pct(props.product) < 25) return 'stock-bar__fill--low'
-  return 'stock-bar__fill--ok'
-})
 
 const stripeClass = computed(() => {
   if (props.product.stock === 0) return 'product-card__stripe--out'
