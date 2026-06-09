@@ -210,6 +210,7 @@
             <label class="form-label" for="np-expiry">Fecha</label>
             <input class="form-input" id="np-expiry" name="np-expiry" type="date" v-model="form.expiry" :min="todayIso"
               @input="handleExpiryInput" />
+            <span v-if="form.expiry && expiryYearError" class="form-hint form-hint--error" role="alert">{{ expiryYearError }}</span>
           </div>
           <div class="form-group">
             <label class="form-label" for="np-batch">Nro. de lote</label>
@@ -382,6 +383,20 @@ function handleExpiryInput() {
   }
 }
 
+// Rango de años válidos para vencimiento
+const MIN_EXPIRY_YEAR = 2000
+const MAX_EXPIRY_YEAR = 2100
+
+const expiryYearError = computed(() => {
+  const val = form.expiry
+  if (!val) return null
+  const year = parseInt(val.split('-')[0], 10)
+  if (year < MIN_EXPIRY_YEAR || year > MAX_EXPIRY_YEAR) {
+    return `Escribe un año entre ${MIN_EXPIRY_YEAR} y ${MAX_EXPIRY_YEAR}`
+  }
+  return null
+})
+
 const brand = computed(() => form.bid ? store.getBrand(form.bid) : null)
 const backTo = computed(() =>
   batchContext
@@ -526,6 +541,7 @@ const save = () => {
   requiredErrors.bid = !form.bid ? 'Seleccioná una marca' : null
   if (requiredErrors.sku || requiredErrors.name || requiredErrors.bid) return
   if (hasNumericErrors.value) return
+  if (expiryYearError.value) return
   if (form.category && form.bid) store.addCategoryToBrand(form.bid, form.category)
   if (batchContext) {
     store.addProductToBatch({ ...form }, batchContext)
