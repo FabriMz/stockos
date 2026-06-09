@@ -83,6 +83,7 @@
     letter-spacing: $letter-spacing-wider;
     text-transform: uppercase;
     color: $color-text-secondary;
+    margin-bottom: $spacing-2;
   }
 
   &__currency-pill {
@@ -166,9 +167,8 @@
   }
 
   &__reorder-hint {
-    @include font-mono($font-size-sm);
+    @include font-mono($font-size-sm + 1);
     color: $color-text-secondary;
-    margin-top: $spacing-2;
   }
 
   &__actions {

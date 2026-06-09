@@ -7,7 +7,6 @@
   background: $color-bg-tertiary;
   overflow: hidden;
   margin-left: auto;
-  margin-bottom: $spacing-1;
 
   &--full {
     width: 100%;
@@ -27,7 +26,8 @@
 
 .stock-nums {
   @include flex-between;
-  @include font-mono($font-size-xs);
-  color: $color-text-tertiary;
-  margin-top: $spacing-1;
+  @include font-mono($font-size-sm + 1);
+  color: $color-text-secondary;
+  margin: $spacing-2 0; 
+  font-weight: $font-weight-medium;
 }
