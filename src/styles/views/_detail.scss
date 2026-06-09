@@ -130,7 +130,7 @@
 
   &__saved-currency {
     @include flex-row($spacing-2, center);
-    margin-top: $spacing-3;
+    margin-top: $spacing-4;
 
     &__dot {
       width: 4px;
@@ -152,9 +152,9 @@
   }
 
   &__price-label {
-    @include font-mono($font-size-xs);
+    @include font-mono($font-size-sm);
     color: $color-text-secondary;
-    margin-bottom: $spacing-1;
+    margin-bottom: $spacing-2;
   }
 
   &__price-value {

@@ -235,10 +235,7 @@
         <!-- Fila 3: PVP (calculado o manual) -->
         <div class="form-row form-row--half">
           <div class="form-group">
-            <label class="form-label" for="np-price">
-              PVP sugerido
-              <span v-if="priceLabel" class="form-hint form-hint--inline">{{ priceLabel }}</span>
-            </label>
+            <label class="form-label" for="np-price">PVP sugerido</label>
             <input class="form-input" id="np-price" name="np-price" type="number" :value="form.price"
               placeholder="Resultado" inputmode="decimal" readonly aria-readonly="true" />
           </div>
@@ -343,10 +340,6 @@ function resolveDiscount(raw) {
 }
 
 const discountPct = computed(() => resolveDiscount(form.discount))
-const priceLabel = computed(() => {
-  if (!priceIsAutoCalc.value) return null
-  return discountPct.value > 0 ? 'con descuento' : 'calculado'
-})
 
 function calcPrice(discountRaw) {
   const cost = form.cost
