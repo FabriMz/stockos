@@ -333,7 +333,8 @@
         <div class="expiry-block__row">
           <div class="form-group">
             <label class="form-label" for="ep-expiry">Fecha</label>
-            <input class="form-input" id="ep-expiry" name="ep-expiry" type="date" v-model="form.expiry" :min="todayIso" />
+            <input class="form-input" id="ep-expiry" name="ep-expiry" type="date" v-model="form.expiry" :min="todayIso" @input="handleExpiryInput" />
+            <span v-if="form.expiry && expiryYearError" class="form-hint form-hint--error">{{ expiryYearError }}</span>
           </div>
           <div class="form-group">
             <label class="form-label" for="ep-batch">Nro. de lote</label>
@@ -538,6 +539,25 @@ function removePhoto() {
   if (photoInput.value) photoInput.value.value = ''
 }
 
+/**
+ * Valida que el año tenga máximo 4 dígitos.
+ * Si el usuario intenta escribir más dígitos, los trunca.
+ */
+function handleExpiryInput() {
+  const val = form.expiry
+  if (!val) return
+  
+  const parts = val.split('-')
+  if (parts.length !== 3) return
+  
+  const [year, month, day] = parts
+  
+  // Si el año tiene más de 4 dígitos, truncar a 4
+  if (year.length > 4) {
+    form.expiry = `${year.substring(0, 4)}-${month}-${day}`
+  }
+}
+
 const creatingBrand = ref(false)
 const newBrand      = ref('')
 const newBrandInput = ref(null)
@@ -613,6 +633,24 @@ function cancelNewCategory() {
 
 // Fecha mínima para el input (hoy en formato YYYY-MM-DD)
 const todayIso = new Date().toLocaleDateString('en-CA') // 'en-CA' produce YYYY-MM-DD con hora local
+
+// Rango de años válidos para vencimiento
+const MIN_EXPIRY_YEAR = 2000
+const MAX_EXPIRY_YEAR = 2100
+
+/**
+ * Devuelve el mensaje de error si el año está fuera del rango [2000, 2100].
+ * Devuelve null si el valor está vacío o el año es válido.
+ */
+const expiryYearError = computed(() => {
+  const val = form.expiry
+  if (!val) return null
+  const year = parseInt(val.split('-')[0], 10)
+  if (year < MIN_EXPIRY_YEAR || year > MAX_EXPIRY_YEAR) {
+    return `Escribe un año entre ${MIN_EXPIRY_YEAR} y ${MAX_EXPIRY_YEAR}`
+  }
+  return null
+})
 
 // Calcula días restantes usando constructor local para evitar desfase de zona horaria
 function daysFromExpiry(dateStr) {

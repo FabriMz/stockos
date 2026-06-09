@@ -359,7 +359,7 @@
         <div class="expiry-block__row">
           <div class="form-group">
             <label class="form-label" for="np-expiry">Fecha</label>
-            <input class="form-input" id="np-expiry" name="np-expiry" type="date" v-model="form.expiry" :min="todayIso" />
+            <input class="form-input" id="np-expiry" name="np-expiry" type="date" v-model="form.expiry" :min="todayIso" @input="handleExpiryInput" />
           </div>
           <div class="form-group">
             <label class="form-label" for="np-batch">Nro. de lote</label>
@@ -514,6 +514,25 @@ function onPhotoChange(e) {
 function removePhoto() {
   form.img = ''
   if (photoInput.value) photoInput.value.value = ''
+}
+
+/**
+ * Valida que el año tenga máximo 4 dígitos.
+ * Si el usuario intenta escribir más dígitos, los trunca.
+ */
+function handleExpiryInput() {
+  const val = form.expiry
+  if (!val) return
+  
+  const parts = val.split('-')
+  if (parts.length !== 3) return
+  
+  const [year, month, day] = parts
+  
+  // Si el año tiene más de 4 dígitos, truncar a 4
+  if (year.length > 4) {
+    form.expiry = `${year.substring(0, 4)}-${month}-${day}`
+  }
 }
 
 const brand  = computed(() => form.bid ? store.getBrand(form.bid) : null)

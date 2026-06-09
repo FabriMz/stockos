@@ -85,6 +85,7 @@
                   class="form-input"
                   v-model="form.expiry"
                   :min="todayIso"
+                  @input="handleExpiryInput"
                 />
                 <span v-if="showErrors && !form.expiry" class="form-hint form-hint--error">Requerido</span>
                 <span v-else-if="form.expiry && expiryYearError" class="form-hint form-hint--error">{{ expiryYearError }}</span>
@@ -240,6 +241,25 @@ function isFormValid() {
     return true
   }
   return form.value.batchNumber.trim() !== '' && !!form.value.expiry && !expiryYearError.value && !isDuplicateName.value
+}
+
+/**
+ * Valida que el año tenga máximo 4 dígitos.
+ * Si el usuario intenta escribir más dígitos, los trunca.
+ */
+function handleExpiryInput() {
+  const val = form.value.expiry
+  if (!val) return
+  
+  const parts = val.split('-')
+  if (parts.length !== 3) return
+  
+  const [year, month, day] = parts
+  
+  // Si el año tiene más de 4 dígitos, truncar a 4
+  if (year.length > 4) {
+    form.value.expiry = `${year.substring(0, 4)}-${month}-${day}`
+  }
 }
 
 function handleConfirm() {

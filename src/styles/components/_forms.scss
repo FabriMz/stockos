@@ -28,7 +28,7 @@
 }
 
 .form-label {
-  @include font-mono($font-size-sm, $font-weight-medium);
+  @include font-mono($font-size-sm + 1, $font-weight-medium);
   color: $color-text-secondary;
   margin-bottom: $spacing-1;
 }
@@ -60,7 +60,6 @@
 .form-hint {
   @include font-mono($font-size-xs);
   color: $color-text-tertiary;
-  text-align: right;
   display: block;
   width: 100%;
 
@@ -72,7 +71,7 @@
 // ─── VENCIMIENTO BLOCK ────────────────────────────────────────────────────────
 .expiry-block {
   @include card-base;
-  @include flex-col($spacing-2);
+  @include flex-col($spacing-5);
   margin: 0 $spacing-5;
   padding: $spacing-4;
 
