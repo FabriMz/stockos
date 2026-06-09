@@ -1,20 +1,24 @@
 <template>
   <nav class="bottom-nav" aria-label="Navegación principal">
     <Teleport to="body">
-      <div v-if="fabOpen" class="fab-backdrop" @click="fabOpen = false" aria-hidden="true"></div>
-      <Transition name="fab-menu">
-        <div v-if="fabOpen" class="fab-menu" role="menu">
-          <div class="fab-menu__item">
-            <button class="fab-menu__btn" aria-label="Nuevo lote" @click="goNewBatch">
-              <i class="ti ti-folder-plus" aria-hidden="true"></i>
-              <span>Nuevo lote</span>
-            </button>
-          </div>
-          <div class="fab-menu__item">
-            <button class="fab-menu__btn" aria-label="Nuevo producto" @click="goNewProduct">
-              <i class="ti ti-box" aria-hidden="true"></i>
-              <span>Nuevo producto</span>
-            </button>
+      <Transition name="sheet">
+        <div v-if="fabOpen" class="sheet-overlay" role="dialog" aria-modal="true" aria-label="Acciones rápidas" @click.self="fabOpen = false">
+          <div class="sheet">
+            <div class="sheet__handle" aria-hidden="true"></div>
+            <div class="sheet__body sheet__body--scroll">
+              <button class="fab-sheet__action" aria-label="Nuevo lote" @click="goNewBatch">
+                <span class="fab-sheet__action-icon">
+                  <i class="ti ti-folder-plus" aria-hidden="true"></i>
+                </span>
+                <span class="fab-sheet__action-label">Nuevo lote</span>
+              </button>
+              <button class="fab-sheet__action" aria-label="Nuevo producto" @click="goNewProduct">
+                <span class="fab-sheet__action-icon">
+                  <i class="ti ti-box" aria-hidden="true"></i>
+                </span>
+                <span class="fab-sheet__action-label">Nuevo producto</span>
+              </button>
+            </div>
           </div>
         </div>
       </Transition>

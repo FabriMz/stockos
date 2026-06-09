@@ -117,65 +117,43 @@
   }
 }
 
-// ─── FAB SPEED-DIAL ──────────────────────────────────────────────────────────
+// ─── FAB SHEET ACTIONS ───────────────────────────────────────────────────────
 
-.fab-backdrop {
-  position  : fixed;
-  inset     : 0;
-  z-index   : $z-overlay - 1;
-  background: rgba(200, 196, 188, 0.70);
-}
+.fab-sheet {
+  &__action {
+    @include flex-row($spacing-4, center, flex-start);
+    width          : 100%;
+    padding        : $spacing-4 $spacing-5;
+    background     : transparent;
+    border         : none;
+    border-bottom  : $border;
+    cursor         : pointer;
+    text-align     : left;
+    transition     : background $transition-fast;
 
-.fab-menu {
-  position      : fixed;
-  bottom        : 72px;
-  left          : 50%;
-  transform     : translateX(-50%);
-  z-index       : $z-overlay;
-  display       : flex;
-  flex-direction: column;
-  align-items   : flex-end;
-  gap           : $spacing-3;
+    &:last-child { border-bottom: none; }
 
-  &__item { @include flex-center; }
+    &:active { background: $color-bg-tertiary; }
+  }
 
-  &__btn {
-    @include flex-row($spacing-3, center, flex-start);
-    border-radius: $radius-full;
-    background   : $color-neumorph-base;
-    box-shadow   : 5px 5px 12px #C8C5BF, -5px -5px 12px #FFFFFF;
-    padding      : $spacing-2 $spacing-6 $spacing-2 $spacing-4;
-    cursor       : pointer;
-    white-space  : nowrap;
-    min-width    : 160px;
-    transition   : box-shadow $transition-fast;
+  &__action-icon {
+    @include flex-center;
+    width        : $avatar-size-md;
+    height       : $avatar-size-md;
+    border-radius: $radius-xl;
+    background   : $color-primary-50;
+    flex-shrink  : 0;
 
     i {
-      font-size  : $icon-md;
-      color      : $color-accent;
-      flex-shrink: 0;
+      font-size: $icon-md;
+      color    : $color-accent;
     }
-
-    span {
-      font-family: $font-body;
-      font-size  : $font-size-sm;
-      font-weight: $font-weight-medium;
-      color      : $color-text-primary;
-    }
-
-    &:active { box-shadow: $shadow-neumorph-pressed; }
   }
-}
 
-// ─── FAB SPEED-DIAL TRANSITION ───────────────────────────────────────────────
-
-.fab-menu-enter-active,
-.fab-menu-leave-active {
-  transition: opacity 0.15s ease, transform 0.15s ease;
-}
-
-.fab-menu-enter-from,
-.fab-menu-leave-to {
-  opacity  : 0;
-  transform: translateX(-50%) translateY($spacing-4);
+  &__action-label {
+    font-family: $font-body;
+    font-size  : $font-size-sm + 1;
+    font-weight: $font-weight-medium;
+    color      : $color-text-primary;
+  }
 }
