@@ -22,9 +22,19 @@
         />
         <label :for="inputId" class="stock-adjuster__label">{{ label }}</label>
       </div>
+      <span
+        v-if="isAtMax"
+        class="stock-adjuster__max-hint"
+        aria-live="polite"
+      >Máximo alcanzado</span>
       <div class="stock-adjuster__controls">
         <button class="stock-adjuster__btn" @click="decrement" aria-label="Restar unidad">−</button>
-        <button class="stock-adjuster__btn" @click="increment" aria-label="Sumar unidad">+</button>
+        <button
+          class="stock-adjuster__btn"
+          @click="increment"
+          aria-label="Sumar unidad"
+          :disabled="isAtMax"
+        >+</button>
       </div>
     </div>
 
@@ -59,6 +69,8 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:modelValue', 'validate'])
+
+const isAtMax = computed(() => props.modelValue >= props.maxStock)
 
 const pct = computed(() => props.max ? Math.round((props.modelValue / props.max) * 100) : 0)
 

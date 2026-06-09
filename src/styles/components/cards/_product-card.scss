@@ -71,9 +71,10 @@
   }
 
   &__meta {
-    @include font-mono($font-size-xs);
-    color     : $color-text-tertiary;
+    @include font-mono($font-size-sm + 1);
+    color     : $color-text-secondary;
     margin-top: $spacing-1;
+    font-weight: $font-weight-medium;
   }
 
   &__bottom {
@@ -84,20 +85,20 @@
   }
 
   &__price-label {
-    @include font-mono($font-size-sm);
-    color        : $color-text-tertiary;
+    @include font-mono($font-size-sm + 1);
+    color        : $color-text-secondary;
     margin-bottom: $spacing-1;
   }
 
   &__price {
-    @include font-mono($font-size-base, $font-weight-medium);
+    @include font-mono($font-size-lg, $font-weight-medium);
     color        : $color-text-primary;
-    margin-bottom: $spacing-1;
+    margin: $spacing-2 0;
   }
 
   &__pvp {
     @include font-mono($font-size-sm);
-    color: $color-text-tertiary;
+    color: $color-text-secondary;
   }
 
   &__stock-info {
@@ -105,13 +106,14 @@
   }
 
   &__units {
-    @include font-mono($font-size-xs);
+    @include font-mono($font-size-md);
     color: $color-text-secondary;
+    margin-bottom: $spacing-1;
   }
 
   &__min {
-    @include font-mono($font-size-xs);
-    color: $color-text-tertiary;
+    @include font-mono($font-size-sm);
+    color: $color-text-secondary;
   }
 
   &__badges {
