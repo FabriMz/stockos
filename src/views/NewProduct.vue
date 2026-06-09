@@ -72,12 +72,33 @@
           <span v-if="requiredErrors.sku" class="form-hint form-hint--error" role="alert">{{ requiredErrors.sku
             }}</span>
         </div>
-        <div class="form-group">
-          <label class="form-label" for="np-name">Nombre del producto</label>
-          <input class="form-input" :class="{ 'form-input--error': requiredErrors.name }" id="np-name" name="np-name"
-            type="text" v-model="form.name" placeholder="Ej. Pesto Alla Genovese 190gr" />
-          <span v-if="requiredErrors.name" class="form-hint form-hint--error" role="alert">{{ requiredErrors.name
-            }}</span>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="np-name">Nombre del producto</label>
+            <input class="form-input" :class="{ 'form-input--error': requiredErrors.name }" id="np-name" name="np-name"
+              type="text" v-model="form.name" placeholder="Ej. Pesto Alla Genovese 190gr" />
+            <span v-if="requiredErrors.name" class="form-hint form-hint--error" role="alert">{{ requiredErrors.name
+              }}</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="np-category">Categoría</label>
+            <select v-if="!creatingCategory" class="form-select" id="np-category" name="np-category"
+              :value="form.category === '' ? '__sin_categoria__' : form.category" @change="onCategoryChange">
+              <option value="" disabled>Seleccionar…</option>
+              <option value="__sin_categoria__">Sin categoría</option>
+              <option v-for="c in availableCategories" :key="c" :value="c">{{ c }}</option>
+              <option value="__nueva__">+ Crear categoría…</option>
+            </select>
+            <div v-else class="discount-custom">
+              <input class="form-input discount-custom__input" id="np-category" name="np-category" type="text"
+                v-model="newCategory" placeholder="Nombre de categoría" @keydown.enter="confirmNewCategory"
+                @keydown.escape="cancelNewCategory" ref="newCatInput" aria-label="Nombre de nueva categoría" />
+              <button type="button" class="discount-custom__reset" @click="cancelNewCategory"
+                aria-label="Cancelar nueva categoría">
+                <i class="ti ti-x" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
         </div>
         <div class="form-row">
           <div class="form-group">
@@ -147,27 +168,6 @@
               @input="e => { const v = sanitizeInteger(e.target.value, MAX_UNITS_BOX); form.unitsPerBox = v === '' ? '' : Number(v); e.target.value = v; validateUnitsPerBox() }" />
             <span v-if="errors.unitsPerBox" class="form-hint form-hint--error" role="alert">{{ errors.unitsPerBox
               }}</span>
-          </div>
-        </div>
-        <div class="form-row form-row--half">
-          <div class="form-group">
-            <label class="form-label" for="np-category">Categoría</label>
-            <select v-if="!creatingCategory" class="form-select" id="np-category" name="np-category"
-              :value="form.category === '' ? '__sin_categoria__' : form.category" @change="onCategoryChange">
-              <option value="" disabled>Seleccionar…</option>
-              <option value="__sin_categoria__">Sin categoría</option>
-              <option v-for="c in availableCategories" :key="c" :value="c">{{ c }}</option>
-              <option value="__nueva__">+ Crear categoría…</option>
-            </select>
-            <div v-else class="discount-custom">
-              <input class="form-input discount-custom__input" id="np-category" name="np-category" type="text"
-                v-model="newCategory" placeholder="Nombre de categoría" @keydown.enter="confirmNewCategory"
-                @keydown.escape="cancelNewCategory" ref="newCatInput" aria-label="Nombre de nueva categoría" />
-              <button type="button" class="discount-custom__reset" @click="cancelNewCategory"
-                aria-label="Cancelar nueva categoría">
-                <i class="ti ti-x" aria-hidden="true"></i>
-              </button>
-            </div>
           </div>
         </div>
       </div>

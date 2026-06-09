@@ -28,9 +28,30 @@
           <input class="form-input" id="ep-sku" name="ep-sku" type="text" :value="product.sku" readonly />
           <span class="form-hint">El SKU no puede modificarse</span>
         </div>
-        <div class="form-group">
-          <label class="form-label" for="ep-name">Nombre del producto</label>
-          <input class="form-input" id="ep-name" name="ep-name" type="text" v-model="form.name" />
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="ep-name">Nombre del producto</label>
+            <input class="form-input" id="ep-name" name="ep-name" type="text" v-model="form.name" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="ep-category">Categoría</label>
+            <select v-if="!creatingCategory" class="form-select" id="ep-category" name="ep-category"
+              :value="form.category === '' ? '__sin_categoria__' : form.category" @change="onCategoryChange">
+              <option value="" disabled>Seleccionar…</option>
+              <option value="__sin_categoria__">Sin categoría</option>
+              <option v-for="c in availableCategories" :key="c" :value="c">{{ c }}</option>
+              <option value="__nueva__">+ Crear categoría…</option>
+            </select>
+            <div v-else class="discount-custom">
+              <input class="form-input discount-custom__input" id="ep-category" name="ep-category" type="text"
+                v-model="newCategory" placeholder="Nombre de categoría" @keydown.enter="confirmNewCategory"
+                @keydown.escape="cancelNewCategory" ref="newCatInput" aria-label="Nombre de nueva categoría" />
+              <button type="button" class="discount-custom__reset" @click="cancelNewCategory"
+                aria-label="Cancelar nueva categoría">
+                <i class="ti ti-x" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
         </div>
         <div class="form-row">
           <div class="form-group">
@@ -96,27 +117,6 @@
               @input="e => { const v = sanitizeInteger(e.target.value, MAX_UNITS_BOX); form.unitsPerBox = v === '' ? '' : Number(v); e.target.value = v; validateUnitsPerBox() }" />
             <span v-if="errors.unitsPerBox" class="form-hint form-hint--error" role="alert">{{ errors.unitsPerBox
             }}</span>
-          </div>
-        </div>
-        <div class="form-row form-row--half">
-          <div class="form-group">
-            <label class="form-label" for="ep-category">Categoría</label>
-            <select v-if="!creatingCategory" class="form-select" id="ep-category" name="ep-category"
-              :value="form.category === '' ? '__sin_categoria__' : form.category" @change="onCategoryChange">
-              <option value="" disabled>Seleccionar…</option>
-              <option value="__sin_categoria__">Sin categoría</option>
-              <option v-for="c in availableCategories" :key="c" :value="c">{{ c }}</option>
-              <option value="__nueva__">+ Crear categoría…</option>
-            </select>
-            <div v-else class="discount-custom">
-              <input class="form-input discount-custom__input" id="ep-category" name="ep-category" type="text"
-                v-model="newCategory" placeholder="Nombre de categoría" @keydown.enter="confirmNewCategory"
-                @keydown.escape="cancelNewCategory" ref="newCatInput" aria-label="Nombre de nueva categoría" />
-              <button type="button" class="discount-custom__reset" @click="cancelNewCategory"
-                aria-label="Cancelar nueva categoría">
-                <i class="ti ti-x" aria-hidden="true"></i>
-              </button>
-            </div>
           </div>
         </div>
       </div>
