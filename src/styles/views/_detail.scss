@@ -36,12 +36,11 @@
       position     : absolute;
       top          : -8px;
       right        : -20px;
-      @include font-mono($font-size-xs, $font-weight-semibold);
+      @include font-mono($font-size-xs);
       padding      : 2px 7px;
       border-radius: $radius-full;
-      background   : $color-success-bg;
-      color        : $color-success;
-      border       : 1.5px solid $color-neumorph-base;
+      background   : $color-success-text;
+      color        : $color-text-on-primary;
       white-space  : nowrap;
       line-height  : 1.4;
     }
