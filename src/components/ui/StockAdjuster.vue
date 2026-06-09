@@ -9,6 +9,7 @@
           class="stock-adjuster__value-input"
           :class="{ 'stock-adjuster__value-input--error': error }"
           :value="modelValue"
+          @keydown="onKeyDown"
           @input="onInput"
           @change="onInput"
           @blur="onBlur"
@@ -78,6 +79,12 @@ const decrement = () => {
   emit('validate')
 }
 
+const BLOCKED_KEYS = ['e', 'E', '+', '-', ',', '.']
+
+const onKeyDown = e => {
+  if (BLOCKED_KEYS.includes(e.key)) e.preventDefault()
+}
+
 const onBlur = e => {
   if (e.target.value === '' || e.target.value === null) {
     emit('update:modelValue', 0)
@@ -88,10 +95,16 @@ const onBlur = e => {
 
 const onInput = e => {
   const raw = e.target.value.replace(/[^0-9]/g, '')
-  if (raw === '') { emit('update:modelValue', 0); return }
+  if (raw === '') {
+    emit('update:modelValue', 0)
+    e.target.value = 0
+    return
+  }
   const val = parseInt(raw, 10)
   if (!isNaN(val) && val >= 0) {
-    emit('update:modelValue', Math.min(val, props.maxStock))
+    const clamped = Math.min(val, props.maxStock)
+    emit('update:modelValue', clamped)
+    e.target.value = clamped
   }
 }
 </script>

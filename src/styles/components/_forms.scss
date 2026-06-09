@@ -171,6 +171,7 @@
 
   &__left {
     @include flex-col($spacing-1);
+    flex: 1;
   }
 
   &__value-input {
