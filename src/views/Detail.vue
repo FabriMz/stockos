@@ -5,9 +5,12 @@
 
     <div class="scroll-content">
       <div class="detail__header">
-        <div class="detail__icon">
-          <img v-if="product.img" :src="product.img" :alt="product.name" class="detail__icon-img">
-          <i v-else :class="`ti ${product.ic}`" :style="{ color: product.col }" aria-hidden="true"></i>
+        <div class="detail__icon-wrap">
+          <div class="detail__icon">
+            <img v-if="product.img" :src="product.img" :alt="product.name" class="detail__icon-img">
+            <i v-else :class="`ti ${product.ic}`" :style="{ color: product.col }" aria-hidden="true"></i>
+          </div>
+          <span v-if="pvpDiscountLabel" class="detail__icon-discount" aria-label="Descuento aplicado">{{ pvpDiscountLabel }}</span>
         </div>
         <div class="detail__name">{{ product.name }}</div>
         <div class="detail__badge-wrap">
@@ -188,5 +191,13 @@ const fillClass = computed(() => {
   if (product.value.stock === 0) return 'stock-bar__fill--out'
   if (pct.value < 25) return 'stock-bar__fill--low'
   return 'stock-bar__fill--ok'
+})
+
+const pvpDiscountLabel = computed(() => {
+  const raw = product.value?.discount
+  if (!raw) return null
+  const num = parseFloat(raw)
+  if (isNaN(num) || num <= 0) return null
+  return `${num}% off`
 })
 </script>
