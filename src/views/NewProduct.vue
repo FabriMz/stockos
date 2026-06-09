@@ -17,7 +17,53 @@
         </button>
       </div>
 
-      <p class="section-label">Identificación</p>
+      <div class="section-label-row">
+        <p class="section-label">Identificación</p>
+        <button
+          type="button"
+          class="scanner-trigger"
+          aria-label="Escanear código de barras"
+          @click="openScanner"
+        >
+          <i class="ti ti-barcode" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <Teleport to="body">
+        <div
+          v-if="scannerOpen"
+          class="scanner-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Escáner de código de barras"
+        >
+          <div class="scanner-overlay__header">
+            <span class="scanner-overlay__title">Apuntar al código</span>
+            <button
+              type="button"
+              class="scanner-overlay__close"
+              aria-label="Cerrar escáner"
+              @click="closeScanner"
+            >
+              <i class="ti ti-x" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="scanner-overlay__viewport">
+            <video
+              ref="scannerVideo"
+              id="scanner-video"
+              class="scanner-overlay__video"
+              autoplay
+              muted
+              playsinline
+              aria-label="Vista de cámara para escaneo"
+            ></video>
+            <div class="scanner-overlay__reticle" aria-hidden="true"></div>
+          </div>
+          <p v-if="scannerError" class="scanner-overlay__error" role="alert">{{ scannerError }}</p>
+        </div>
+      </Teleport>
+
       <div class="form-section">
         <div class="form-group">
           <label class="form-label" for="np-sku">Código / SKU</label>
@@ -139,8 +185,8 @@
                 @keydown="e => ['-', '+', 'e', 'E'].includes(e.key) && e.preventDefault()" aria-label="Precio neto" />
               <select class="form-select size-field__unit-select" id="np-price-currency" name="np-price-currency"
                 v-model="form.priceCurrency" aria-label="Moneda del precio">
-                <option value="USD">USD</option>
                 <option value="UYU">UYU</option>
+                <option value="USD">USD</option>
               </select>
             </div>
             <span v-if="errors.cost" class="form-hint form-hint--error" role="alert">{{ errors.cost }}</span>
@@ -252,7 +298,7 @@
 </template>
 
 <script setup>
-import { reactive, ref, computed, watch, nextTick } from 'vue'
+import { reactive, ref, computed, watch, nextTick, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useProductsStore } from '../stores/products.js'
 import { DEFAULT_PRESET } from '../stores/discounts.js'
@@ -276,7 +322,7 @@ const form = reactive({
   expiry: '', batch: batchContext ?? '', stock: 0,
   ic: 'ti-box', bg: '#F0EAE4', col: '#791132', max: 100, img: '',
   alertDays: 30,
-  priceCurrency: 'USD',
+  priceCurrency: 'UYU',
 })
 
 watch([sizeQty, sizeUnit], ([qty, unit]) => {
@@ -531,6 +577,75 @@ function cancelNewCategory() {
   newCategory.value = ''
   form.category = ''
 }
+
+// ─── Barcode Scanner ──────────────────────────────────────────────────────────
+const barcodeSupported = ref(typeof BarcodeDetector !== 'undefined')
+const scannerOpen = ref(false)
+const scannerVideo = ref(null)
+const scannerError = ref(null)
+
+let _scannerStream = null
+let _scannerDetector = null
+let _scannerRAF = null
+
+async function openScanner() {
+  scannerError.value = null
+  scannerOpen.value = true
+
+  await nextTick()
+
+  if (typeof BarcodeDetector === 'undefined') {
+    scannerError.value = 'Tu navegador no soporta el escáner. Usá Chrome en Android o Safari en iOS.'
+    return
+  }
+
+  try {
+    _scannerStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment' },
+      audio: false,
+    })
+    if (!scannerVideo.value) return
+    scannerVideo.value.srcObject = _scannerStream
+
+    _scannerDetector = new BarcodeDetector({
+      formats: [
+        'ean_13', 'ean_8', 'upc_a', 'upc_e',
+        'code_39', 'code_128', 'itf', 'data_matrix', 'qr_code',
+      ],
+    })
+
+    const detect = async () => {
+      if (!scannerOpen.value) return
+      try {
+        const results = await _scannerDetector.detect(scannerVideo.value)
+        if (results.length > 0) {
+          form.sku = results[0].rawValue
+          closeScanner()
+          return
+        }
+      } catch { /* frame not ready yet */ }
+      _scannerRAF = requestAnimationFrame(detect)
+    }
+
+    scannerVideo.value.onloadedmetadata = () => {
+      _scannerRAF = requestAnimationFrame(detect)
+    }
+  } catch (err) {
+    scannerError.value = err.name === 'NotAllowedError'
+      ? 'Permiso de cámara denegado.'
+      : 'No se pudo acceder a la cámara.'
+  }
+}
+
+function closeScanner() {
+  scannerOpen.value = false
+  if (_scannerRAF) { cancelAnimationFrame(_scannerRAF); _scannerRAF = null }
+  if (_scannerStream) { _scannerStream.getTracks().forEach(t => t.stop()); _scannerStream = null }
+  _scannerDetector = null
+  scannerError.value = null
+}
+
+onUnmounted(() => { if (scannerOpen.value) closeScanner() })
 
 const save = () => {
   if (creatingBrand.value) confirmNewBrand()

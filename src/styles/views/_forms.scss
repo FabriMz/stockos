@@ -213,3 +213,137 @@
   text-transform: uppercase;
   letter-spacing: $letter-spacing-wider;
 }
+
+// ─── SECTION LABEL CON ACCIÓN (fila label + botón) ───────────────────────────
+.section-label-row {
+  @include flex-between;
+  padding: 0 $spacing-5;
+  margin: $spacing-5 0 $spacing-5;
+  border-bottom: $border;
+
+  .section-label {
+    border-bottom: none;
+    margin: 0;
+    padding: 0 0 $spacing-2;
+  }
+}
+
+// ─── BOTÓN DISPARADOR DEL ESCÁNER ────────────────────────────────────────────
+.scanner-trigger {
+  @include flex-center;
+  width: $icon-btn-size;
+  height: $icon-btn-size;
+  border-radius: $radius-md;
+  border: none;
+  background: $color-neumorph-base;
+  box-shadow: $shadow-neumorph-raised;
+  color: $color-text-secondary;
+  cursor: pointer;
+  transition: box-shadow $transition-fast, color $transition-fast;
+  flex-shrink: 0;
+  margin-bottom: $spacing-1;
+
+  i { font-size: $icon-md; }
+
+  &:active {
+    box-shadow: $shadow-neumorph-pressed;
+    color: $color-primary;
+  }
+}
+
+// ─── OVERLAY DE ESCÁNER ───────────────────────────────────────────────────────
+.scanner-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.92);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-5;
+
+  &__header {
+    @include flex-between;
+    width: 100%;
+    max-width: 360px;
+    padding: 0 $spacing-5;
+  }
+
+  &__title {
+    font-size: $font-size-base;
+    font-weight: $font-weight-medium;
+    color: #fff;
+  }
+
+  &__close {
+    @include flex-center;
+    width: $icon-btn-size;
+    height: $icon-btn-size;
+    border-radius: $radius-md;
+    border: none;
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    cursor: pointer;
+    transition: background $transition-fast;
+
+    i { font-size: $icon-md; }
+
+    &:active { background: rgba(255, 255, 255, 0.22); }
+  }
+
+  &__viewport {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    border-radius: $radius-xl;
+    overflow: hidden;
+    background: #000;
+  }
+
+  &__video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &__reticle {
+    position: absolute;
+    inset: $spacing-7;
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    border-radius: $radius-md;
+    pointer-events: none;
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-color: $color-primary;
+      border-style: solid;
+    }
+
+    &::before {
+      top: -2px;
+      left: -2px;
+      border-width: 3px 0 0 3px;
+      border-radius: $radius-sm 0 0 0;
+    }
+
+    &::after {
+      bottom: -2px;
+      right: -2px;
+      border-width: 0 3px 3px 0;
+      border-radius: 0 0 $radius-sm 0;
+    }
+  }
+
+  &__error {
+    font-size: $font-size-sm;
+    color: $color-danger;
+    text-align: center;
+    padding: 0 $spacing-5;
+  }
+}

@@ -163,35 +163,64 @@
   margin: 0 $spacing-5;
   padding: $spacing-4;
 
-  &__header {
+  &__body {
     @include flex-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  &__left {
+    @include flex-col($spacing-1);
+  }
+
+  &__value-input {
+    width: auto;
+    min-width: 0;
+    max-width: 80px;
+    height: auto;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    font-size: $font-size-xl + 10px;
+    font-weight: $font-weight-medium;
+    color: $color-text-primary;
+    font-family: $font-body;
+    line-height: 1;
+    padding: 0;
+    outline: none;
+    appearance: textfield;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      appearance: none;
+      margin: 0;
+    }
+
+    &--error {
+      color: $color-danger;
+    }
+
+    &:focus {
+      color: $color-primary;
+    }
   }
 
   &__label {
-    font-size: $font-size-base;
-    color: $color-text-secondary;
-    margin-right: $spacing-2;
-  }
-
-  &__value {
-    @include font-mono($font-size-md, $font-weight-medium);
-    color: $color-text-primary;
-  }
-
-  &__hint {
-    @include font-mono($font-size-xs);
+    font-size: $font-size-sm;
     color: $color-text-tertiary;
+    cursor: pointer;
   }
 
   &__controls {
     @include flex-row($spacing-2);
+    justify-content: flex-end;
   }
 
   &__btn {
     @include flex-center;
-    width: 34px;
-    height: 34px;
-    border-radius: $radius-md;
+    width: 32px;
+    height: 32px;
+    border-radius: $radius-full;
     border: none;
     background: $color-neumorph-base;
     box-shadow: $shadow-neumorph-raised;
@@ -207,31 +236,9 @@
     }
   }
 
-  &__input {
-    flex: 1;
-    height: 34px;
-    border-radius: $radius-md;
-    border: none;
-    background: $color-neumorph-base;
-    box-shadow: $shadow-neumorph-inset;
-    @include font-mono($font-size-lg, $font-weight-medium);
-    color: $color-text-primary;
-    text-align: center;
-    outline: none;
-
-    &:focus {
-      box-shadow: $shadow-neumorph-inset, 0 0 0 2px rgba(192, 57, 43, 0.20);
-    }
-
-    &--error {
-      border-color: $color-danger !important;
-      background: rgba($color-danger, 0.06);
-
-      &:focus {
-        border-color: $color-danger !important;
-        box-shadow: 0 0 0 2px rgba($color-danger, 0.18);
-      }
-    }
+  &__hint {
+    @include font-mono($font-size-sm);
+    color: $color-text-tertiary;
   }
 
   &--error {
@@ -242,7 +249,6 @@
     @include font-mono($font-size-xs);
     color: $color-danger-text;
     display: block;
-    text-align: right;
     width: 100%;
   }
 }

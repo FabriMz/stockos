@@ -1,8 +1,30 @@
 <template>
   <div class="stock-adjuster" :class="{ 'stock-adjuster--error': error }">
-    <div class="stock-adjuster__header">
-      <span class="stock-adjuster__label">{{ label }}</span>
-      <span class="stock-adjuster__value">{{ modelValue }} uds.</span>
+    <div class="stock-adjuster__body">
+      <div class="stock-adjuster__left">
+        <input
+          :id="inputId"
+          :name="inputId"
+          type="number"
+          class="stock-adjuster__value-input"
+          :class="{ 'stock-adjuster__value-input--error': error }"
+          :value="modelValue"
+          @input="onInput"
+          @change="onInput"
+          @blur="onBlur"
+          min="0"
+          :max="maxStock"
+          step="1"
+          inputmode="numeric"
+          :aria-label="label"
+          :aria-invalid="!!error"
+        />
+        <label :for="inputId" class="stock-adjuster__label">{{ label }}</label>
+      </div>
+      <div class="stock-adjuster__controls">
+        <button class="stock-adjuster__btn" @click="decrement" aria-label="Restar unidad">−</button>
+        <button class="stock-adjuster__btn" @click="increment" aria-label="Sumar unidad">+</button>
+      </div>
     </div>
 
     <template v-if="showBar">
@@ -17,16 +39,6 @@
     </template>
 
     <div v-if="hint" class="stock-adjuster__hint">{{ hint }}</div>
-
-    <div class="stock-adjuster__controls">
-      <button class="stock-adjuster__btn" @click="decrement" aria-label="Restar unidad">−</button>
-      <input :id="inputId" :name="inputId" type="number" class="stock-adjuster__input"
-        :class="{ 'stock-adjuster__input--error': error }" :value="modelValue" @input="onInput" @change="onInput"
-        @blur="$emit('validate')" min="0" :max="maxStock" step="1" inputmode="numeric" :aria-label="label"
-        :aria-invalid="!!error" />
-      <button class="stock-adjuster__btn" @click="increment" aria-label="Sumar unidad">+</button>
-    </div>
-
     <span v-if="error" class="stock-adjuster__error" role="alert">{{ error }}</span>
   </div>
 </template>
@@ -63,6 +75,14 @@ const increment = () => {
 
 const decrement = () => {
   emit('update:modelValue', Math.max(0, props.modelValue - 1))
+  emit('validate')
+}
+
+const onBlur = e => {
+  if (e.target.value === '' || e.target.value === null) {
+    emit('update:modelValue', 0)
+    e.target.value = 0
+  }
   emit('validate')
 }
 
