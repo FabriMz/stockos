@@ -6,13 +6,8 @@
     </div>
 
     <template v-if="showBar">
-      <div
-        class="stock-bar stock-bar--full"
-        role="progressbar"
-        :aria-valuenow="pct"
-        aria-valuemin="0"
-        aria-valuemax="100"
-      >
+      <div class="stock-bar stock-bar--full" role="progressbar" :aria-valuenow="pct" aria-valuemin="0"
+        aria-valuemax="100">
         <div class="stock-bar__fill" :class="fillClass" :style="{ width: pct + '%' }"></div>
       </div>
       <div class="stock-nums">
@@ -25,23 +20,10 @@
 
     <div class="stock-adjuster__controls">
       <button class="stock-adjuster__btn" @click="decrement" aria-label="Restar unidad">−</button>
-      <input
-        :id="inputId"
-        :name="inputId"
-        type="number"
-        class="stock-adjuster__input"
-        :class="{ 'stock-adjuster__input--error': error }"
-        :value="modelValue"
-        @input="onInput"
-        @change="onInput"
-        @blur="$emit('validate')"
-        min="0"
-        :max="maxStock"
-        step="1"
-        inputmode="numeric"
-        :aria-label="label"
-        :aria-invalid="!!error"
-      />
+      <input :id="inputId" :name="inputId" type="number" class="stock-adjuster__input"
+        :class="{ 'stock-adjuster__input--error': error }" :value="modelValue" @input="onInput" @change="onInput"
+        @blur="$emit('validate')" min="0" :max="maxStock" step="1" inputmode="numeric" :aria-label="label"
+        :aria-invalid="!!error" />
       <button class="stock-adjuster__btn" @click="increment" aria-label="Sumar unidad">+</button>
     </div>
 
@@ -54,13 +36,13 @@ import { computed } from 'vue'
 
 const props = defineProps({
   modelValue: { type: Number, required: true },
-  label:      { type: String, default: 'Unidades en stock' },
-  hint:       { type: String, default: '' },
-  max:        { type: Number, default: 0 },
-  showBar:    { type: Boolean, default: false },
-  inputId:    { type: String, default: 'stock-input' },
-  maxStock:   { type: Number, default: 99_999 },
-  error:      { type: String, default: null },
+  label: { type: String, default: 'Unidades en stock' },
+  hint: { type: String, default: '' },
+  max: { type: Number, default: 0 },
+  showBar: { type: Boolean, default: false },
+  inputId: { type: String, default: 'stock-input' },
+  maxStock: { type: Number, default: 99_999 },
+  error: { type: String, default: null },
 })
 
 const emit = defineEmits(['update:modelValue', 'validate'])
@@ -69,7 +51,7 @@ const pct = computed(() => props.max ? Math.round((props.modelValue / props.max)
 
 const fillClass = computed(() => {
   if (props.modelValue === 0) return 'stock-bar__fill--out'
-  if (pct.value < 25)         return 'stock-bar__fill--low'
+  if (pct.value < 25) return 'stock-bar__fill--low'
   return 'stock-bar__fill--ok'
 })
 

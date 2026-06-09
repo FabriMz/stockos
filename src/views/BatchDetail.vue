@@ -1,11 +1,6 @@
 <template>
   <div class="screen">
-    <TopBar
-      variant="back"
-      :title="folder?.batchNumber ?? ''"
-      back-label="Lotes"
-      back-to="/catalog?tab=batches"
-    />
+    <TopBar variant="back" :title="folder?.batchNumber ?? ''" back-label="Lotes" back-to="/catalog?tab=batches" />
 
     <div class="scroll-content">
       <div v-if="folder" class="batch-detail__header">
@@ -27,23 +22,11 @@
       <!-- Buscador de marcas -->
       <div class="brand-search">
         <i class="ti ti-search brand-search__icon" aria-hidden="true"></i>
-        <input
-          id="batch-detail-search"
-          name="batch-detail-search"
-          class="brand-search__input"
-          type="search"
-          v-model="searchQuery"
-          placeholder="Buscar marca..."
-          autocomplete="off"
-          aria-label="Buscar marca en este lote"
-        />
-        <button
-          v-if="searchQuery"
-          class="brand-search__clear"
-          type="button"
-          aria-label="Limpiar búsqueda"
-          @click="searchQuery = ''"
-        >
+        <input id="batch-detail-search" name="batch-detail-search" class="brand-search__input" type="search"
+          v-model="searchQuery" placeholder="Buscar marca..." autocomplete="off"
+          aria-label="Buscar marca en este lote" />
+        <button v-if="searchQuery" class="brand-search__clear" type="button" aria-label="Limpiar búsqueda"
+          @click="searchQuery = ''">
           <i class="ti ti-x" aria-hidden="true"></i>
         </button>
       </div>
@@ -58,80 +41,50 @@
           <i class="ti ti-folder-plus" aria-hidden="true"></i>
           <span>Categoría</span>
         </button>
-        <button
-          class="catalog-action-bar__btn catalog-action-bar__btn--settings"
-          :class="{ 'catalog-action-bar__btn--active': showSettingsSheet }"
-          aria-label="Ajustes del lote"
-          @click="openSettingsSheet"
-        >
+        <button class="catalog-action-bar__btn catalog-action-bar__btn--settings"
+          :class="{ 'catalog-action-bar__btn--active': showSettingsSheet }" aria-label="Ajustes del lote"
+          @click="openSettingsSheet">
           <i class="ti ti-settings" aria-hidden="true"></i>
           <span>Ajustes</span>
         </button>
       </div>
 
       <template v-for="catGroup in categorizedGroups" :key="catGroup.id ?? '__sin_cat__'">
-        <CatalogCatSep
-          v-if="catGroup.id"
-          :cat-id="catGroup.id"
-          :cat-name="catGroup.category"
-          :show-migrate="true"
-          :is-migrating="migratingCatId === catGroup.id"
-          @delete="handleDeleteCat(catGroup.id)"
-          @renamed="(n) => handleRenameCat(catGroup.id, n)"
-          @toggle-migrate="toggleMigrateMode(catGroup.id)"
-        />
-        <CatalogCatSep
-          v-else
-          cat-id="__sin_cat__"
-          cat-name="Sin categoría"
-          :show-migrate="true"
-          :show-delete="false"
-          :show-edit="false"
-          :is-migrating="migratingCatId === '__sin_cat__'"
-          @toggle-migrate="toggleMigrateMode('__sin_cat__')"
-        />
+        <CatalogCatSep v-if="catGroup.id" :cat-id="catGroup.id" :cat-name="catGroup.category" :show-migrate="true"
+          :is-migrating="migratingCatId === catGroup.id" @delete="handleDeleteCat(catGroup.id)"
+          @renamed="(n) => handleRenameCat(catGroup.id, n)" @toggle-migrate="toggleMigrateMode(catGroup.id)" />
+        <CatalogCatSep v-else cat-id="__sin_cat__" cat-name="Sin categoría" :show-migrate="true" :show-delete="false"
+          :show-edit="false" :is-migrating="migratingCatId === '__sin_cat__'"
+          @toggle-migrate="toggleMigrateMode('__sin_cat__')" />
 
         <!-- Modo normal -->
-        <template v-if="migratingCatId === null || (catGroup.id !== null && migratingCatId !== catGroup.id) || (catGroup.id === null && migratingCatId !== '__sin_cat__')">
-          <BrandRow
-            v-for="group in catGroup.groups"
-            :key="group.brand.id"
-            :brand="group.brand"
+        <template
+          v-if="migratingCatId === null || (catGroup.id !== null && migratingCatId !== catGroup.id) || (catGroup.id === null && migratingCatId !== '__sin_cat__')">
+          <BrandRow v-for="group in catGroup.groups" :key="group.brand.id" :brand="group.brand"
             :to="`/catalog/batch/${encodeURIComponent(folder.batchNumber)}/${group.brand.id}`"
-            :meta="`${group.items.length} ${group.items.length === 1 ? 'producto' : 'productos'}`"
-          />
+            :meta="`${group.items.length} ${group.items.length === 1 ? 'producto' : 'productos'}`" />
         </template>
 
         <!-- Modo migración: filas seleccionables -->
         <template v-else>
-          <div
-            v-for="group in catGroup.groups"
-            :key="group.brand.id"
-            class="brand-row brand-row--selectable"
-            :class="{ 'brand-row--selected': selectedBrandIds.has(group.brand.id) }"
-            role="checkbox"
-            :aria-checked="String(selectedBrandIds.has(group.brand.id))"
-            :aria-label="group.brand.name"
-            tabindex="0"
-            @click="toggleBrandSelect(group.brand.id)"
-            @keydown.enter.prevent="toggleBrandSelect(group.brand.id)"
-            @keydown.space.prevent="toggleBrandSelect(group.brand.id)"
-          >
+          <div v-for="group in catGroup.groups" :key="group.brand.id" class="brand-row brand-row--selectable"
+            :class="{ 'brand-row--selected': selectedBrandIds.has(group.brand.id) }" role="checkbox"
+            :aria-checked="String(selectedBrandIds.has(group.brand.id))" :aria-label="group.brand.name" tabindex="0"
+            @click="toggleBrandSelect(group.brand.id)" @keydown.enter.prevent="toggleBrandSelect(group.brand.id)"
+            @keydown.space.prevent="toggleBrandSelect(group.brand.id)">
             <div class="brand-row__body">
               <div class="brand-row__header">
                 <div class="brand-row__check">
-                  <i
-                    class="ti"
-                    :class="selectedBrandIds.has(group.brand.id) ? 'ti-circle-check' : 'ti-circle'"
-                    aria-hidden="true"
-                  ></i>
+                  <i class="ti" :class="selectedBrandIds.has(group.brand.id) ? 'ti-circle-check' : 'ti-circle'"
+                    aria-hidden="true"></i>
                 </div>
                 <div class="brand-row__icon" :style="{ background: group.brand.bg }">
                   <i :class="`ti ${group.brand.ic}`" :style="{ color: group.brand.col }" aria-hidden="true"></i>
                 </div>
                 <div class="brand-row__info">
                   <div class="brand-row__name">{{ group.brand.name }}</div>
-                  <div class="brand-row__meta">{{ group.items.length }} {{ group.items.length === 1 ? 'producto' : 'productos' }}</div>
+                  <div class="brand-row__meta">{{ group.items.length }} {{ group.items.length === 1 ? 'producto' :
+                    'productos' }}</div>
                 </div>
               </div>
             </div>
@@ -153,20 +106,14 @@
           {{ selectedBrandIds.size }} marca{{ selectedBrandIds.size !== 1 ? 's' : '' }}
         </span>
         <div class="catalog__migrate-actions">
-          <button
-            class="btn btn--ghost btn--sm"
+          <button class="btn btn--ghost btn--sm"
             :aria-label="isAllBrandsSelected ? 'Deseleccionar todas' : 'Seleccionar todas'"
-            @click="toggleSelectAllBrands"
-          >
+            @click="toggleSelectAllBrands">
             <i class="ti" :class="isAllBrandsSelected ? 'ti-square-minus' : 'ti-select-all'" aria-hidden="true"></i>
             {{ isAllBrandsSelected ? 'Ninguna' : 'Todas' }}
           </button>
           <button class="btn btn--secondary btn--sm" @click="cancelMigrate">Cancelar</button>
-          <button
-            class="btn btn--primary btn--sm"
-            :disabled="selectedBrandIds.size === 0"
-            @click="openMigrateSheet"
-          >
+          <button class="btn btn--primary btn--sm" :disabled="selectedBrandIds.size === 0" @click="openMigrateSheet">
             Migrar
           </button>
         </div>
@@ -177,13 +124,8 @@
 
     <!-- Nueva categoría sheet -->
     <Transition name="sheet">
-      <div
-        v-if="showNewCatSheet"
-        class="sheet-overlay"
-        role="dialog"
-        aria-label="Nueva categoría"
-        @click.self="closeNewCatSheet"
-      >
+      <div v-if="showNewCatSheet" class="sheet-overlay" role="dialog" aria-label="Nueva categoría"
+        @click.self="closeNewCatSheet">
         <div class="sheet">
           <div class="sheet__handle" aria-hidden="true"></div>
           <div class="sheet__header">
@@ -193,17 +135,9 @@
           <div class="sheet__body">
             <div class="form-group">
               <label class="form-label" for="batch-new-cat-name">Nombre</label>
-              <input
-                id="batch-new-cat-name"
-                name="batch-new-cat-name"
-                class="form-input"
-                v-model="newCatName"
-                placeholder="Ej: Vinos · Espumantes"
-                autocomplete="off"
-                ref="newCatInputRef"
-                @keydown.enter.prevent="handleCreateCat"
-                @keydown.escape="closeNewCatSheet"
-              />
+              <input id="batch-new-cat-name" name="batch-new-cat-name" class="form-input" v-model="newCatName"
+                placeholder="Ej: Vinos · Espumantes" autocomplete="off" ref="newCatInputRef"
+                @keydown.enter.prevent="handleCreateCat" @keydown.escape="closeNewCatSheet" />
               <span v-if="newCatError" class="form-hint form-hint--error" role="alert">{{ newCatError }}</span>
             </div>
           </div>
@@ -220,13 +154,8 @@
 
     <!-- Nueva marca sheet -->
     <Transition name="sheet">
-      <div
-        v-if="showNewBrandSheet"
-        class="sheet-overlay"
-        role="dialog"
-        aria-label="Nueva marca"
-        @click.self="closeNewBrandSheet"
-      >
+      <div v-if="showNewBrandSheet" class="sheet-overlay" role="dialog" aria-label="Nueva marca"
+        @click.self="closeNewBrandSheet">
         <div class="sheet">
           <div class="sheet__handle" aria-hidden="true"></div>
           <div class="sheet__header">
@@ -236,17 +165,9 @@
           <div class="sheet__body">
             <div class="form-group">
               <label class="form-label" for="batch-new-brand-name">Nombre</label>
-              <input
-                id="batch-new-brand-name"
-                name="batch-new-brand-name"
-                class="form-input"
-                v-model="newBrandName"
-                placeholder="Ej: Porta · Santa Rita"
-                autocomplete="off"
-                ref="newBrandInputRef"
-                @keydown.enter.prevent="handleCreateBrand"
-                @keydown.escape="closeNewBrandSheet"
-              />
+              <input id="batch-new-brand-name" name="batch-new-brand-name" class="form-input" v-model="newBrandName"
+                placeholder="Ej: Porta · Santa Rita" autocomplete="off" ref="newBrandInputRef"
+                @keydown.enter.prevent="handleCreateBrand" @keydown.escape="closeNewBrandSheet" />
               <span v-if="newBrandError" class="form-hint form-hint--error" role="alert">{{ newBrandError }}</span>
             </div>
           </div>
@@ -263,13 +184,8 @@
 
     <!-- Ajustes sheet -->
     <Transition name="sheet">
-      <div
-        v-if="showSettingsSheet"
-        class="sheet-overlay"
-        role="dialog"
-        aria-label="Ajustes del lote"
-        @click.self="closeSettingsSheet"
-      >
+      <div v-if="showSettingsSheet" class="sheet-overlay" role="dialog" aria-label="Ajustes del lote"
+        @click.self="closeSettingsSheet">
         <div class="sheet sheet--tall">
           <div class="sheet__handle" aria-hidden="true"></div>
           <div class="sheet__header">
@@ -280,21 +196,10 @@
           <div class="sheet__body sheet__body--scroll">
             <div class="topbar__search settings-sheet__search">
               <i class="ti ti-search" aria-hidden="true"></i>
-              <input
-                id="batch-settings-search"
-                name="batch-settings-search"
-                type="search"
-                v-model="settingsSearchQuery"
-                placeholder="Buscar marcas y categorías…"
-                aria-label="Buscar marcas y categorías"
-              />
-              <button
-                v-if="settingsSearchQuery"
-                class="topbar__search-clear"
-                type="button"
-                @click="settingsSearchQuery = ''"
-                aria-label="Limpiar búsqueda"
-              >
+              <input id="batch-settings-search" name="batch-settings-search" type="search" v-model="settingsSearchQuery"
+                placeholder="Buscar marcas y categorías…" aria-label="Buscar marcas y categorías" />
+              <button v-if="settingsSearchQuery" class="topbar__search-clear" type="button"
+                @click="settingsSearchQuery = ''" aria-label="Limpiar búsqueda">
                 <i class="ti ti-x" aria-hidden="true"></i>
               </button>
             </div>
@@ -305,26 +210,17 @@
               Categorías de marcas
             </p>
             <div class="settings-sheet__list" role="list">
-              <div
-                v-for="cat in filteredSettingsCategories"
-                :key="cat.id"
-                class="settings-sheet__item"
-                role="listitem"
-              >
+              <div v-for="cat in filteredSettingsCategories" :key="cat.id" class="settings-sheet__item" role="listitem">
                 <template v-if="settingsEditingCatId === cat.id">
-                  <input
-                    :id="`batch-settings-cat-${cat.id}`"
-                    :name="`batch-settings-cat-${cat.id}`"
-                    class="settings-sheet__edit-input"
-                    v-model="settingsEditValue"
-                    autocomplete="off"
+                  <input :id="`batch-settings-cat-${cat.id}`" :name="`batch-settings-cat-${cat.id}`"
+                    class="settings-sheet__edit-input" v-model="settingsEditValue" autocomplete="off"
                     :ref="el => { if (el) settingsInputRefs[cat.id] = el }"
-                    @keydown.enter.prevent="confirmSettingsCatRename(cat.id)"
-                    @keydown.escape="cancelSettingsEdit"
-                  />
-                  <span v-if="settingsEditError" class="settings-sheet__edit-error" role="alert">{{ settingsEditError }}</span>
+                    @keydown.enter.prevent="confirmSettingsCatRename(cat.id)" @keydown.escape="cancelSettingsEdit" />
+                  <span v-if="settingsEditError" class="settings-sheet__edit-error" role="alert">{{ settingsEditError
+                    }}</span>
                   <div class="settings-sheet__item-actions">
-                    <button class="settings-sheet__confirm-btn" aria-label="Confirmar" @click="confirmSettingsCatRename(cat.id)">
+                    <button class="settings-sheet__confirm-btn" aria-label="Confirmar"
+                      @click="confirmSettingsCatRename(cat.id)">
                       <i class="ti ti-check" aria-hidden="true"></i>
                     </button>
                     <button class="settings-sheet__cancel-btn" aria-label="Cancelar" @click="cancelSettingsEdit">
@@ -338,21 +234,16 @@
                   </div>
                   <div class="settings-sheet__item-info">
                     <span class="settings-sheet__item-name">{{ cat.name }}</span>
-                    <span class="settings-sheet__item-meta">{{ cat.brandIds.length }} marca{{ cat.brandIds.length !== 1 ? 's' : '' }}</span>
+                    <span class="settings-sheet__item-meta">{{ cat.brandIds.length }} marca{{ cat.brandIds.length !== 1
+                      ? 's' : '' }}</span>
                   </div>
                   <div class="settings-sheet__item-actions">
-                    <button
-                      class="settings-sheet__action-btn"
-                      :aria-label="`Renombrar ${cat.name}`"
-                      @click="startSettingsCatEdit(cat)"
-                    >
+                    <button class="settings-sheet__action-btn" :aria-label="`Renombrar ${cat.name}`"
+                      @click="startSettingsCatEdit(cat)">
                       <i class="ti ti-pencil" aria-hidden="true"></i>
                     </button>
-                    <button
-                      class="settings-sheet__action-btn settings-sheet__action-btn--danger"
-                      :aria-label="`Eliminar ${cat.name}`"
-                      @click="handleSettingsDeleteCat(cat.id)"
-                    >
+                    <button class="settings-sheet__action-btn settings-sheet__action-btn--danger"
+                      :aria-label="`Eliminar ${cat.name}`" @click="handleSettingsDeleteCat(cat.id)">
                       <i class="ti ti-trash" aria-hidden="true"></i>
                     </button>
                   </div>
@@ -369,26 +260,18 @@
               Marcas
             </p>
             <div class="settings-sheet__list" role="list">
-              <div
-                v-for="brand in filteredSettingsBrands"
-                :key="brand.id"
-                class="settings-sheet__item"
-                role="listitem"
-              >
+              <div v-for="brand in filteredSettingsBrands" :key="brand.id" class="settings-sheet__item" role="listitem">
                 <template v-if="settingsEditingBrandId === brand.id">
-                  <input
-                    :id="`batch-settings-brand-${brand.id}`"
-                    :name="`batch-settings-brand-${brand.id}`"
-                    class="settings-sheet__edit-input"
-                    v-model="settingsEditValue"
-                    autocomplete="off"
+                  <input :id="`batch-settings-brand-${brand.id}`" :name="`batch-settings-brand-${brand.id}`"
+                    class="settings-sheet__edit-input" v-model="settingsEditValue" autocomplete="off"
                     :ref="el => { if (el) settingsInputRefs[brand.id] = el }"
                     @keydown.enter.prevent="confirmSettingsBrandRename(brand.id)"
-                    @keydown.escape="cancelSettingsEdit"
-                  />
-                  <span v-if="settingsEditError" class="settings-sheet__edit-error" role="alert">{{ settingsEditError }}</span>
+                    @keydown.escape="cancelSettingsEdit" />
+                  <span v-if="settingsEditError" class="settings-sheet__edit-error" role="alert">{{ settingsEditError
+                    }}</span>
                   <div class="settings-sheet__item-actions">
-                    <button class="settings-sheet__confirm-btn" aria-label="Confirmar" @click="confirmSettingsBrandRename(brand.id)">
+                    <button class="settings-sheet__confirm-btn" aria-label="Confirmar"
+                      @click="confirmSettingsBrandRename(brand.id)">
                       <i class="ti ti-check" aria-hidden="true"></i>
                     </button>
                     <button class="settings-sheet__cancel-btn" aria-label="Cancelar" @click="cancelSettingsEdit">
@@ -405,18 +288,12 @@
                     <span class="settings-sheet__item-meta">{{ store.getByBrand(brand.id).length }} productos</span>
                   </div>
                   <div class="settings-sheet__item-actions">
-                    <button
-                      class="settings-sheet__action-btn"
-                      :aria-label="`Renombrar ${brand.name}`"
-                      @click="startSettingsBrandEdit(brand)"
-                    >
+                    <button class="settings-sheet__action-btn" :aria-label="`Renombrar ${brand.name}`"
+                      @click="startSettingsBrandEdit(brand)">
                       <i class="ti ti-pencil" aria-hidden="true"></i>
                     </button>
-                    <button
-                      class="settings-sheet__action-btn settings-sheet__action-btn--danger"
-                      :aria-label="`Eliminar ${brand.name}`"
-                      @click="handleSettingsDeleteBrand(brand.id)"
-                    >
+                    <button class="settings-sheet__action-btn settings-sheet__action-btn--danger"
+                      :aria-label="`Eliminar ${brand.name}`" @click="handleSettingsDeleteBrand(brand.id)">
                       <i class="ti ti-trash" aria-hidden="true"></i>
                     </button>
                   </div>
@@ -437,13 +314,8 @@
 
     <!-- Migrate destination sheet -->
     <Transition name="sheet">
-      <div
-        v-if="showMigrateSheet"
-        class="sheet-overlay"
-        role="dialog"
-        aria-label="Mover marcas"
-        @click.self="showMigrateSheet = false"
-      >
+      <div v-if="showMigrateSheet" class="sheet-overlay" role="dialog" aria-label="Mover marcas"
+        @click.self="showMigrateSheet = false">
         <div class="sheet">
           <div class="sheet__handle" aria-hidden="true"></div>
           <div class="sheet__header">
@@ -456,26 +328,16 @@
           <div class="sheet__body">
             <p class="sheet__section-label">Destino</p>
             <div class="catalog__migrate-dest-list" role="listbox" aria-label="Categoría destino">
-              <button
-                v-for="cat in migrationTargets"
-                :key="cat.id"
-                class="catalog__migrate-dest-item"
-                :class="{ 'catalog__migrate-dest-item--selected': migrateTargetId === cat.id }"
-                role="option"
-                :aria-selected="migrateTargetId === cat.id"
-                @click="migrateTargetId = cat.id"
-              >
+              <button v-for="cat in migrationTargets" :key="cat.id" class="catalog__migrate-dest-item"
+                :class="{ 'catalog__migrate-dest-item--selected': migrateTargetId === cat.id }" role="option"
+                :aria-selected="migrateTargetId === cat.id" @click="migrateTargetId = cat.id">
                 <span>{{ cat.name }}</span>
                 <i v-if="migrateTargetId === cat.id" class="ti ti-check" aria-hidden="true"></i>
               </button>
             </div>
           </div>
           <div class="btn-group">
-            <button
-              class="btn btn--primary"
-              :disabled="!migrateTargetId"
-              @click="confirmMigrate"
-            >
+            <button class="btn btn--primary" :disabled="!migrateTargetId" @click="confirmMigrate">
               <i class="ti ti-arrows-exchange" aria-hidden="true"></i>
               Mover marcas
             </button>
@@ -491,17 +353,17 @@
 <script setup>
 import { ref, computed, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useProductsStore }        from '../stores/products.js'
-import { useSettingsSheet }        from '../composables/useSettingsSheet.js'
+import { useProductsStore } from '../stores/products.js'
+import { useSettingsSheet } from '../composables/useSettingsSheet.js'
 import { formatExpiry, expiryBadgeClass, expiryBadgeLabel, expiryBadgeIcon } from '../utils/alerts.js'
-import TopBar        from '../components/layout/TopBar.vue'
-import BottomNav     from '../components/layout/BottomNav.vue'
-import BrandRow      from '../components/ui/BrandRow.vue'
+import TopBar from '../components/layout/TopBar.vue'
+import BottomNav from '../components/layout/BottomNav.vue'
+import BrandRow from '../components/ui/BrandRow.vue'
 import CatalogCatSep from '../components/ui/CatalogCatSep.vue'
 
-const route  = useRoute()
+const route = useRoute()
 const router = useRouter()
-const store  = useProductsStore()
+const store = useProductsStore()
 
 const batchNumber = computed(() => decodeURIComponent(route.params.batchNumber))
 
@@ -578,12 +440,12 @@ function handleRenameCat(id, newName) {
 // ─── NUEVA CATEGORÍA ─────────────────────────────────────────────────────────
 
 const showNewCatSheet = ref(false)
-const newCatName      = ref('')
-const newCatError     = ref('')
-const newCatInputRef  = ref(null)
+const newCatName = ref('')
+const newCatError = ref('')
+const newCatInputRef = ref(null)
 
 function openNewCatSheet() {
-  newCatName.value  = ''
+  newCatName.value = ''
   newCatError.value = ''
   showNewCatSheet.value = true
   nextTick(() => newCatInputRef.value?.focus())
@@ -591,7 +453,7 @@ function openNewCatSheet() {
 
 function closeNewCatSheet() {
   showNewCatSheet.value = false
-  newCatName.value  = ''
+  newCatName.value = ''
   newCatError.value = ''
 }
 
@@ -612,12 +474,12 @@ function handleCreateCat() {
 // ─── NUEVA MARCA ─────────────────────────────────────────────────────────────
 
 const showNewBrandSheet = ref(false)
-const newBrandName      = ref('')
-const newBrandError     = ref('')
-const newBrandInputRef  = ref(null)
+const newBrandName = ref('')
+const newBrandError = ref('')
+const newBrandInputRef = ref(null)
 
 function openNewBrandSheet() {
-  newBrandName.value  = ''
+  newBrandName.value = ''
   newBrandError.value = ''
   showNewBrandSheet.value = true
   nextTick(() => newBrandInputRef.value?.focus())
@@ -625,7 +487,7 @@ function openNewBrandSheet() {
 
 function closeNewBrandSheet() {
   showNewBrandSheet.value = false
-  newBrandName.value  = ''
+  newBrandName.value = ''
   newBrandError.value = ''
 }
 
@@ -667,16 +529,16 @@ const {
   handleSettingsDeleteBrand,
   cancelSettingsEdit,
 } = useSettingsSheet({
-  getCategories:       () => store.getBatchSortedCategories(batchNumber.value),
+  getCategories: () => store.getBatchSortedCategories(batchNumber.value),
   getSortedCategories: () => store.getBatchSortedCategories(batchNumber.value),
-  getSortedBrands:     () => store.sortedBrands,
-  getBrand:            store.getBrand,
-  addCategory:         (name) => store.addBatchCategory(batchNumber.value, name),
-  renameCategory:      (id, name) => store.renameBatchCategory(batchNumber.value, id, name),
-  deleteCategory:      (id) => store.deleteBatchCategory(batchNumber.value, id),
-  addBrand:            store.addBrand,
-  editBrandName:       store.editBrandName,
-  deleteBrand:         store.markDeleteBrand,
+  getSortedBrands: () => store.sortedBrands,
+  getBrand: store.getBrand,
+  addCategory: (name) => store.addBatchCategory(batchNumber.value, name),
+  renameCategory: (id, name) => store.renameBatchCategory(batchNumber.value, id, name),
+  deleteCategory: (id) => store.deleteBatchCategory(batchNumber.value, id),
+  addBrand: store.addBrand,
+  editBrandName: store.editBrandName,
+  deleteBrand: store.markDeleteBrand,
 }, {
   batchBrandIds,
   onRenameCat: (id, val) => store.renameBatchCategory(batchNumber.value, id, val),
@@ -685,10 +547,10 @@ const {
 
 // ─── MIGRATE STATE ────────────────────────────────────────────────────────────
 
-const migratingCatId   = ref(null)
+const migratingCatId = ref(null)
 const selectedBrandIds = ref(new Set())
 const showMigrateSheet = ref(false)
-const migrateTargetId  = ref(null)
+const migrateTargetId = ref(null)
 
 const migratingCatName = computed(() => {
   if (migratingCatId.value === '__sin_cat__') return 'Sin categoría'
@@ -724,16 +586,16 @@ function toggleMigrateMode(catId) {
   if (migratingCatId.value === catId) {
     cancelMigrate()
   } else {
-    migratingCatId.value   = catId
+    migratingCatId.value = catId
     selectedBrandIds.value = new Set()
   }
 }
 
 function cancelMigrate() {
-  migratingCatId.value   = null
+  migratingCatId.value = null
   selectedBrandIds.value = new Set()
   showMigrateSheet.value = false
-  migrateTargetId.value  = null
+  migrateTargetId.value = null
 }
 
 function toggleBrandSelect(bid) {
@@ -745,7 +607,7 @@ function toggleBrandSelect(bid) {
 
 function openMigrateSheet() {
   if (selectedBrandIds.value.size === 0) return
-  migrateTargetId.value  = null
+  migrateTargetId.value = null
   showMigrateSheet.value = true
 }
 
@@ -756,8 +618,8 @@ function confirmMigrate() {
     store.moveBrandInBatch(batchNumber.value, brandId, fromCatId, migrateTargetId.value)
   }
   showMigrateSheet.value = false
-  migratingCatId.value   = null
+  migratingCatId.value = null
   selectedBrandIds.value = new Set()
-  migrateTargetId.value  = null
+  migrateTargetId.value = null
 }
 </script>

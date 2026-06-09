@@ -1,11 +1,6 @@
 <template>
   <div class="screen" v-if="product">
-    <TopBar
-      variant="back"
-      :back-label="backLabel"
-      :back-to="backTo"
-      title="Detalle"
-    >
+    <TopBar variant="back" :back-label="backLabel" :back-to="backTo" title="Detalle">
     </TopBar>
 
     <div class="scroll-content">
@@ -18,13 +13,20 @@
         <div class="detail__badge-wrap">
           <StockBadge :product="product" />
         </div>
-        <div class="detail__row"><span class="detail__row-label">Marca</span><span class="detail__row-value">{{ product.brand }}</span></div>
-        <div class="detail__row"><span class="detail__row-label">SKU</span><span class="detail__row-value">{{ product.sku }}</span></div>
-        <div class="detail__row"><span class="detail__row-label">Contenido</span><span class="detail__row-value">{{ product.size }}</span></div>
-        <div class="detail__row"><span class="detail__row-label">Origen</span><span class="detail__row-value">{{ product.origin }}</span></div>
-        <div class="detail__row"><span class="detail__row-label">Uds. por caja</span><span class="detail__row-value">{{ product.unitsPerBox }}</span></div>
-        <div class="detail__row"><span class="detail__row-label">Descuento</span><span class="detail__row-value">{{ product.discount ?? '—' }}%</span></div>
-        <div class="detail__row"><span class="detail__row-label">Nº de lote</span><span class="detail__row-value">{{ product.batch || 'S/N' }}</span></div>
+        <div class="detail__row"><span class="detail__row-label">Marca</span><span class="detail__row-value">{{
+          product.brand }}</span></div>
+        <div class="detail__row"><span class="detail__row-label">SKU</span><span class="detail__row-value">{{
+            product.sku }}</span></div>
+        <div class="detail__row"><span class="detail__row-label">Contenido</span><span class="detail__row-value">{{
+          product.size }}</span></div>
+        <div class="detail__row"><span class="detail__row-label">Origen</span><span class="detail__row-value">{{
+          product.origin }}</span></div>
+        <div class="detail__row"><span class="detail__row-label">Uds. por caja</span><span class="detail__row-value">{{
+          product.unitsPerBox }}</span></div>
+        <div class="detail__row"><span class="detail__row-label">Descuento</span><span class="detail__row-value">{{
+          product.discount ?? '—' }}%</span></div>
+        <div class="detail__row"><span class="detail__row-label">Nº de lote</span><span class="detail__row-value">{{
+          product.batch || 'S/N' }}</span></div>
         <div v-if="formattedExpiry" class="detail__row">
           <span class="detail__row-label">Vencimiento</span>
           <span class="detail__row-value detail__row-value--warn">{{ formattedExpiry }}</span>
@@ -36,11 +38,8 @@
       <div class="detail__section">
         <div class="detail__section-head">
           <div class="detail__section-title">Precios</div>
-          <button
-            class="detail__currency-pill"
-            @click.stop="currencyStore.toggleCurrency()"
-            :aria-label="`Cambiar vista a ${currencyStore.currency === 'UYU' ? 'dólares' : 'pesos uruguayos'}`"
-          >
+          <button class="detail__currency-pill" @click.stop="currencyStore.toggleCurrency()"
+            :aria-label="`Cambiar vista a ${currencyStore.currency === 'UYU' ? 'dólares' : 'pesos uruguayos'}`">
             <i class="ti ti-arrows-exchange" aria-hidden="true"></i>
             <span>{{ currencyStore.currency }}</span>
           </button>
@@ -50,7 +49,8 @@
         <div class="detail__prices">
           <div class="detail__price-col">
             <div class="detail__price-label">Precio neto</div>
-            <div class="detail__price-value">{{ currencyStore.formatProductPriceWithCurrency(product.cost, product.priceCurrency) }}</div>
+            <div class="detail__price-value">{{ currencyStore.formatProductPriceWithCurrency(product.cost,
+              product.priceCurrency) }}</div>
           </div>
           <div class="detail__price-col">
             <div class="detail__price-label">IVA</div>
@@ -72,14 +72,16 @@
           </div>
           <div class="detail__price-col">
             <div class="detail__price-label">PVP sugerido</div>
-            <div class="detail__price-value detail__price-value--success">{{ currencyStore.formatProductPriceWithCurrency(product.price, product.priceCurrency) }}</div>
+            <div class="detail__price-value detail__price-value--success">{{
+              currencyStore.formatProductPriceWithCurrency(product.price, product.priceCurrency) }}</div>
           </div>
         </div>
 
         <!-- Hint: moneda guardada -->
         <div class="detail__saved-currency">
           <span class="detail__saved-currency__dot"></span>
-          <span class="detail__saved-currency__text">guardado en <strong>{{ product.priceCurrency || 'USD' }}</strong></span>
+          <span class="detail__saved-currency__text">guardado en <strong>{{ product.priceCurrency || 'USD'
+              }}</strong></span>
         </div>
       </div>
 
@@ -87,13 +89,8 @@
 
       <div class="detail__section">
         <div class="detail__section-title">Stock actual</div>
-        <div
-          class="stock-bar stock-bar--full"
-          role="progressbar"
-          :aria-valuenow="pct"
-          aria-valuemin="0"
-          aria-valuemax="100"
-        >
+        <div class="stock-bar stock-bar--full" role="progressbar" :aria-valuenow="pct" aria-valuemin="0"
+          aria-valuemax="100">
           <div class="stock-bar__fill" :class="fillClass" :style="{ width: pct + '%' }"></div>
         </div>
         <div class="stock-nums">
@@ -136,22 +133,22 @@
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useProductsStore } from '../stores/products.js'
-import { useCurrencyStore }  from '../stores/currency.js'
+import { useCurrencyStore } from '../stores/currency.js'
 import { resolveAlertBack } from '../composables/useAlertNavigation.js'
-import TopBar    from '../components/layout/TopBar.vue'
+import TopBar from '../components/layout/TopBar.vue'
 import BottomNav from '../components/layout/BottomNav.vue'
 import StockBadge from '../components/ui/StockBadge.vue'
 
-const route         = useRoute()
-const router        = useRouter()
-const store         = useProductsStore()
+const route = useRoute()
+const router = useRouter()
+const store = useProductsStore()
 const currencyStore = useCurrencyStore()
-const product       = computed(() => store.getProduct(route.params.id))
+const product = computed(() => store.getProduct(route.params.id))
 
 const confirming = ref(false)
 
 const alertBack = computed(() => resolveAlertBack(route.query, product.value))
-const backTo    = computed(() => alertBack.value?.to ?? (product.value?.bid ? `/catalog/${product.value.bid}` : '/catalog'))
+const backTo = computed(() => alertBack.value?.to ?? (product.value?.bid ? `/catalog/${product.value.bid}` : '/catalog'))
 const backLabel = computed(() => alertBack.value?.label ?? (product.value?.bid ? (product.value?.brand ?? 'Atrás') : 'Catálogo'))
 
 // Margen calculado como fallback para productos sin margin guardado

@@ -1,12 +1,7 @@
 <template>
   <Transition name="sheet">
-    <div
-      v-if="modelValue"
-      class="sheet-overlay"
-      role="dialog"
-      :aria-label="sheetAriaLabel"
-      @click.self="emit('cancel')"
-    >
+    <div v-if="modelValue" class="sheet-overlay" role="dialog" :aria-label="sheetAriaLabel"
+      @click.self="emit('cancel')">
       <div class="sheet">
         <div class="sheet__handle" aria-hidden="true"></div>
 
@@ -30,29 +25,21 @@
           <template v-if="isCloneMode && batchFoldersMeta.length > 0">
             <div class="sheet__section-label" id="batch-selector-label">Seleccioná el lote</div>
             <div class="sheet__batch-list" role="listbox" aria-labelledby="batch-selector-label">
-              <button
-                v-for="batch in batchFoldersMeta"
-                :key="batch.batchNumber"
-                class="sheet__batch-option"
-                :class="{ 'sheet__batch-option--active': selectedOption === batch.batchNumber }"
-                role="option"
-                :aria-selected="selectedOption === batch.batchNumber"
-                @click="selectedOption = batch.batchNumber"
-              >
+              <button v-for="batch in batchFoldersMeta" :key="batch.batchNumber" class="sheet__batch-option"
+                :class="{ 'sheet__batch-option--active': selectedOption === batch.batchNumber }" role="option"
+                :aria-selected="selectedOption === batch.batchNumber" @click="selectedOption = batch.batchNumber">
                 <div class="sheet__batch-option-body">
                   <span class="sheet__batch-option-name">{{ batch.batchNumber }}</span>
                   <span class="sheet__batch-option-meta">vence {{ formatExpiry(batch.expiry) }}</span>
                 </div>
-                <span :class="['badge', expiryBadgeClass(batch.expiry)]"><i :class="`ti ${expiryBadgeIcon(batch.expiry)}`" aria-hidden="true"></i>{{ expiryBadgeLabel(batch.expiry) }}</span>
+                <span :class="['badge', expiryBadgeClass(batch.expiry)]"><i
+                    :class="`ti ${expiryBadgeIcon(batch.expiry)}`" aria-hidden="true"></i>{{
+                      expiryBadgeLabel(batch.expiry) }}</span>
               </button>
 
-              <button
-                class="sheet__batch-option sheet__batch-option--new"
-                :class="{ 'sheet__batch-option--active': selectedOption === '_new' }"
-                role="option"
-                :aria-selected="selectedOption === '_new'"
-                @click="selectedOption = '_new'"
-              >
+              <button class="sheet__batch-option sheet__batch-option--new"
+                :class="{ 'sheet__batch-option--active': selectedOption === '_new' }" role="option"
+                :aria-selected="selectedOption === '_new'" @click="selectedOption = '_new'">
                 <div class="sheet__batch-option-body sheet__batch-option-body--row">
                   <i class="ti ti-folder-plus" aria-hidden="true"></i>
                   <span class="sheet__batch-option-name">Crear nuevo lote</span>
@@ -65,45 +52,27 @@
             <div class="form-row">
               <div class="form-group">
                 <label class="form-label" for="clone-batch">Nro. de lote</label>
-                <input
-                  id="clone-batch"
-                  name="clone-batch"
-                  class="form-input"
-                  v-model="form.batchNumber"
-                  placeholder="Ej: L2504-D"
-                  autocomplete="off"
-                />
+                <input id="clone-batch" name="clone-batch" class="form-input" v-model="form.batchNumber"
+                  placeholder="Ej: L2504-D" autocomplete="off" />
                 <span v-if="showErrors && !form.batchNumber.trim()" class="form-hint form-hint--error">Requerido</span>
-                <span v-else-if="showErrors && isDuplicateName" class="form-hint form-hint--error">Ya existe un lote con ese nombre</span>
+                <span v-else-if="showErrors && isDuplicateName" class="form-hint form-hint--error">Ya existe un lote con
+                  ese nombre</span>
               </div>
               <div class="form-group">
                 <label class="form-label" for="clone-expiry">Vencimiento</label>
-                <input
-                  id="clone-expiry"
-                  name="clone-expiry"
-                  type="date"
-                  class="form-input"
-                  v-model="form.expiry"
-                  :min="todayIso"
-                  @input="handleExpiryInput"
-                />
+                <input id="clone-expiry" name="clone-expiry" type="date" class="form-input" v-model="form.expiry"
+                  :min="todayIso" @input="handleExpiryInput" />
                 <span v-if="showErrors && !form.expiry" class="form-hint form-hint--error">Requerido</span>
-                <span v-else-if="form.expiry && expiryYearError" class="form-hint form-hint--error">{{ expiryYearError }}</span>
+                <span v-else-if="form.expiry && expiryYearError" class="form-hint form-hint--error">{{ expiryYearError
+                  }}</span>
               </div>
             </div>
           </template>
 
           <div v-if="isCloneMode" class="form-group">
             <label class="form-label" for="clone-stock">Stock inicial</label>
-            <input
-              id="clone-stock"
-              name="clone-stock"
-              type="number"
-              min="0"
-              class="form-input"
-              v-model.number="form.stock"
-              placeholder="0"
-            />
+            <input id="clone-stock" name="clone-stock" type="number" min="0" class="form-input"
+              v-model.number="form.stock" placeholder="0" />
             <span class="form-hint">Unidades que llegaron en esta carga</span>
           </div>
 
@@ -129,8 +98,8 @@ import { formatExpiry, expiryBadgeClass, expiryBadgeLabel, expiryBadgeIcon } fro
 
 const props = defineProps({
   modelValue: { type: Boolean, default: false },
-  product:    { type: Object,  default: null },
-  editBatch:  { type: Object,  default: null },
+  product: { type: Object, default: null },
+  editBatch: { type: Object, default: null },
 })
 
 const emit = defineEmits(['confirm', 'cancel'])
@@ -138,9 +107,9 @@ const emit = defineEmits(['confirm', 'cancel'])
 const store = useProductsStore()
 const { batchFoldersMeta } = storeToRefs(store)
 
-const isCloneMode  = computed(() => !!props.product && !props.editBatch)
+const isCloneMode = computed(() => !!props.product && !props.editBatch)
 const isCreateMode = computed(() => !props.product && !props.editBatch)
-const isEditMode   = computed(() => !!props.editBatch)
+const isEditMode = computed(() => !!props.editBatch)
 
 // Fecha mínima para el input de vencimiento (hoy en YYYY-MM-DD local)
 const todayIso = new Date().toLocaleDateString('en-CA')
@@ -164,8 +133,8 @@ const expiryYearError = computed(() => {
 })
 
 const selectedOption = ref('_new')
-const form           = ref({ batchNumber: '', expiry: '', stock: 0 })
-const showErrors     = ref(false)
+const form = ref({ batchNumber: '', expiry: '', stock: 0 })
+const showErrors = ref(false)
 
 const showNameExpiry = computed(() => {
   if (isEditMode.value || isCreateMode.value) return true
@@ -192,8 +161,8 @@ watch(() => props.modelValue, open => {
       : rawExpiry
     form.value = {
       batchNumber: props.editBatch.batchNumber,
-      expiry:      dateInputValue,
-      stock:       0,
+      expiry: dateInputValue,
+      stock: 0,
     }
   } else {
     form.value = { batchNumber: '', expiry: '', stock: 0 }
@@ -204,13 +173,13 @@ watch(() => props.modelValue, open => {
 })
 
 const sheetTitle = computed(() => {
-  if (isEditMode.value)  return 'Editar lote'
+  if (isEditMode.value) return 'Editar lote'
   if (isCloneMode.value) return 'Clonar a lote'
   return 'Nuevo lote'
 })
 
 const sheetSub = computed(() => {
-  if (isEditMode.value)  return 'Modifica el número o la fecha de vencimiento'
+  if (isEditMode.value) return 'Modifica el número o la fecha de vencimiento'
   if (isCloneMode.value) return batchFoldersMeta.value.length > 0
     ? 'Elige un lote existente o crea uno nuevo'
     : 'Asigna el lote de la carga que llegó'
@@ -218,7 +187,7 @@ const sheetSub = computed(() => {
 })
 
 const sheetAriaLabel = computed(() => {
-  if (isEditMode.value)  return `Editar lote ${props.editBatch?.batchNumber}`
+  if (isEditMode.value) return `Editar lote ${props.editBatch?.batchNumber}`
   if (isCloneMode.value) return `Clonar ${props.product?.name} a lote`
   return 'Nuevo lote'
 })
@@ -228,7 +197,7 @@ const confirmIcon = computed(() =>
 )
 
 const confirmLabel = computed(() => {
-  if (isEditMode.value)  return 'Guardar cambios'
+  if (isEditMode.value) return 'Guardar cambios'
   if (isCloneMode.value) return selectedOption.value === '_new' ? 'Crear lote y clonar' : 'Agregar al lote'
   return 'Crear lote'
 })
@@ -250,12 +219,12 @@ function isFormValid() {
 function handleExpiryInput() {
   const val = form.value.expiry
   if (!val) return
-  
+
   const parts = val.split('-')
   if (parts.length !== 3) return
-  
+
   const [year, month, day] = parts
-  
+
   // Si el año tiene más de 4 dígitos, truncar a 4
   if (year.length > 4) {
     form.value.expiry = `${year.substring(0, 4)}-${month}-${day}`
@@ -279,8 +248,8 @@ function handleConfirm() {
     } else {
       emit('confirm', {
         batchNumber: form.value.batchNumber,
-        expiry:      form.value.expiry,
-        stock:       form.value.stock,
+        expiry: form.value.expiry,
+        stock: form.value.stock,
       })
     }
     return

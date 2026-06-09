@@ -6,28 +6,14 @@
 
       <div class="form-view__preview">
         <div class="form-view__photo-picker">
-          <input
-            ref="photoInput"
-            id="ep-photo"
-            name="ep-photo"
-            type="file"
-            accept="image/*"
-            capture="environment"
-            class="form-view__photo-input"
-            aria-label="Tomar foto del producto"
-            @change="onPhotoChange"
-          />
+          <input ref="photoInput" id="ep-photo" name="ep-photo" type="file" accept="image/*" capture="environment"
+            class="form-view__photo-input" aria-label="Tomar foto del producto" @change="onPhotoChange" />
           <label for="ep-photo" class="form-view__photo-trigger">
             <img v-if="form.img" :src="form.img" :alt="product.name" class="form-view__photo-img" />
             <i v-else class="ti ti-camera" aria-hidden="true"></i>
           </label>
-          <button
-            v-if="form.img"
-            type="button"
-            class="form-view__photo-remove"
-            aria-label="Quitar imagen"
-            @click="removePhoto"
-          >
+          <button v-if="form.img" type="button" class="form-view__photo-remove" aria-label="Quitar imagen"
+            @click="removePhoto">
             <i class="ti ti-x" aria-hidden="true"></i>
           </button>
         </div>
@@ -49,32 +35,18 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label" for="ep-brand">Marca</label>
-            <select
-              v-if="!creatingBrand"
-              class="form-select"
-              id="ep-brand"
-              name="ep-brand"
-              :value="form.bid"
-              @change="onBrandChange"
-            >
+            <select v-if="!creatingBrand" class="form-select" id="ep-brand" name="ep-brand" :value="form.bid"
+              @change="onBrandChange">
               <option value="">Seleccionar…</option>
               <option v-for="b in store.sortedBrands" :key="b.id" :value="b.id">{{ b.name }}</option>
               <option value="__nueva__">+ Crear marca…</option>
             </select>
             <div v-else class="discount-custom">
-              <input
-                class="form-input discount-custom__input"
-                id="ep-brand"
-                name="ep-brand"
-                type="text"
-                v-model="newBrand"
-                placeholder="Nombre de marca"
-                @keydown.enter="confirmNewBrand"
-                @keydown.escape="cancelNewBrand"
-                ref="newBrandInput"
-                aria-label="Nombre de nueva marca"
-              />
-              <button type="button" class="discount-custom__reset" @click="cancelNewBrand" aria-label="Cancelar nueva marca">
+              <input class="form-input discount-custom__input" id="ep-brand" name="ep-brand" type="text"
+                v-model="newBrand" placeholder="Nombre de marca" @keydown.enter="confirmNewBrand"
+                @keydown.escape="cancelNewBrand" ref="newBrandInput" aria-label="Nombre de nueva marca" />
+              <button type="button" class="discount-custom__reset" @click="cancelNewBrand"
+                aria-label="Cancelar nueva marca">
                 <i class="ti ti-x" aria-hidden="true"></i>
               </button>
             </div>
@@ -82,32 +54,19 @@
           </div>
           <div class="form-group">
             <label class="form-label" for="ep-origin">Origen</label>
-            <input class="form-input" id="ep-origin" name="ep-origin" type="text" :value="form.origin" placeholder="Ej. Italia" @input="e => { form.origin = sanitizeOrigin(e.target.value); e.target.value = form.origin }" />
+            <input class="form-input" id="ep-origin" name="ep-origin" type="text" :value="form.origin"
+              placeholder="Ej. Italia"
+              @input="e => { form.origin = sanitizeOrigin(e.target.value); e.target.value = form.origin }" />
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label" for="ep-size">Contenido</label>
             <div class="size-field">
-              <input
-                class="form-input size-field__qty"
-                id="ep-size"
-                name="ep-size"
-                type="number"
-                v-model="sizeQty"
-                placeholder="Ej. 190"
-                inputmode="decimal"
-                min="0"
-                step="any"
-                aria-label="Cantidad de contenido"
-              />
-              <select
-                class="form-select size-field__unit-select"
-                id="ep-size-unit"
-                name="ep-size-unit"
-                v-model="sizeUnit"
-                aria-label="Unidad de medida"
-              >
+              <input class="form-input size-field__qty" id="ep-size" name="ep-size" type="number" v-model="sizeQty"
+                placeholder="Ej. 190" inputmode="decimal" min="0" step="any" aria-label="Cantidad de contenido" />
+              <select class="form-select size-field__unit-select" id="ep-size-unit" name="ep-size-unit"
+                v-model="sizeUnit" aria-label="Unidad de medida">
                 <optgroup label="Sólidos">
                   <option value="gr">gr</option>
                   <option value="Kg">Kg</option>
@@ -131,53 +90,30 @@
           </div>
           <div class="form-group">
             <label class="form-label" for="ep-units-per-box">Uds. por caja</label>
-            <input
-              class="form-input"
-              :class="{ 'form-input--error': errors.unitsPerBox }"
-              id="ep-units-per-box"
-              name="ep-units-per-box"
-              type="number"
-              :value="form.unitsPerBox"
-              inputmode="numeric"
-              min="1"
-              :max="MAX_UNITS_BOX"
-              step="1"
-              @blur="validateUnitsPerBox"
-              @input="e => { const v = sanitizeInteger(e.target.value, MAX_UNITS_BOX); form.unitsPerBox = v === '' ? '' : Number(v); e.target.value = v; validateUnitsPerBox() }"
-            />
-            <span v-if="errors.unitsPerBox" class="form-hint form-hint--error" role="alert">{{ errors.unitsPerBox }}</span>
+            <input class="form-input" :class="{ 'form-input--error': errors.unitsPerBox }" id="ep-units-per-box"
+              name="ep-units-per-box" type="number" :value="form.unitsPerBox" inputmode="numeric" min="1"
+              :max="MAX_UNITS_BOX" step="1" @blur="validateUnitsPerBox"
+              @input="e => { const v = sanitizeInteger(e.target.value, MAX_UNITS_BOX); form.unitsPerBox = v === '' ? '' : Number(v); e.target.value = v; validateUnitsPerBox() }" />
+            <span v-if="errors.unitsPerBox" class="form-hint form-hint--error" role="alert">{{ errors.unitsPerBox
+            }}</span>
           </div>
         </div>
         <div class="form-row form-row--half">
           <div class="form-group">
             <label class="form-label" for="ep-category">Categoría</label>
-            <select
-              v-if="!creatingCategory"
-              class="form-select"
-              id="ep-category"
-              name="ep-category"
-              :value="form.category === '' ? '__sin_categoria__' : form.category"
-              @change="onCategoryChange"
-            >
+            <select v-if="!creatingCategory" class="form-select" id="ep-category" name="ep-category"
+              :value="form.category === '' ? '__sin_categoria__' : form.category" @change="onCategoryChange">
               <option value="" disabled>Seleccionar…</option>
               <option value="__sin_categoria__">Sin categoría</option>
               <option v-for="c in availableCategories" :key="c" :value="c">{{ c }}</option>
               <option value="__nueva__">+ Crear categoría…</option>
             </select>
             <div v-else class="discount-custom">
-              <input
-                class="form-input discount-custom__input"
-                id="ep-category"
-                name="ep-category"
-                type="text"
-                v-model="newCategory"
-                placeholder="Nombre de categoría"
-                @keydown.enter="confirmNewCategory"
-                @keydown.escape="cancelNewCategory"
-                ref="newCatInput"
-                aria-label="Nombre de nueva categoría"
-              />
-              <button type="button" class="discount-custom__reset" @click="cancelNewCategory" aria-label="Cancelar nueva categoría">
+              <input class="form-input discount-custom__input" id="ep-category" name="ep-category" type="text"
+                v-model="newCategory" placeholder="Nombre de categoría" @keydown.enter="confirmNewCategory"
+                @keydown.escape="cancelNewCategory" ref="newCatInput" aria-label="Nombre de nueva categoría" />
+              <button type="button" class="discount-custom__reset" @click="cancelNewCategory"
+                aria-label="Cancelar nueva categoría">
                 <i class="ti ti-x" aria-hidden="true"></i>
               </button>
             </div>
@@ -192,30 +128,12 @@
           <div class="form-group">
             <label class="form-label" for="ep-cost">Precio neto</label>
             <div class="size-field">
-              <input
-                class="form-input size-field__qty"
-                :class="{ 'form-input--error': errors.cost }"
-                id="ep-cost"
-                name="ep-cost"
-                type="number"
-                v-model.number="form.cost"
-                placeholder="Valor"
-                inputmode="decimal"
-                min="0"
-                :max="MAX_PRICE"
-                step="0.01"
-                @blur="validateCost"
-                @input="onCostInput"
-                @keydown="e => ['-', '+', 'e', 'E'].includes(e.key) && e.preventDefault()"
-                aria-label="Precio neto"
-              />
-              <select
-                class="form-select size-field__unit-select"
-                id="ep-price-currency"
-                name="ep-price-currency"
-                v-model="form.priceCurrency"
-                aria-label="Moneda del precio"
-              >
+              <input class="form-input size-field__qty" :class="{ 'form-input--error': errors.cost }" id="ep-cost"
+                name="ep-cost" type="number" v-model.number="form.cost" placeholder="Valor" inputmode="decimal" min="0"
+                :max="MAX_PRICE" step="0.01" @blur="validateCost" @input="onCostInput"
+                @keydown="e => ['-', '+', 'e', 'E'].includes(e.key) && e.preventDefault()" aria-label="Precio neto" />
+              <select class="form-select size-field__unit-select" id="ep-price-currency" name="ep-price-currency"
+                v-model="form.priceCurrency" aria-label="Moneda del precio">
                 <option value="USD">USD</option>
                 <option value="UYU">UYU</option>
               </select>
@@ -224,22 +142,10 @@
           </div>
           <div class="form-group">
             <label class="form-label" for="ep-vat-rate">IVA %</label>
-            <input
-              class="form-input"
-              :class="{ 'form-input--error': errors.vatRate }"
-              id="ep-vat-rate"
-              name="ep-vat-rate"
-              type="number"
-              :value="form.vatRate"
-              inputmode="numeric"
-              min="0"
-              :max="MAX_VAT"
-              step="1"
-              placeholder="Ej. 21"
-              @blur="validateVatRate"
-              @input="onVatRateInput"
-              @keydown="e => ['-', '+', 'e', 'E', '.', ','].includes(e.key) && e.preventDefault()"
-            />
+            <input class="form-input" :class="{ 'form-input--error': errors.vatRate }" id="ep-vat-rate"
+              name="ep-vat-rate" type="number" :value="form.vatRate" inputmode="numeric" min="0" :max="MAX_VAT" step="1"
+              placeholder="Ej. 21" @blur="validateVatRate" @input="onVatRateInput"
+              @keydown="e => ['-', '+', 'e', 'E', '.', ','].includes(e.key) && e.preventDefault()" />
             <span v-if="errors.vatRate" class="form-hint form-hint--error" role="alert">{{ errors.vatRate }}</span>
           </div>
         </div>
@@ -248,56 +154,28 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label" for="ep-discount">Descuento</label>
-            <select
-              v-if="discountMode !== 'custom'"
-              class="form-select"
-              id="ep-discount"
-              name="ep-discount"
-              :value="discountSelectValue"
-              @change="onDiscountAndCalc"
-            >
+            <select v-if="discountMode !== 'custom'" class="form-select" id="ep-discount" name="ep-discount"
+              :value="discountSelectValue" @change="onDiscountAndCalc">
               <option value="none">Sin descuento</option>
               <option value="custom">Personalizado</option>
             </select>
             <div v-else class="discount-custom">
-              <input
-                class="form-input discount-custom__input"
-                id="ep-discount"
-                name="ep-discount"
-                type="number"
-                :value="customDiscountValue"
-                @input="e => { onCustomDiscountInput(e); calcPrice(e.target.value) }"
-                @blur="e => { onCustomDiscountBlur(e); calcPrice(form.discount) }"
-                inputmode="decimal"
-                min="1"
-                max="100"
-                step="0.1"
-                placeholder="Ej. 15"
-                aria-label="Descuento personalizado (1-100%)"
-              />
-              <button type="button" class="discount-custom__reset" @click="onResetDiscount" aria-label="Volver a opciones predefinidas">
+              <input class="form-input discount-custom__input" id="ep-discount" name="ep-discount" type="number"
+                :value="customDiscountValue" @input="e => { onCustomDiscountInput(e); calcPrice(e.target.value) }"
+                @blur="e => { onCustomDiscountBlur(e); calcPrice(form.discount) }" inputmode="decimal" min="1" max="100"
+                step="0.1" placeholder="Ej. 15" aria-label="Descuento personalizado (1-100%)" />
+              <button type="button" class="discount-custom__reset" @click="onResetDiscount"
+                aria-label="Volver a opciones predefinidas">
                 <i class="ti ti-x" aria-hidden="true"></i>
               </button>
             </div>
           </div>
           <div class="form-group">
             <label class="form-label" for="ep-margin">Margen %</label>
-            <input
-              class="form-input"
-              :class="{ 'form-input--error': errors.margin }"
-              id="ep-margin"
-              name="ep-margin"
-              type="number"
-              :value="form.margin"
-              inputmode="numeric"
-              min="0"
-              :max="MAX_MARGIN"
-              step="1"
-              placeholder="Ej. 30"
-              @blur="validateMargin"
-              @input="onMarginInput"
-              @keydown="e => ['-', '+', 'e', 'E', '.', ','].includes(e.key) && e.preventDefault()"
-            />
+            <input class="form-input" :class="{ 'form-input--error': errors.margin }" id="ep-margin" name="ep-margin"
+              type="number" :value="form.margin" inputmode="numeric" min="0" :max="MAX_MARGIN" step="1"
+              placeholder="Ej. 30" @blur="validateMargin" @input="onMarginInput"
+              @keydown="e => ['-', '+', 'e', 'E', '.', ','].includes(e.key) && e.preventDefault()" />
             <span v-if="errors.margin" class="form-hint form-hint--error" role="alert">{{ errors.margin }}</span>
           </div>
         </div>
@@ -309,17 +187,8 @@
               PVP sugerido
               <span v-if="priceLabel" class="form-hint form-hint--inline">{{ priceLabel }}</span>
             </label>
-            <input
-              class="form-input"
-              id="ep-price"
-              name="ep-price"
-              type="number"
-              :value="form.price"
-              placeholder="Resultado"
-              inputmode="decimal"
-              readonly
-              aria-readonly="true"
-            />
+            <input class="form-input" id="ep-price" name="ep-price" type="number" :value="form.price"
+              placeholder="Resultado" inputmode="decimal" readonly aria-readonly="true" />
           </div>
         </div>
       </div>
@@ -333,12 +202,15 @@
         <div class="expiry-block__row">
           <div class="form-group">
             <label class="form-label" for="ep-expiry">Fecha</label>
-            <input class="form-input" id="ep-expiry" name="ep-expiry" type="date" v-model="form.expiry" :min="todayIso" @input="handleExpiryInput" />
+            <input class="form-input" id="ep-expiry" name="ep-expiry" type="date" v-model="form.expiry" :min="todayIso"
+              @input="handleExpiryInput" />
             <span v-if="form.expiry && expiryYearError" class="form-hint form-hint--error">{{ expiryYearError }}</span>
           </div>
           <div class="form-group">
             <label class="form-label" for="ep-batch">Nro. de lote</label>
-            <input class="form-input" id="ep-batch" name="ep-batch" type="text" :value="form.batch" placeholder="Ej. L2503" :readonly="isBatchContext" maxlength="20" @input="e => { if (!isBatchContext) { form.batch = e.target.value.replace(/[^A-Za-z0-9\-]/g, ''); e.target.value = form.batch } }" />
+            <input class="form-input" id="ep-batch" name="ep-batch" type="text" :value="form.batch"
+              placeholder="Ej. L2503" :readonly="isBatchContext" maxlength="20"
+              @input="e => { if (!isBatchContext) { form.batch = e.target.value.replace(/[^A-Za-z0-9\-]/g, ''); e.target.value = form.batch } }" />
             <span v-if="isBatchContext" class="form-hint">El nro. de lote se edita desde la carpeta del lote</span>
           </div>
         </div>
@@ -349,7 +221,8 @@
             <option :value="60">60 días antes</option>
             <option :value="90">90 días antes</option>
           </select>
-          <div v-if="expiryLevel !== 'ok'" :class="`expiry-block__alert expiry-block__alert--${expiryLevel}`" role="alert">
+          <div v-if="expiryLevel !== 'ok'" :class="`expiry-block__alert expiry-block__alert--${expiryLevel}`"
+            role="alert">
             <i :class="`ti ${expiryLevelIcon}`" aria-hidden="true"></i>
             <p>{{ expiryLevelMessage }}</p>
           </div>
@@ -357,22 +230,15 @@
       </div>
 
       <p class="section-label">Actualizar stock</p>
-      <StockAdjuster
-        v-model="form.stock"
-        label="Unidades actuales"
-        :max="product.max"
-        :show-bar="true"
-        input-id="ep-stock"
-        :max-stock="MAX_STOCK"
-        :error="errors.stock"
-        @validate="validateStock"
-      />
+      <StockAdjuster v-model="form.stock" label="Unidades actuales" :max="product.max" :show-bar="true"
+        input-id="ep-stock" :max-stock="MAX_STOCK" :error="errors.stock" @validate="validateStock" />
 
       <div class="spacer--sm"></div>
     </div>
 
     <div class="btn-group btn-group--row">
-      <button class="btn btn--secondary" @click="$router.push(detailPathWithQuery(product.id, route.query))">Descartar cambios</button>
+      <button class="btn btn--secondary" @click="$router.push(detailPathWithQuery(product.id, route.query))">Descartar
+        cambios</button>
       <button class="btn btn--primary" @click="save">
         <i class="ti ti-device-floppy" aria-hidden="true"></i>Guardar cambios
       </button>
@@ -383,26 +249,26 @@
 <script setup>
 import { computed, reactive, ref, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useProductsStore }  from '../stores/products.js'
+import { useProductsStore } from '../stores/products.js'
 import { DEFAULT_PRESET } from '../stores/discounts.js'
-import { useDtoSelector }    from '../composables/useDtoSelector.js'
+import { useDtoSelector } from '../composables/useDtoSelector.js'
 import { detailPathWithQuery, resolveAlertBack } from '../composables/useAlertNavigation.js'
 import { useProductFieldValidation, sanitizeInteger, sanitizeOrigin } from '../composables/useProductFieldValidation.js'
-import TopBar        from '../components/layout/TopBar.vue'
-import StockBadge    from '../components/ui/StockBadge.vue'
+import TopBar from '../components/layout/TopBar.vue'
+import StockBadge from '../components/ui/StockBadge.vue'
 import StockAdjuster from '../components/ui/StockAdjuster.vue'
 
-const route   = useRoute()
-const router  = useRouter()
-const store          = useProductsStore()
-const product        = computed(() => store.getProduct(route.params.id))
+const route = useRoute()
+const router = useRouter()
+const store = useProductsStore()
+const product = computed(() => store.getProduct(route.params.id))
 const isBatchContext = computed(() => route.query.from === 'batch')
-const alertBack      = computed(() => resolveAlertBack(route.query, product.value))
-const backTo         = computed(() => alertBack.value?.to ?? detailPathWithQuery(route.params.id, route.query))
-const backLabel      = computed(() => alertBack.value?.label ?? 'Detalle')
+const alertBack = computed(() => resolveAlertBack(route.query, product.value))
+const backTo = computed(() => alertBack.value?.to ?? detailPathWithQuery(route.params.id, route.query))
+const backLabel = computed(() => alertBack.value?.label ?? 'Detalle')
 
 const SIZE_UNITS = ['gr', 'Kg', 'mg', 'oz', 'lb', 'ml', 'Lt', 'cl', 'fl oz', 'cm', 'm', 'ud']
-const sizeQty  = ref('')
+const sizeQty = ref('')
 const sizeUnit = ref('gr')
 
 function parseSizeString(raw) {
@@ -453,22 +319,22 @@ function resolveDiscount(raw) {
 }
 
 const discountPct = computed(() => resolveDiscount(form.discount))
-const priceLabel  = computed(() => {
+const priceLabel = computed(() => {
   if (!priceIsAutoCalc.value) return null
   return discountPct.value > 0 ? 'con descuento' : 'calculado'
 })
 
 function calcPrice(discountRaw) {
-  const cost    = form.cost
+  const cost = form.cost
   const vatRate = form.vatRate
-  const margin  = form.margin
+  const margin = form.margin
   const anyEmpty = cost === '' || cost === null || vatRate === '' || vatRate === null || margin === '' || margin === null
   if (anyEmpty) return
   if (typeof cost !== 'number' || typeof vatRate !== 'number' || typeof margin !== 'number') return
   if (isNaN(cost) || isNaN(vatRate) || isNaN(margin)) return
-  const pct         = resolveDiscount(discountRaw !== undefined ? discountRaw : form.discount)
+  const pct = resolveDiscount(discountRaw !== undefined ? discountRaw : form.discount)
   const costWithVat = cost * (1 + vatRate / 100)
-  const pvpBase     = costWithVat * (1 + margin / 100)
+  const pvpBase = costWithVat * (1 + margin / 100)
   form.price = parseFloat((pvpBase * (1 - pct / 100)).toFixed(2))
   priceIsAutoCalc.value = true
 }
@@ -519,7 +385,7 @@ watch(product, p => {
     priceCurrency: p.priceCurrency || 'USD',
   })
   const parsed = parseSizeString(p.size)
-  sizeQty.value  = parsed.qty
+  sizeQty.value = parsed.qty
   sizeUnit.value = parsed.unit
   initFromValue(p.discount)
   priceIsAutoCalc.value = p.vatRate != null && p.margin != null
@@ -546,12 +412,12 @@ function removePhoto() {
 function handleExpiryInput() {
   const val = form.expiry
   if (!val) return
-  
+
   const parts = val.split('-')
   if (parts.length !== 3) return
-  
+
   const [year, month, day] = parts
-  
+
   // Si el año tiene más de 4 dígitos, truncar a 4
   if (year.length > 4) {
     form.expiry = `${year.substring(0, 4)}-${month}-${day}`
@@ -559,7 +425,7 @@ function handleExpiryInput() {
 }
 
 const creatingBrand = ref(false)
-const newBrand      = ref('')
+const newBrand = ref('')
 const newBrandInput = ref(null)
 
 function _resetCategoryIfStale() {
@@ -596,8 +462,8 @@ function cancelNewBrand() {
 }
 
 const creatingCategory = ref(false)
-const newCategory      = ref('')
-const newCatInput      = ref(null)
+const newCategory = ref('')
+const newCatInput = ref(null)
 
 const availableCategories = computed(() =>
   form.bid ? store.getCategoriesForBrand(form.bid) : []
@@ -657,30 +523,30 @@ function daysFromExpiry(dateStr) {
   if (!dateStr) return null
   const [y, m, d] = dateStr.split('-').map(Number)
   const expiry = new Date(y, m - 1, d)
-  const today  = new Date(); today.setHours(0, 0, 0, 0)
+  const today = new Date(); today.setHours(0, 0, 0, 0)
   return Math.ceil((expiry - today) / (1000 * 60 * 60 * 24))
 }
 
 const expiryLevel = computed(() => {
   const diff = daysFromExpiry(form.expiry)
-  if (diff === null)              return 'ok'
-  if (diff < 0)                   return 'critico'
-  if (diff < 30)                  return 'atencion'
-  if (diff < form.alertDays)      return 'aviso'
+  if (diff === null) return 'ok'
+  if (diff < 0) return 'critico'
+  if (diff < 30) return 'atencion'
+  if (diff < form.alertDays) return 'aviso'
   return 'ok'
 })
 
 const expiryLevelIcon = computed(() => ({
-  aviso:    'ti-info-circle',
+  aviso: 'ti-info-circle',
   atencion: 'ti-alert-triangle',
-  critico:  'ti-circle-x',
+  critico: 'ti-circle-x',
 }[expiryLevel.value] ?? ''))
 
 const expiryLevelMessage = computed(() => {
   const diff = daysFromExpiry(form.expiry)
   if (diff === null) return ''
-  if (diff < 0)      return 'Vencido'
-  if (diff === 0)    return 'Vence hoy'
+  if (diff < 0) return 'Vencido'
+  if (diff === 0) return 'Vence hoy'
   return `Vence en ${diff} día${diff === 1 ? '' : 's'}`
 })
 

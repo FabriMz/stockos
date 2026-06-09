@@ -1,12 +1,6 @@
 <template>
-  <div
-    class="brand-row"
-    @click="$router.push(to)"
-    role="button"
-    tabindex="0"
-    :aria-label="brand.name"
-    @keydown.enter="$router.push(to)"
-  >
+  <div class="brand-row" @click="$router.push(to)" role="button" tabindex="0" :aria-label="brand.name"
+    @keydown.enter="$router.push(to)">
     <div v-if="stripe" class="brand-row__stripe" :style="{ background: stripe }"></div>
     <div class="brand-row__body">
       <div class="brand-row__header">
@@ -28,9 +22,9 @@
 
 <script setup>
 defineProps({
-  brand:  { type: Object,  required: true },
-  to:     { type: String,  required: true },
-  meta:   { type: String,  default: '' },
-  stripe: { type: String,  default: '' },
+  brand: { type: Object, required: true },
+  to: { type: String, required: true },
+  meta: { type: String, default: '' },
+  stripe: { type: String, default: '' },
 })
 </script>

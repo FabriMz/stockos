@@ -1,11 +1,6 @@
 <template>
   <div class="screen">
-    <TopBar
-      variant="back"
-      back-label="Catálogo"
-      back-to="/catalog"
-      :title="brand?.name || ''"
-    />
+    <TopBar variant="back" back-label="Catálogo" back-to="/catalog" :title="brand?.name || ''" />
 
     <div class="scroll-content">
       <div v-if="brand" class="brand-summary">
@@ -16,12 +11,7 @@
           <div class="brand-summary__name">{{ brand.name }} · {{ brand.origin }}</div>
           <div class="brand-summary__meta">{{ products.length }} productos</div>
         </div>
-        <button
-          class="brand-summary__add-btn"
-          type="button"
-          aria-label="Nuevo producto"
-          @click="goNewProduct"
-        >
+        <button class="brand-summary__add-btn" type="button" aria-label="Nuevo producto" @click="goNewProduct">
           <i class="ti ti-plus" aria-hidden="true"></i>
         </button>
       </div>
@@ -29,168 +19,89 @@
       <!-- Buscador dentro de la marca -->
       <div class="brand-search">
         <i class="ti ti-search brand-search__icon" aria-hidden="true"></i>
-        <input
-          class="brand-search__input"
-          id="brand-search"
-          name="brand-search"
-          type="search"
-          v-model="searchQuery"
-          placeholder="Buscar producto…"
-          autocomplete="off"
-          aria-label="Buscar producto en esta marca"
-        />
-        <button
-          v-if="searchQuery"
-          class="brand-search__clear"
-          type="button"
-          aria-label="Limpiar búsqueda"
-          @click="searchQuery = ''"
-        >
+        <input class="brand-search__input" id="brand-search" name="brand-search" type="search" v-model="searchQuery"
+          placeholder="Buscar producto…" autocomplete="off" aria-label="Buscar producto en esta marca" />
+        <button v-if="searchQuery" class="brand-search__clear" type="button" aria-label="Limpiar búsqueda"
+          @click="searchQuery = ''">
           <i class="ti ti-x" aria-hidden="true"></i>
         </button>
       </div>
 
       <!-- Barra de acciones de la marca -->
       <div class="brand-toolbar">
-        <button
-          class="brand-toolbar__btn"
-          aria-label="Expandir todas las categorías"
-          @click="expandAll"
-        >
+        <button class="brand-toolbar__btn" aria-label="Expandir todas las categorías" @click="expandAll">
           <i class="ti ti-arrows-vertical" aria-hidden="true"></i>
           <span>Expandir</span>
         </button>
-        <button
-          class="brand-toolbar__btn"
-          aria-label="Colapsar todas las categorías"
-          @click="collapseAll"
-        >
+        <button class="brand-toolbar__btn" aria-label="Colapsar todas las categorías" @click="collapseAll">
           <i class="ti ti-layout-distribute-vertical" aria-hidden="true"></i>
           <span>Colapsar</span>
         </button>
-        <button
-          class="brand-toolbar__btn"
-          :class="{ 'brand-toolbar__btn--active': showCatSettingsSheet }"
-          aria-label="Ajustes de categorías"
-          @click="openCatSettingsSheet"
-        >
+        <button class="brand-toolbar__btn" :class="{ 'brand-toolbar__btn--active': showCatSettingsSheet }"
+          aria-label="Ajustes de categorías" @click="openCatSettingsSheet">
           <i class="ti ti-settings" aria-hidden="true"></i>
           <span>Ajustes</span>
         </button>
       </div>
 
       <!-- Productos agrupados por categoría -->
-      <div
-        v-for="group in categorizedProducts"
-        :key="group.cat ?? '__sin_cat__'"
-        class="cat-accordion"
-        :class="{ 'cat-accordion--open': catOpen.isOpen(route.params.brandId, group.cat ?? '__sin_cat__') }"
-      >
+      <div v-for="group in categorizedProducts" :key="group.cat ?? '__sin_cat__'" class="cat-accordion"
+        :class="{ 'cat-accordion--open': catOpen.isOpen(route.params.brandId, group.cat ?? '__sin_cat__') }">
 
         <!-- Header del acordeón -->
-        <div
-          class="cat-accordion__header"
-          :class="{ 'cat-accordion__header--migrating': migratingCat === (group.cat ?? '__sin_cat__') }"
-          role="button"
-          tabindex="0"
-          :aria-expanded="String(catOpen.isOpen(route.params.brandId, group.cat ?? '__sin_cat__'))"
+        <div class="cat-accordion__header"
+          :class="{ 'cat-accordion__header--migrating': migratingCat === (group.cat ?? '__sin_cat__') }" role="button"
+          tabindex="0" :aria-expanded="String(catOpen.isOpen(route.params.brandId, group.cat ?? '__sin_cat__'))"
           :aria-controls="`cat-body-${group.cat ?? '__sin_cat__'}`"
           :aria-label="catOpen.isOpen(route.params.brandId, group.cat ?? '__sin_cat__') ? `Colapsar ${group.cat ?? 'Sin categoría'}` : `Expandir ${group.cat ?? 'Sin categoría'}`"
           @click="catOpen.toggle(route.params.brandId, group.cat ?? '__sin_cat__')"
           @keydown.enter.prevent="catOpen.toggle(route.params.brandId, group.cat ?? '__sin_cat__')"
-          @keydown.space.prevent="catOpen.toggle(route.params.brandId, group.cat ?? '__sin_cat__')"
-        >
+          @keydown.space.prevent="catOpen.toggle(route.params.brandId, group.cat ?? '__sin_cat__')">
           <span class="cat-accordion__title">{{ group.cat ?? 'Sin categoría' }}</span>
           <span class="cat-accordion__dots" aria-hidden="true"></span>
-          <span class="cat-accordion__count" :aria-label="`${group.items.length} productos`">{{ group.items.length }}</span>
+          <span class="cat-accordion__count" :aria-label="`${group.items.length} productos`">{{ group.items.length
+            }}</span>
 
           <!-- Gear: solo para categorías con nombre, detiene propagación -->
-          <CatalogCatSep
-            v-if="group.cat"
-            :cat-id="group.cat"
-            :cat-name="group.cat"
-            :show-migrate="true"
-            :is-migrating="migratingCat === group.cat"
-            migrate-label="Migrar productos"
-            variant="icon-only"
-            @click.stop
-            @delete="handleDeleteCat(group.cat)"
-            @renamed="(n) => handleRenameCat(group.cat, n)"
-            @toggle-migrate="toggleMigrateMode(group.cat)"
-          />
-          <CatalogCatSep
-            v-else-if="group.items.length > 0"
-            cat-id="__sin_cat__"
-            cat-name="Sin categoría"
-            :show-migrate="true"
-            :show-delete="false"
-            :show-edit="false"
-            migrate-label="Migrar productos"
-            :is-migrating="migratingCat === '__sin_cat__'"
-            variant="icon-only"
-            @click.stop
-            @toggle-migrate="toggleMigrateMode('__sin_cat__')"
-          />
+          <CatalogCatSep v-if="group.cat" :cat-id="group.cat" :cat-name="group.cat" :show-migrate="true"
+            :is-migrating="migratingCat === group.cat" migrate-label="Migrar productos" variant="icon-only" @click.stop
+            @delete="handleDeleteCat(group.cat)" @renamed="(n) => handleRenameCat(group.cat, n)"
+            @toggle-migrate="toggleMigrateMode(group.cat)" />
+          <CatalogCatSep v-else-if="group.items.length > 0" cat-id="__sin_cat__" cat-name="Sin categoría"
+            :show-migrate="true" :show-delete="false" :show-edit="false" migrate-label="Migrar productos"
+            :is-migrating="migratingCat === '__sin_cat__'" variant="icon-only" @click.stop
+            @toggle-migrate="toggleMigrateMode('__sin_cat__')" />
 
           <i class="ti ti-chevron-down cat-accordion__chevron" aria-hidden="true"></i>
         </div>
 
         <!-- Cuerpo colapsable -->
-        <div
-          :id="`cat-body-${group.cat ?? '__sin_cat__'}`"
-          class="cat-accordion__body"
-          role="region"
-          :aria-label="group.cat ?? 'Sin categoría'"
-        >
+        <div :id="`cat-body-${group.cat ?? '__sin_cat__'}`" class="cat-accordion__body" role="region"
+          :aria-label="group.cat ?? 'Sin categoría'">
           <!-- Modo normal -->
           <template v-if="!migratingCat || migratingCat !== (group.cat ?? '__sin_cat__')">
-            <ProductCard
-              v-for="p in group.items"
-              :key="p.id"
-              :product="p"
-              :show-actions="true"
-              @clone="openCloneSheet"
-            />
+            <ProductCard v-for="p in group.items" :key="p.id" :product="p" :show-actions="true"
+              @clone="openCloneSheet" />
           </template>
 
           <!-- Modo migración: selección de productos -->
           <template v-else>
-            <div
-              v-for="p in group.items"
-              :key="p.id"
-              class="brand-row brand-row--selectable"
-              :class="{ 'brand-row--selected': selectedProductIds.has(p.id) }"
-              role="checkbox"
-              :aria-checked="String(selectedProductIds.has(p.id))"
-              :aria-label="p.name"
-              tabindex="0"
-              @click="toggleProductSelect(p.id)"
-              @keydown.enter.prevent="toggleProductSelect(p.id)"
-              @keydown.space.prevent="toggleProductSelect(p.id)"
-            >
+            <div v-for="p in group.items" :key="p.id" class="brand-row brand-row--selectable"
+              :class="{ 'brand-row--selected': selectedProductIds.has(p.id) }" role="checkbox"
+              :aria-checked="String(selectedProductIds.has(p.id))" :aria-label="p.name" tabindex="0"
+              @click="toggleProductSelect(p.id)" @keydown.enter.prevent="toggleProductSelect(p.id)"
+              @keydown.space.prevent="toggleProductSelect(p.id)">
               <div class="brand-row__body">
                 <div class="brand-row__header">
                   <div class="brand-row__check">
-                    <i
-                      class="ti"
-                      :class="selectedProductIds.has(p.id) ? 'ti-circle-check' : 'ti-circle'"
-                      aria-hidden="true"
-                    ></i>
+                    <i class="ti" :class="selectedProductIds.has(p.id) ? 'ti-circle-check' : 'ti-circle'"
+                      aria-hidden="true"></i>
                   </div>
                   <div class="brand-row__icon">
-                    <img
-                      v-if="p.img"
-                      :src="p.img"
-                      :alt="p.name"
-                      class="brand-row__icon-img"
-                      @error="$event.target.style.display = 'none'"
-                    />
-                    <i
-                      v-else
-                      :class="`ti ${store.getBrand(p.bid)?.ic}`"
-                      :style="{ color: store.getBrand(p.bid)?.col }"
-                      aria-hidden="true"
-                    ></i>
+                    <img v-if="p.img" :src="p.img" :alt="p.name" class="brand-row__icon-img"
+                      @error="$event.target.style.display = 'none'" />
+                    <i v-else :class="`ti ${store.getBrand(p.bid)?.ic}`" :style="{ color: store.getBrand(p.bid)?.col }"
+                      aria-hidden="true"></i>
                   </div>
                   <div class="brand-row__info">
                     <div class="brand-row__name">{{ p.name }}</div>
@@ -214,20 +125,13 @@
           {{ selectedProductIds.size }} producto{{ selectedProductIds.size !== 1 ? 's' : '' }}
         </span>
         <div class="catalog__migrate-actions">
-          <button
-            class="btn btn--ghost btn--sm"
-            :aria-label="isAllSelected ? 'Deseleccionar todos' : 'Seleccionar todos'"
-            @click="toggleSelectAll"
-          >
+          <button class="btn btn--ghost btn--sm"
+            :aria-label="isAllSelected ? 'Deseleccionar todos' : 'Seleccionar todos'" @click="toggleSelectAll">
             <i class="ti" :class="isAllSelected ? 'ti-square-minus' : 'ti-select-all'" aria-hidden="true"></i>
             {{ isAllSelected ? 'Ninguno' : 'Todos' }}
           </button>
           <button class="btn btn--secondary btn--sm" @click="cancelMigrate">Cancelar</button>
-          <button
-            class="btn btn--primary btn--sm"
-            :disabled="selectedProductIds.size === 0"
-            @click="openMigrateSheet"
-          >
+          <button class="btn btn--primary btn--sm" :disabled="selectedProductIds.size === 0" @click="openMigrateSheet">
             Migrar
           </button>
         </div>
@@ -238,13 +142,8 @@
 
     <!-- Sheet: ajustes de categorías de la marca -->
     <Transition name="sheet">
-      <div
-        v-if="showCatSettingsSheet"
-        class="sheet-overlay"
-        role="dialog"
-        aria-label="Ajustes de categorías"
-        @click.self="closeCatSettingsSheet"
-      >
+      <div v-if="showCatSettingsSheet" class="sheet-overlay" role="dialog" aria-label="Ajustes de categorías"
+        @click.self="closeCatSettingsSheet">
         <div class="sheet sheet--tall">
           <div class="sheet__handle" aria-hidden="true"></div>
           <div class="sheet__header">
@@ -256,21 +155,10 @@
 
             <div class="topbar__search settings-sheet__search">
               <i class="ti ti-search" aria-hidden="true"></i>
-              <input
-                id="cat-settings-search"
-                name="cat-settings-search"
-                type="search"
-                v-model="catSettingsSearchQuery"
-                placeholder="Buscar categorías…"
-                aria-label="Buscar categorías"
-              />
-              <button
-                v-if="catSettingsSearchQuery"
-                class="topbar__search-clear"
-                type="button"
-                @click="catSettingsSearchQuery = ''"
-                aria-label="Limpiar búsqueda"
-              >
+              <input id="cat-settings-search" name="cat-settings-search" type="search" v-model="catSettingsSearchQuery"
+                placeholder="Buscar categorías…" aria-label="Buscar categorías" />
+              <button v-if="catSettingsSearchQuery" class="topbar__search-clear" type="button"
+                @click="catSettingsSearchQuery = ''" aria-label="Limpiar búsqueda">
                 <i class="ti ti-x" aria-hidden="true"></i>
               </button>
             </div>
@@ -278,36 +166,23 @@
             <p class="settings-sheet__section-label">
               <i class="ti ti-folder" aria-hidden="true"></i>
               Categorías
-              <button
-                type="button"
-                class="settings-sheet__section-add-btn"
-                aria-label="Nueva categoría"
-                @click="startCatSettingsCreate"
-              >
+              <button type="button" class="settings-sheet__section-add-btn" aria-label="Nueva categoría"
+                @click="startCatSettingsCreate">
                 <i class="ti ti-plus" aria-hidden="true"></i>
               </button>
             </p>
             <div class="settings-sheet__list" role="list">
-              <div
-                v-for="cat in filteredCatSettings"
-                :key="cat"
-                class="settings-sheet__item"
-                role="listitem"
-              >
+              <div v-for="cat in filteredCatSettings" :key="cat" class="settings-sheet__item" role="listitem">
                 <template v-if="catSettingsEditingId === cat">
-                  <input
-                    :id="`cat-settings-edit-${cat}`"
-                    :name="`cat-settings-edit-${cat}`"
-                    class="settings-sheet__edit-input"
-                    v-model="catSettingsEditValue"
-                    autocomplete="off"
+                  <input :id="`cat-settings-edit-${cat}`" :name="`cat-settings-edit-${cat}`"
+                    class="settings-sheet__edit-input" v-model="catSettingsEditValue" autocomplete="off"
                     :ref="el => { if (el) catSettingsInputRef = el }"
-                    @keydown.enter.prevent="confirmCatSettingsRename(cat)"
-                    @keydown.escape="cancelCatSettingsEdit"
-                  />
-                  <span v-if="catSettingsEditError" class="settings-sheet__edit-error" role="alert">{{ catSettingsEditError }}</span>
+                    @keydown.enter.prevent="confirmCatSettingsRename(cat)" @keydown.escape="cancelCatSettingsEdit" />
+                  <span v-if="catSettingsEditError" class="settings-sheet__edit-error" role="alert">{{
+                    catSettingsEditError }}</span>
                   <div class="settings-sheet__item-actions">
-                    <button class="settings-sheet__confirm-btn" aria-label="Confirmar" @click="confirmCatSettingsRename(cat)">
+                    <button class="settings-sheet__confirm-btn" aria-label="Confirmar"
+                      @click="confirmCatSettingsRename(cat)">
                       <i class="ti ti-check" aria-hidden="true"></i>
                     </button>
                     <button class="settings-sheet__cancel-btn" aria-label="Cancelar" @click="cancelCatSettingsEdit">
@@ -322,22 +197,17 @@
                   <div class="settings-sheet__item-info">
                     <span class="settings-sheet__item-name">{{ cat }}</span>
                     <span class="settings-sheet__item-meta">
-                      {{ getCatProductCount(cat) === 0 ? 'Sin productos' : getCatProductCount(cat) === 1 ? '1 producto' : `${getCatProductCount(cat)} productos` }}
+                      {{ getCatProductCount(cat) === 0 ? 'Sin productos' : getCatProductCount(cat) === 1 ? '1 producto'
+                        : `${getCatProductCount(cat)} productos` }}
                     </span>
                   </div>
                   <div class="settings-sheet__item-actions">
-                    <button
-                      class="settings-sheet__action-btn"
-                      :aria-label="`Renombrar ${cat}`"
-                      @click="startCatSettingsEdit(cat)"
-                    >
+                    <button class="settings-sheet__action-btn" :aria-label="`Renombrar ${cat}`"
+                      @click="startCatSettingsEdit(cat)">
                       <i class="ti ti-pencil" aria-hidden="true"></i>
                     </button>
-                    <button
-                      class="settings-sheet__action-btn settings-sheet__action-btn--danger"
-                      :aria-label="`Eliminar ${cat}`"
-                      @click="handleCatSettingsDelete(cat)"
-                    >
+                    <button class="settings-sheet__action-btn settings-sheet__action-btn--danger"
+                      :aria-label="`Eliminar ${cat}`" @click="handleCatSettingsDelete(cat)">
                       <i class="ti ti-trash" aria-hidden="true"></i>
                     </button>
                   </div>
@@ -349,18 +219,12 @@
 
               <!-- fila de creación inline -->
               <div v-if="catSettingsCreating" class="settings-sheet__item" role="listitem">
-                <input
-                  id="cat-settings-new"
-                  name="cat-settings-new"
-                  class="settings-sheet__edit-input"
-                  v-model="catSettingsNewValue"
-                  placeholder="Nombre de categoría"
-                  autocomplete="off"
-                  :ref="el => { if (el) catSettingsNewInputRef = el }"
-                  @keydown.enter.prevent="confirmCatSettingsCreate"
-                  @keydown.escape="cancelCatSettingsCreate"
-                />
-                <span v-if="catSettingsNewError" class="settings-sheet__edit-error" role="alert">{{ catSettingsNewError }}</span>
+                <input id="cat-settings-new" name="cat-settings-new" class="settings-sheet__edit-input"
+                  v-model="catSettingsNewValue" placeholder="Nombre de categoría" autocomplete="off"
+                  :ref="el => { if (el) catSettingsNewInputRef = el }" @keydown.enter.prevent="confirmCatSettingsCreate"
+                  @keydown.escape="cancelCatSettingsCreate" />
+                <span v-if="catSettingsNewError" class="settings-sheet__edit-error" role="alert">{{ catSettingsNewError
+                  }}</span>
                 <div class="settings-sheet__item-actions">
                   <button class="settings-sheet__confirm-btn" aria-label="Confirmar" @click="confirmCatSettingsCreate">
                     <i class="ti ti-check" aria-hidden="true"></i>
@@ -385,13 +249,8 @@
 
     <!-- Sheet: eliminar categorías (selección múltiple) -->
     <Transition name="sheet">
-      <div
-        v-if="showDeleteCatsPanel"
-        class="sheet-overlay"
-        role="dialog"
-        aria-label="Eliminar categorías"
-        @click.self="showDeleteCatsPanel = false"
-      >
+      <div v-if="showDeleteCatsPanel" class="sheet-overlay" role="dialog" aria-label="Eliminar categorías"
+        @click.self="showDeleteCatsPanel = false">
         <div class="sheet">
           <div class="sheet__handle" aria-hidden="true"></div>
           <div class="sheet__header">
@@ -400,31 +259,17 @@
           </div>
           <div class="sheet__body">
             <div class="catalog__migrate-dest-list" role="group" aria-label="Seleccionar categorías a eliminar">
-              <button
-                v-for="cat in existingCats"
-                :key="cat"
-                class="catalog__migrate-dest-item"
-                :class="{ 'catalog__migrate-dest-item--selected': catsToDelete.has(cat) }"
-                role="checkbox"
-                :aria-checked="String(catsToDelete.has(cat))"
-                @click="toggleCatToDelete(cat)"
-              >
+              <button v-for="cat in existingCats" :key="cat" class="catalog__migrate-dest-item"
+                :class="{ 'catalog__migrate-dest-item--selected': catsToDelete.has(cat) }" role="checkbox"
+                :aria-checked="String(catsToDelete.has(cat))" @click="toggleCatToDelete(cat)">
                 <span>{{ cat }}</span>
-                <i
-                  v-if="catsToDelete.has(cat)"
-                  class="ti ti-check"
-                  aria-hidden="true"
-                ></i>
+                <i v-if="catsToDelete.has(cat)" class="ti ti-check" aria-hidden="true"></i>
               </button>
             </div>
           </div>
           <div class="btn-group btn-group--row">
             <button class="btn btn--secondary" @click="showDeleteCatsPanel = false">Cancelar</button>
-            <button
-              class="btn btn--danger"
-              :disabled="catsToDelete.size === 0"
-              @click="handleDeleteCats"
-            >
+            <button class="btn btn--danger" :disabled="catsToDelete.size === 0" @click="handleDeleteCats">
               <i class="ti ti-trash" aria-hidden="true"></i>
               Eliminar {{ catsToDelete.size > 0 ? `(${catsToDelete.size})` : '' }}
             </button>
@@ -435,13 +280,8 @@
 
     <!-- Sheet: destino de migración -->
     <Transition name="sheet">
-      <div
-        v-if="showMigrateSheet"
-        class="sheet-overlay"
-        role="dialog"
-        aria-label="Mover productos"
-        @click.self="showMigrateSheet = false"
-      >
+      <div v-if="showMigrateSheet" class="sheet-overlay" role="dialog" aria-label="Mover productos"
+        @click.self="showMigrateSheet = false">
         <div class="sheet">
           <div class="sheet__handle" aria-hidden="true"></div>
           <div class="sheet__header">
@@ -454,28 +294,18 @@
           <div class="sheet__body">
             <p class="settings-sheet__section-label">
               Categorías
-              <button
-                v-if="!migrateCreating"
-                class="settings-sheet__section-add-btn"
-                aria-label="Nueva categoría"
-                @click="startMigrateCreateCat"
-              >
+              <button v-if="!migrateCreating" class="settings-sheet__section-add-btn" aria-label="Nueva categoría"
+                @click="startMigrateCreateCat">
                 <i class="ti ti-plus" aria-hidden="true"></i>
               </button>
             </p>
             <div v-if="migrateCreating" class="settings-sheet__item" role="listitem">
-              <input
-                id="migrate-new-cat-product"
-                name="migrate-new-cat-product"
-                class="settings-sheet__edit-input"
-                v-model="migrateNewCatName"
-                placeholder="Nombre de la categoría"
-                autocomplete="off"
-                ref="migrateNewCatInputRef"
-                @keydown.enter.prevent="handleMigrateCreateCat"
-                @keydown.escape="cancelMigrateCreateCat"
-              />
-              <span v-if="migrateNewCatError" class="settings-sheet__edit-error" role="alert">{{ migrateNewCatError }}</span>
+              <input id="migrate-new-cat-product" name="migrate-new-cat-product" class="settings-sheet__edit-input"
+                v-model="migrateNewCatName" placeholder="Nombre de la categoría" autocomplete="off"
+                ref="migrateNewCatInputRef" @keydown.enter.prevent="handleMigrateCreateCat"
+                @keydown.escape="cancelMigrateCreateCat" />
+              <span v-if="migrateNewCatError" class="settings-sheet__edit-error" role="alert">{{ migrateNewCatError
+                }}</span>
               <div class="settings-sheet__item-actions">
                 <button class="settings-sheet__confirm-btn" aria-label="Confirmar" @click="handleMigrateCreateCat">
                   <i class="ti ti-check" aria-hidden="true"></i>
@@ -486,33 +316,20 @@
               </div>
             </div>
             <div class="catalog__migrate-dest-list" role="listbox" aria-label="Categoría destino">
-              <button
-                v-for="cat in migrationTargets"
-                :key="cat"
-                class="catalog__migrate-dest-item"
-                :class="{ 'catalog__migrate-dest-item--selected': migrateTarget === cat }"
-                role="option"
-                :aria-selected="migrateTarget === cat"
-                @click="migrateTarget = cat"
-              >
+              <button v-for="cat in migrationTargets" :key="cat" class="catalog__migrate-dest-item"
+                :class="{ 'catalog__migrate-dest-item--selected': migrateTarget === cat }" role="option"
+                :aria-selected="migrateTarget === cat" @click="migrateTarget = cat">
                 <span>{{ cat }}</span>
                 <i v-if="migrateTarget === cat" class="ti ti-check" aria-hidden="true"></i>
               </button>
-              <div
-                v-if="migrationTargets.length === 0 && !migrateCreating"
-                class="catalog__migrate-dest-empty"
-              >
+              <div v-if="migrationTargets.length === 0 && !migrateCreating" class="catalog__migrate-dest-empty">
                 Sin categorías. Usá el + para crear una.
               </div>
             </div>
           </div>
           <div class="btn-group btn-group--row">
             <button class="btn btn--secondary" @click="showMigrateSheet = false">Cancelar</button>
-            <button
-              class="btn btn--primary"
-              :disabled="!migrateTarget"
-              @click="confirmMigrate"
-            >
+            <button class="btn btn--primary" :disabled="!migrateTarget" @click="confirmMigrate">
               <i class="ti ti-arrows-exchange" aria-hidden="true"></i>
               Mover productos
             </button>
@@ -521,40 +338,35 @@
       </div>
     </Transition>
 
-    <CloneSheet
-      v-model="showSheet"
-      :product="cloneTarget"
-      @confirm="handleCloneConfirm"
-      @cancel="showSheet = false"
-    />
+    <CloneSheet v-model="showSheet" :product="cloneTarget" @confirm="handleCloneConfirm" @cancel="showSheet = false" />
   </div>
 </template>
 
 <script setup>
 import { ref, computed, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useProductsStore }      from '../stores/products.js'
+import { useProductsStore } from '../stores/products.js'
 import { useProductCatOpenStore } from '../stores/productCatOpen.js'
-import TopBar        from '../components/layout/TopBar.vue'
-import BottomNav     from '../components/layout/BottomNav.vue'
-import ProductCard   from '../components/ui/ProductCard.vue'
-import CloneSheet    from '../components/ui/CloneSheet.vue'
+import TopBar from '../components/layout/TopBar.vue'
+import BottomNav from '../components/layout/BottomNav.vue'
+import ProductCard from '../components/ui/ProductCard.vue'
+import CloneSheet from '../components/ui/CloneSheet.vue'
 import CatalogCatSep from '../components/ui/CatalogCatSep.vue'
 import { useProductMigration } from '../composables/useProductMigration.js'
 
-const route    = useRoute()
-const router   = useRouter()
-const store    = useProductsStore()
-const catOpen  = useProductCatOpenStore()
+const route = useRoute()
+const router = useRouter()
+const store = useProductsStore()
+const catOpen = useProductCatOpenStore()
 
-const brand    = computed(() => store.getBrand(route.params.brandId))
+const brand = computed(() => store.getBrand(route.params.brandId))
 const products = computed(() => store.getByBrand(route.params.brandId))
 
 // ─── Nuevo producto directo a esta marca ──────────────────────────────────────
 
 function goNewProduct() {
   router.push({
-    path : '/product/new',
+    path: '/product/new',
     query: { bid: route.params.brandId },
   })
 }
@@ -637,12 +449,12 @@ function collapseAll() {
 
 // ─── Sheet de ajustes de categorías ──────────────────────────────────────────
 
-const showCatSettingsSheet    = ref(false)
-const catSettingsSearchQuery  = ref('')
-const catSettingsEditingId    = ref(null)
-const catSettingsEditValue    = ref('')
-const catSettingsEditError    = ref('')
-const catSettingsInputRef     = ref(null)
+const showCatSettingsSheet = ref(false)
+const catSettingsSearchQuery = ref('')
+const catSettingsEditingId = ref(null)
+const catSettingsEditValue = ref('')
+const catSettingsEditError = ref('')
+const catSettingsInputRef = ref(null)
 
 const filteredCatSettings = computed(() => {
   const q = catSettingsSearchQuery.value.trim().toLowerCase()
@@ -656,27 +468,27 @@ function getCatProductCount(cat) {
 
 function openCatSettingsSheet() {
   catSettingsSearchQuery.value = ''
-  catSettingsEditingId.value   = null
-  catSettingsEditValue.value   = ''
-  catSettingsEditError.value   = ''
-  showCatSettingsSheet.value   = true
+  catSettingsEditingId.value = null
+  catSettingsEditValue.value = ''
+  catSettingsEditError.value = ''
+  showCatSettingsSheet.value = true
 }
 
 function closeCatSettingsSheet() {
-  showCatSettingsSheet.value  = false
+  showCatSettingsSheet.value = false
   catSettingsSearchQuery.value = ''
-  catSettingsEditingId.value   = null
-  catSettingsEditValue.value   = ''
-  catSettingsEditError.value   = ''
-  catSettingsCreating.value    = false
-  catSettingsNewValue.value    = ''
-  catSettingsNewError.value    = ''
+  catSettingsEditingId.value = null
+  catSettingsEditValue.value = ''
+  catSettingsEditError.value = ''
+  catSettingsCreating.value = false
+  catSettingsNewValue.value = ''
+  catSettingsNewError.value = ''
 }
 
 function startCatSettingsEdit(cat) {
-  catSettingsEditingId.value  = cat
-  catSettingsEditValue.value  = cat
-  catSettingsEditError.value  = ''
+  catSettingsEditingId.value = cat
+  catSettingsEditValue.value = cat
+  catSettingsEditError.value = ''
   nextTick(() => catSettingsInputRef.value?.focus())
 }
 
@@ -710,23 +522,23 @@ function handleCatSettingsDelete(cat) {
 
 // ─── Nueva categoría (inline en settings sheet) ──────────────────────────────
 
-const catSettingsCreating     = ref(false)
-const catSettingsNewValue     = ref('')
-const catSettingsNewError     = ref('')
-const catSettingsNewInputRef  = ref(null)
+const catSettingsCreating = ref(false)
+const catSettingsNewValue = ref('')
+const catSettingsNewError = ref('')
+const catSettingsNewInputRef = ref(null)
 
 function startCatSettingsCreate() {
-  catSettingsEditingId.value  = null
-  catSettingsCreating.value   = true
-  catSettingsNewValue.value   = ''
-  catSettingsNewError.value   = ''
+  catSettingsEditingId.value = null
+  catSettingsCreating.value = true
+  catSettingsNewValue.value = ''
+  catSettingsNewError.value = ''
   nextTick(() => catSettingsNewInputRef.value?.focus())
 }
 
 function cancelCatSettingsCreate() {
-  catSettingsCreating.value  = false
-  catSettingsNewValue.value  = ''
-  catSettingsNewError.value  = ''
+  catSettingsCreating.value = false
+  catSettingsNewValue.value = ''
+  catSettingsNewError.value = ''
 }
 
 function confirmCatSettingsCreate() {
@@ -748,10 +560,10 @@ function confirmCatSettingsCreate() {
 // ─── Eliminar categorías (múltiple) ──────────────────────────────────────────
 
 const showDeleteCatsPanel = ref(false)
-const catsToDelete        = ref(new Set())
+const catsToDelete = ref(new Set())
 
 function openDeleteCatsPanel() {
-  catsToDelete.value        = new Set()
+  catsToDelete.value = new Set()
   showDeleteCatsPanel.value = true
 }
 
@@ -767,7 +579,7 @@ function handleDeleteCats() {
     store.markDeleteCategoryInBrand(route.params.brandId, cat)
   }
   showDeleteCatsPanel.value = false
-  catsToDelete.value        = new Set()
+  catsToDelete.value = new Set()
 }
 
 // ─── Ruedita de categoría ─────────────────────────────────────────────────────
@@ -821,12 +633,12 @@ const {
 
 // ─── Clone ────────────────────────────────────────────────────────────────────
 
-const showSheet   = ref(false)
+const showSheet = ref(false)
 const cloneTarget = ref(null)
 
 function openCloneSheet(product) {
   cloneTarget.value = product
-  showSheet.value   = true
+  showSheet.value = true
 }
 
 function handleCloneConfirm(data) {

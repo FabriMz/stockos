@@ -7,25 +7,13 @@
       <div class="form-section">
         <div class="form-group">
           <label class="form-label" for="ep-name">Proveedor / descripción</label>
-          <input
-            class="form-input"
-            id="ep-name"
-            name="ep-name"
-            type="text"
-            v-model="form.name"
-            placeholder="Ej. Polli — Reposición salsas"
-          />
+          <input class="form-input" id="ep-name" name="ep-name" type="text" v-model="form.name"
+            placeholder="Ej. Polli — Reposición salsas" />
         </div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label" for="ep-ref">Referencia</label>
-            <input
-              class="form-input"
-              id="ep-ref"
-              name="ep-ref"
-              type="text"
-              v-model="form.ref"
-            />
+            <input class="form-input" id="ep-ref" name="ep-ref" type="text" v-model="form.ref" />
           </div>
           <div class="form-group">
             <label class="form-label" for="ep-section">Sección</label>
@@ -41,43 +29,19 @@
       <div class="form-section">
         <div class="form-group">
           <label class="form-label" for="ep-status">Estado</label>
-          <input
-            class="form-input"
-            id="ep-status"
-            name="ep-status"
-            type="text"
-            v-model="form.status"
-            placeholder="Ej. en preparación"
-          />
+          <input class="form-input" id="ep-status" name="ep-status" type="text" v-model="form.status"
+            placeholder="Ej. en preparación" />
         </div>
         <div class="form-group">
           <label class="form-label" for="ep-amount">Monto</label>
-          <input
-            class="form-input"
-            id="ep-amount"
-            name="ep-amount"
-            type="number"
-            v-model.number="form.amount"
-            placeholder="0"
-            inputmode="decimal"
-          />
+          <input class="form-input" id="ep-amount" name="ep-amount" type="number" v-model.number="form.amount"
+            placeholder="0" inputmode="decimal" />
         </div>
         <div class="form-group">
           <label class="form-label" id="ep-color-label">Color de estado</label>
           <div class="orders__color-picker" role="group" aria-labelledby="ep-color-label">
-            <label
-              v-for="c in colors"
-              :key="c.value"
-              class="orders__color-option"
-              :aria-label="c.label"
-            >
-              <input
-                type="radio"
-                :id="`ep-color-${c.value}`"
-                name="ep-color"
-                :value="c.value"
-                v-model="form.color"
-              />
+            <label v-for="c in colors" :key="c.value" class="orders__color-option" :aria-label="c.label">
+              <input type="radio" :id="`ep-color-${c.value}`" name="ep-color" :value="c.value" v-model="form.color" />
               <span class="orders__color-dot" :style="{ background: c.value }"></span>
               <span class="orders__color-label">{{ c.label }}</span>
             </label>
@@ -128,23 +92,23 @@ import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import TopBar from '../components/layout/TopBar.vue'
 import { useOrdersStore } from '../stores/orders.js'
-import { ORDER_COLORS }    from '../constants/orderColors.js'
+import { ORDER_COLORS } from '../constants/orderColors.js'
 
-const route  = useRoute()
+const route = useRoute()
 const router = useRouter()
-const store  = useOrdersStore()
+const store = useOrdersStore()
 
-const order      = computed(() => store.orders.find(p => p.id === Number(route.params.id)))
+const order = computed(() => store.orders.find(p => p.id === Number(route.params.id)))
 const confirming = ref(false)
 const colors = ORDER_COLORS
 
 const form = ref({
-  name:    order.value?.name  ?? '',
-  ref:     order.value?.ref     ?? '',
-  status:  order.value?.status  ?? '',
-  amount:  order.value?.amount   ?? null,
-  color:   order.value?.color   ?? '#C07828',
-  active:  order.value?.active ?? true,
+  name: order.value?.name ?? '',
+  ref: order.value?.ref ?? '',
+  status: order.value?.status ?? '',
+  amount: order.value?.amount ?? null,
+  color: order.value?.color ?? '#C07828',
+  active: order.value?.active ?? true,
 })
 
 const isFormValid = computed(() =>

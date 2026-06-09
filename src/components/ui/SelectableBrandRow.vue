@@ -1,15 +1,7 @@
 <template>
-  <div
-    class="brand-row brand-row--selectable"
-    :class="{ 'brand-row--selected': selected }"
-    role="checkbox"
-    :aria-checked="String(selected)"
-    :aria-label="brand?.name"
-    tabindex="0"
-    @click="toggle"
-    @keydown.enter.prevent="toggle"
-    @keydown.space.prevent="toggle"
-  >
+  <div class="brand-row brand-row--selectable" :class="{ 'brand-row--selected': selected }" role="checkbox"
+    :aria-checked="String(selected)" :aria-label="brand?.name" tabindex="0" @click="toggle"
+    @keydown.enter.prevent="toggle" @keydown.space.prevent="toggle">
     <div class="brand-row__body">
       <div class="brand-row__header">
         <div class="brand-row__check">

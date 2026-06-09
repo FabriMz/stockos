@@ -15,13 +15,13 @@
 
 <script setup>
 defineProps({
-  label:      { type: String, required: true },
-  value:      { type: [String, Number], required: true },
-  sub:        { type: String, default: '' },
-  color:      { type: String, default: 'primary' },
+  label: { type: String, required: true },
+  value: { type: [String, Number], required: true },
+  sub: { type: String, default: '' },
+  color: { type: String, default: 'primary' },
   valueClass: { type: String, default: '' },
-  full:       { type: Boolean, default: false },
-  badge:      { type: String, default: '' },
-  badgeIcon:  { type: String, default: '' },
+  full: { type: Boolean, default: false },
+  badge: { type: String, default: '' },
+  badgeIcon: { type: String, default: '' },
 })
 </script>

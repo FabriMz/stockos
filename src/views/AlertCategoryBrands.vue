@@ -6,16 +6,8 @@
 
     <div class="scroll-content">
       <template v-if="searchQuery.trim()">
-        <div
-          v-for="p in filteredProducts"
-          :key="p.id"
-          class="brand-row"
-          role="button"
-          tabindex="0"
-          :aria-label="p.name"
-          @click="openProduct(p)"
-          @keydown.enter="openProduct(p)"
-        >
+        <div v-for="p in filteredProducts" :key="p.id" class="brand-row" role="button" tabindex="0" :aria-label="p.name"
+          @click="openProduct(p)" @keydown.enter="openProduct(p)">
           <div class="brand-row__stripe" :style="{ background: config.stripe }"></div>
           <div class="brand-row__body">
             <div class="brand-row__header">
@@ -30,7 +22,8 @@
             </div>
             <div class="brand-row__divider" aria-hidden="true"></div>
             <div class="brand-row__badges">
-              <span :class="config.badgeClass"><i :class="`ti ${config.badgeIcon}`" aria-hidden="true"></i>{{ config.badgeLabel }}</span>
+              <span :class="config.badgeClass"><i :class="`ti ${config.badgeIcon}`" aria-hidden="true"></i>{{
+                config.badgeLabel }}</span>
             </div>
           </div>
         </div>
@@ -41,38 +34,26 @@
 
       <template v-else>
         <template v-for="entry in filteredCategories" :key="entry.id">
-          <CatalogCatSep
-            :cat-id="entry.id"
-            :cat-name="entry.name"
-            :show-migrate="false"
-            @delete="handleDeleteCat(entry.id)"
-            @renamed="(n) => handleRenameCat(entry.id, n)"
-          />
-          <BrandRow
-            v-for="bid in entry.bids"
-            :key="bid"
-            :brand="getBrand(bid)"
-            :to="`${config.basePath}/${bid}`"
+          <CatalogCatSep :cat-id="entry.id" :cat-name="entry.name" :show-migrate="false"
+            @delete="handleDeleteCat(entry.id)" @renamed="(n) => handleRenameCat(entry.id, n)" />
+          <BrandRow v-for="bid in entry.bids" :key="bid" :brand="getBrand(bid)" :to="`${config.basePath}/${bid}`"
             :meta="`${productCount(bid)} producto${productCount(bid) > 1 ? 's' : ''} · ${getBrand(bid).origin}`"
-            :stripe="config.stripe"
-          >
+            :stripe="config.stripe">
             <template #badges>
-              <span :class="config.badgeClass"><i :class="`ti ${config.badgeIcon}`" aria-hidden="true"></i>{{ config.badgeLabel }}</span>
+              <span :class="config.badgeClass"><i :class="`ti ${config.badgeIcon}`" aria-hidden="true"></i>{{
+                config.badgeLabel }}</span>
             </template>
           </BrandRow>
         </template>
 
         <!-- Marcas con alerta no asignadas a ninguna categoría -->
-        <BrandRow
-          v-for="bid in uncategorizedAlertBrandIds"
-          :key="bid"
-          :brand="getBrand(bid)"
+        <BrandRow v-for="bid in uncategorizedAlertBrandIds" :key="bid" :brand="getBrand(bid)"
           :to="`${config.basePath}/${bid}`"
           :meta="`${productCount(bid)} producto${productCount(bid) > 1 ? 's' : ''} · ${getBrand(bid).origin}`"
-          :stripe="config.stripe"
-        >
+          :stripe="config.stripe">
           <template #badges>
-            <span :class="config.badgeClass"><i :class="`ti ${config.badgeIcon}`" aria-hidden="true"></i>{{ config.badgeLabel }}</span>
+            <span :class="config.badgeClass"><i :class="`ti ${config.badgeIcon}`" aria-hidden="true"></i>{{
+              config.badgeLabel }}</span>
           </template>
         </BrandRow>
 
@@ -81,14 +62,9 @@
           <div class="catalog__cat-sep catalog__cat-sep--no-actions">
             <span class="catalog__cat-label">Sin marca</span>
           </div>
-          <div
-            class="brand-row"
-            role="button"
-            tabindex="0"
-            aria-label="Ver productos sin marca"
+          <div class="brand-row" role="button" tabindex="0" aria-label="Ver productos sin marca"
             @click="$router.push(`${config.basePath}/__sin_marca__`)"
-            @keydown.enter="$router.push(`${config.basePath}/__sin_marca__`)"
-          >
+            @keydown.enter="$router.push(`${config.basePath}/__sin_marca__`)">
             <div class="brand-row__stripe" :style="{ background: config.stripe }"></div>
             <div class="brand-row__body">
               <div class="brand-row__header">
@@ -97,19 +73,22 @@
                 </div>
                 <div class="brand-row__info">
                   <div class="brand-row__name">Sin marca</div>
-                  <div class="brand-row__meta">{{ unbrandedAlertProducts.length }} producto{{ unbrandedAlertProducts.length !== 1 ? 's' : '' }}</div>
+                  <div class="brand-row__meta">{{ unbrandedAlertProducts.length }} producto{{
+                    unbrandedAlertProducts.length !== 1 ? 's' : '' }}</div>
                 </div>
                 <i class="ti ti-chevron-right brand-row__chevron" aria-hidden="true"></i>
               </div>
               <div class="brand-row__divider" aria-hidden="true"></div>
               <div class="brand-row__badges">
-                <span :class="config.badgeClass"><i :class="`ti ${config.badgeIcon}`" aria-hidden="true"></i>{{ config.badgeLabel }}</span>
+                <span :class="config.badgeClass"><i :class="`ti ${config.badgeIcon}`" aria-hidden="true"></i>{{
+                  config.badgeLabel }}</span>
               </div>
             </div>
           </div>
         </template>
 
-        <p v-if="!filteredCategories.length && !uncategorizedAlertBrandIds.length && !unbrandedAlertProducts.length" class="home__empty">
+        <p v-if="!filteredCategories.length && !uncategorizedAlertBrandIds.length && !unbrandedAlertProducts.length"
+          class="home__empty">
           Sin productos en esta carpeta
         </p>
       </template>
@@ -124,41 +103,41 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useProductsStore }        from '../stores/products.js'
+import { useProductsStore } from '../stores/products.js'
 import { useBrandCategoriesStore } from '../stores/brandCategories.js'
-import { matchesProductSearch }    from '../utils/alerts.js'
-import { productRouteFromAlerts }  from '../composables/useAlertNavigation.js'
-import TopBar         from '../components/layout/TopBar.vue'
-import BottomNav      from '../components/layout/BottomNav.vue'
-import BrandRow       from '../components/ui/BrandRow.vue'
+import { matchesProductSearch } from '../utils/alerts.js'
+import { productRouteFromAlerts } from '../composables/useAlertNavigation.js'
+import TopBar from '../components/layout/TopBar.vue'
+import BottomNav from '../components/layout/BottomNav.vue'
+import BrandRow from '../components/ui/BrandRow.vue'
 import AlertSearchBar from '../components/ui/AlertSearchBar.vue'
-import CatalogCatSep  from '../components/ui/CatalogCatSep.vue'
+import CatalogCatSep from '../components/ui/CatalogCatSep.vue'
 
-const route    = useRoute()
-const router   = useRouter()
-const store    = useProductsStore()
+const route = useRoute()
+const router = useRouter()
+const store = useProductsStore()
 const catStore = useBrandCategoriesStore()
 
 const { getBrand } = store
-const searchQuery  = ref('')
+const searchQuery = ref('')
 
 const TYPE_CONFIG = {
   'out-of-stock': {
-    title    : 'Sin Stock',
-    basePath : '/alerts/out-of-stock',
-    stripe   : '#791132',
+    title: 'Sin Stock',
+    basePath: '/alerts/out-of-stock',
+    stripe: '#791132',
     badgeClass: 'badge badge--out',
-    badgeIcon : 'ti-ban',
+    badgeIcon: 'ti-ban',
     badgeLabel: 'Sin stock',
     brands: () => store.outOfStockBrands,
     filter: store.isOutOfStock,
   },
   'low-stock': {
-    title    : 'Stock Bajo',
-    basePath : '/alerts/low-stock',
-    stripe   : '#90542f',
+    title: 'Stock Bajo',
+    basePath: '/alerts/low-stock',
+    stripe: '#90542f',
     badgeClass: 'badge badge--low',
-    badgeIcon : 'ti-alert-circle',
+    badgeIcon: 'ti-alert-circle',
     badgeLabel: 'Stock bajo',
     brands: () => store.lowStockBrands,
     filter: store.isLowStock,
@@ -215,7 +194,7 @@ function productCount(bid) {
 
 function openProduct(p) {
   router.push(productRouteFromAlerts(p.id, {
-    alert  : route.meta.alertType,
+    alert: route.meta.alertType,
     brandId: p.bid,
   }))
 }

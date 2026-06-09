@@ -12,14 +12,8 @@
       <template v-if="store.activeOrders.length">
         <p class="section-label">En curso</p>
         <div class="orders__list">
-          <div
-            v-for="p in store.activeOrders"
-            :key="p.id"
-            class="order-row order-row--interactive"
-            role="button"
-            :aria-label="`Editar pedido ${p.name}`"
-            @click="$router.push(`/orders/${p.id}/edit`)"
-          >
+          <div v-for="p in store.activeOrders" :key="p.id" class="order-row order-row--interactive" role="button"
+            :aria-label="`Editar pedido ${p.name}`" @click="$router.push(`/orders/${p.id}/edit`)">
             <div class="order-row__dot" :style="{ background: p.color }"></div>
             <div class="order-row__info">
               <div class="order-row__name">{{ p.name }}</div>
@@ -33,14 +27,8 @@
       <template v-if="store.orderHistory.length">
         <p class="section-label">Historial reciente</p>
         <div class="orders__list">
-          <div
-            v-for="p in store.orderHistory"
-            :key="p.id"
-            class="order-row order-row--interactive"
-            role="button"
-            :aria-label="`Editar pedido ${p.name}`"
-            @click="$router.push(`/orders/${p.id}/edit`)"
-          >
+          <div v-for="p in store.orderHistory" :key="p.id" class="order-row order-row--interactive" role="button"
+            :aria-label="`Editar pedido ${p.name}`" @click="$router.push(`/orders/${p.id}/edit`)">
             <div class="order-row__dot" :style="{ background: p.color }"></div>
             <div class="order-row__info">
               <div class="order-row__name">{{ p.name }}</div>
@@ -61,11 +49,11 @@
 </template>
 
 <script setup>
-import TopBar    from '../components/layout/TopBar.vue'
+import TopBar from '../components/layout/TopBar.vue'
 import BottomNav from '../components/layout/BottomNav.vue'
-import { useOrdersStore }  from '../stores/orders.js'
+import { useOrdersStore } from '../stores/orders.js'
 import { useCurrencyStore } from '../stores/currency.js'
 
-const store         = useOrdersStore()
+const store = useOrdersStore()
 const currencyStore = useCurrencyStore()
 </script>
