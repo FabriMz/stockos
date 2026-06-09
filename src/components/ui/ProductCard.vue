@@ -55,6 +55,21 @@
         </div>
       </div>
 
+      <div class="product-card__pricing">
+        <div class="product-card__pricing-left">
+          <span class="product-card__pricing-label">PVP sugerido</span>
+          <span v-if="pvpDiscount" class="product-card__pvp-original">
+            {{ currencyStore.formatProductPriceWithCurrency(product.price, product.priceCurrency) }}
+          </span>
+          <span :class="pvpDiscount ? 'product-card__pvp-final' : 'product-card__pvp-base'">
+            {{ currencyStore.formatProductPriceWithCurrency(pvpFinalPrice, product.priceCurrency) }}
+          </span>
+        </div>
+        <span v-if="pvpDiscount" class="product-card__discount-pill">
+          <i class="ti ti-tag" aria-hidden="true"></i>−{{ pvpDiscount }}%
+        </span>
+      </div>
+
       <template v-if="showActions">
         <div class="product-card__divider" aria-hidden="true"></div>
         <div class="product-card__actions">
@@ -121,6 +136,20 @@ function navigateToEdit() {
   const q = batchQuery()
   router.push(q ? { path: `/product/${props.product.id}/edit`, query: q } : `/product/${props.product.id}/edit`)
 }
+
+const pvpDiscount = computed(() => {
+  const raw = props.product?.discount
+  if (!raw) return null
+  const num = parseFloat(raw)
+  return (!isNaN(num) && num > 0) ? num : null
+})
+
+const pvpFinalPrice = computed(() => {
+  const price = props.product?.price
+  if (!price) return 0
+  if (!pvpDiscount.value) return price
+  return price * (1 - pvpDiscount.value / 100)
+})
 
 const stripeClass = computed(() => {
   if (props.product.stock === 0) return 'product-card__stripe--out'
