@@ -262,8 +262,8 @@ export const useProductsStore = defineStore('products', () => {
 
   function addProduct(prod) {
     const newId = Math.max(0, ...products.value.map(p => p.id)) + 1
-    products.value.push({ ...prod, id: newId })
     const brand = brands.value.find(b => b.id === prod.bid)
+    products.value.push({ ...prod, id: newId, brand: brand?.name ?? prod.brand ?? '' })
     if (brand) brand.prods.push(newId)
   }
 
@@ -371,7 +371,8 @@ export const useProductsStore = defineStore('products', () => {
     const meta = batchFoldersMeta.value.find(f => f.batchNumber === batchNumber)
     if (!meta) return
     const newId = Math.max(0, ...products.value.map(p => p.id)) + 1
-    products.value.push({ ...prod, id: newId, _batchOnly: true, batch: batchNumber, expiry: meta.expiry })
+    const batchBrand = brands.value.find(b => b.id === prod.bid)
+    products.value.push({ ...prod, id: newId, brand: batchBrand?.name ?? prod.brand ?? '', _batchOnly: true, batch: batchNumber, expiry: meta.expiry })
     if (!Array.isArray(meta.brandIds)) meta.brandIds = []
     if (!meta.brandIds.includes(prod.bid)) meta.brandIds.push(prod.bid)
     const itemId = `batch_${Date.now()}_${newId}`
