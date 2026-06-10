@@ -50,7 +50,7 @@
           <div class="product-card__pvp">Lote: {{ batchContext?.batchNum || product.batch || 'S/N' }}</div>
         </div>
         <div class="product-card__stock-info">
-          <div class="product-card__units">{{ product.stock }} uds.</div>
+          <div class="product-card__units">{{ displayStock }} uds.</div>
           <div class="product-card__min">mín. {{ product.unitsPerBox }}/caja</div>
         </div>
       </div>
@@ -149,6 +149,13 @@ const pvpFinalPrice = computed(() => {
   if (!price) return 0
   if (!pvpDiscount.value) return price
   return price * (1 - pvpDiscount.value / 100)
+})
+
+const displayStock = computed(() => {
+  const boxes = Number(props.product.boxCount)
+  const units = Number(props.product.unitsPerBox)
+  if (boxes > 0 && units > 0) return boxes * units
+  return props.product.stock
 })
 
 const stripeClass = computed(() => {

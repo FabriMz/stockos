@@ -24,6 +24,8 @@
           product.size }}</span></div>
         <div class="detail__row"><span class="detail__row-label">Origen</span><span class="detail__row-value">{{
           product.origin }}</span></div>
+        <div v-if="product.boxCount" class="detail__row"><span class="detail__row-label">Cantidad de cajas</span><span class="detail__row-value">{{
+          product.boxCount }}</span></div>
         <div class="detail__row"><span class="detail__row-label">Uds. por caja</span><span class="detail__row-value">{{
           product.unitsPerBox }}</span></div>
         <div class="detail__row"><span class="detail__row-label">Descuento</span><span class="detail__row-value">{{
