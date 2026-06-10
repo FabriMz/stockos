@@ -15,7 +15,7 @@
     background   : $color-primary-100;
     @include flex-center;
     @include font-mono($font-size-xl, $font-weight-semibold);
-    color      : $color-primary-900;
+    color      : $color-primary;
     flex-shrink: 0;
   }
 

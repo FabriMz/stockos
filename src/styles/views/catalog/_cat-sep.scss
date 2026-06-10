@@ -65,7 +65,7 @@
     }
 
     &--active {
-      color     : $color-primary-900;
+      color     : $color-primary;
       background: $color-primary-50;
     }
 
@@ -183,7 +183,7 @@
     }
 
     &:active {
-      color     : $color-primary-900;
+      color     : $color-primary;
       background: $color-primary-50;
     }
   }
@@ -231,7 +231,7 @@
 
     i {
       font-size  : $icon-sm;
-      color      : $color-primary-900;
+      color      : $color-primary;
       flex-shrink: 0;
     }
 
@@ -241,7 +241,7 @@
 
     &--selected {
       background: $color-primary-50;
-      color     : $color-primary-900;
+      color     : $color-primary;
     }
   }
 

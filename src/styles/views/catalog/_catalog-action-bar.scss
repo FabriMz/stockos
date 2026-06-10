@@ -50,10 +50,10 @@
 
       &.catalog-action-bar__btn--active {
         background: $color-primary-50;
-        color     : $color-primary-900;
+        color     : $color-primary;
 
         i {
-          color: $color-primary-900;
+          color: $color-primary;
         }
       }
     }

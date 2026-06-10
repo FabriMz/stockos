@@ -106,7 +106,7 @@ $color-primary-50   // rgba(99,102,241, 0.14)
 $color-primary-100  // rgba(99,102,241, 0.22)
 $color-primary-200  // rgba(99,102,241, 0.36)
 $color-primary-700  // #4f46e5
-$color-primary-900  // #a5b4fc
+$color-primary  // #a5b4fc
 
 // Cream (índigo muy claro → dark mode: fondos)
 $color-cream-50   // #1e1a2e

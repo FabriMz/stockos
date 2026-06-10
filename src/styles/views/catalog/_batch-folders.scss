@@ -200,7 +200,7 @@
     }
 
     &--open {
-      color     : $color-primary-900;
+      color     : $color-primary;
       background: $color-primary-50;
 
       i {
@@ -251,7 +251,7 @@
     }
 
     &--active {
-      color     : $color-primary-900;
+      color     : $color-primary;
       background: $color-primary-50;
     }
   }
