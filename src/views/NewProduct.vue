@@ -675,7 +675,8 @@ const save = () => {
   if (hasNumericErrors.value) return
   if (expiryYearError.value) return
   if (form.category && form.bid) store.addCategoryToBrand(form.bid, form.category)
-  if (!form.boxCount && form.minStock) form.stock = Number(form.minStock)
+  if (form.boxCount && form.unitsPerBox) form.stock = Number(form.boxCount) * Number(form.unitsPerBox)
+  else if (!form.boxCount && form.minStock) form.stock = Number(form.minStock)
   if (batchContext) {
     store.addProductToBatch({ ...form }, batchContext)
     router.push(`/catalog/batch/${encodeURIComponent(batchContext)}/${form.bid}`)

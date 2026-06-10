@@ -109,7 +109,7 @@
               </select>
             </div>
           </div>
-          <div class="form-group">
+          <div v-if="isBoxMode" class="form-group">
             <label class="form-label" for="ep-units-per-box">Uds. por caja</label>
             <input class="form-input" :class="{ 'form-input--error': errors.unitsPerBox }" id="ep-units-per-box"
               name="ep-units-per-box" type="number" :value="form.unitsPerBox" inputmode="numeric" min="1"
@@ -286,6 +286,7 @@ const SIZE_UNITS = ['gr', 'Kg', 'mg', 'oz', 'lb', 'ml', 'Lt', 'cl', 'fl oz', 'cm
 const sizeQty = ref('')
 const sizeUnit = ref('gr')
 const minStockManual = ref(false)
+const isBoxMode = computed(() => Number(form.unitsPerBox) > 0)
 
 function parseSizeString(raw) {
   if (!raw) return { qty: '', unit: 'gr' }
