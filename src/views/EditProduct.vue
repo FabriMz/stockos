@@ -109,14 +109,21 @@
               </select>
             </div>
           </div>
-          <div v-if="isBoxMode" class="form-group">
+        </div>
+        <div v-if="isBoxMode" class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="ep-box-count">Cantidad de cajas</label>
+            <input class="form-input" id="ep-box-count" name="ep-box-count" type="number"
+              :value="form.boxCount" placeholder="Ej. 2" inputmode="numeric" min="1" :max="MAX_STOCK" step="1"
+              @input="e => { const v = sanitizeInteger(e.target.value, MAX_STOCK); form.boxCount = v === '' ? '' : Number(v); e.target.value = v }" />
+          </div>
+          <div class="form-group">
             <label class="form-label" for="ep-units-per-box">Uds. por caja</label>
             <input class="form-input" :class="{ 'form-input--error': errors.unitsPerBox }" id="ep-units-per-box"
               name="ep-units-per-box" type="number" :value="form.unitsPerBox" inputmode="numeric" min="1"
-              :max="MAX_UNITS_BOX" step="1" :disabled="minStockManual && !!form.minStock" @blur="validateUnitsPerBox"
-              @input="e => { const v = sanitizeInteger(e.target.value, MAX_UNITS_BOX); form.unitsPerBox = v === '' ? '' : Number(v); e.target.value = v; minStockManual.value = false; validateUnitsPerBox() }" />
-            <span v-if="errors.unitsPerBox" class="form-hint form-hint--error" role="alert">{{ errors.unitsPerBox
-            }}</span>
+              :max="MAX_UNITS_BOX" step="1" @blur="validateUnitsPerBox"
+              @input="e => { const v = sanitizeInteger(e.target.value, MAX_UNITS_BOX); form.unitsPerBox = v === '' ? '' : Number(v); e.target.value = v; validateUnitsPerBox() }" />
+            <span v-if="errors.unitsPerBox" class="form-hint form-hint--error" role="alert">{{ errors.unitsPerBox }}</span>
           </div>
         </div>
         <div class="form-row form-row--half">
@@ -297,7 +304,7 @@ function parseSizeString(raw) {
 }
 
 const form = reactive({
-  name: '', size: '', unitsPerBox: 0,
+  name: '', size: '', unitsPerBox: 0, boxCount: 0,
   cost: 0, vatRate: '', margin: '', price: 0, discount: DEFAULT_PRESET,
   stock: 0, expiry: '', batch: '',
   bid: '', origin: '', category: '',
@@ -395,6 +402,7 @@ watch(product, p => {
   if (!p) return
   Object.assign(form, {
     name: p.name, size: p.size, unitsPerBox: p.unitsPerBox,
+    boxCount: (p.unitsPerBox > 0 && p.stock > 0) ? Math.floor(p.stock / p.unitsPerBox) : 0,
     cost: p.cost, vatRate: p.vatRate ?? '', margin: p.margin ?? '', price: p.price,
     discount: p.discount || DEFAULT_PRESET,
     stock: p.stock, expiry: p.expiry || '', batch: p.batch || '',
@@ -576,6 +584,7 @@ const save = () => {
   validateNumericFields()
   if (hasNumericErrors.value) return
   if (form.category && form.bid) store.addCategoryToBrand(form.bid, form.category)
+  if (isBoxMode.value && form.boxCount && form.unitsPerBox) form.stock = Number(form.boxCount) * Number(form.unitsPerBox)
   store.editProduct(product.value.id, { ...form })
   store.setProductUpdated()
   router.push(detailPathWithQuery(product.value.id, route.query))
