@@ -24,10 +24,16 @@
           product.size }}</span></div>
         <div class="detail__row"><span class="detail__row-label">Origen</span><span class="detail__row-value">{{
           product.origin }}</span></div>
-        <div v-if="product.boxCount" class="detail__row"><span class="detail__row-label">Cantidad de cajas</span><span class="detail__row-value">{{
-          product.boxCount }}</span></div>
-        <div class="detail__row"><span class="detail__row-label">Uds. por caja</span><span class="detail__row-value">{{
-          product.unitsPerBox }}</span></div>
+        <template v-if="product.unitsPerBox">
+          <div v-if="product.boxCount" class="detail__row"><span class="detail__row-label">Cantidad de cajas</span><span class="detail__row-value">{{
+            product.boxCount }}</span></div>
+          <div class="detail__row"><span class="detail__row-label">Uds. por caja</span><span class="detail__row-value">{{
+            product.unitsPerBox }}</span></div>
+          <div v-if="product.boxCount" class="detail__row"><span class="detail__row-label">Productos disponibles</span><span class="detail__row-value">{{
+            displayStock }}</span></div>
+        </template>
+        <div v-else class="detail__row"><span class="detail__row-label">Uds.</span><span class="detail__row-value">{{
+          product.stock }}</span></div>
         <div class="detail__row"><span class="detail__row-label">Descuento</span><span class="detail__row-value">{{
           product.discount ?? '—' }}%</span></div>
         <div class="detail__row"><span class="detail__row-label">Nº de lote</span><span class="detail__row-value">{{
@@ -102,7 +108,7 @@
           <span>{{ product.stock }} uds. en stock</span>
           <span>cap. {{ product.max }} uds.</span>
         </div>
-        <p class="detail__reorder-hint">
+        <p v-if="product.unitsPerBox" class="detail__reorder-hint">
           Mín. reposición: 1 caja = {{ product.unitsPerBox }} uds.
         </p>
       </div>
@@ -165,6 +171,13 @@ const margenCalc = computed(() => {
 })
 
 const pct = computed(() => product.value ? store.pct(product.value) : 0)
+
+const displayStock = computed(() => {
+  const boxes = Number(product.value?.boxCount)
+  const units = Number(product.value?.unitsPerBox)
+  if (boxes > 0 && units > 0) return boxes * units
+  return product.value?.stock ?? 0
+})
 
 function goEdit() {
   router.push({ path: `/product/${product.value.id}/edit`, query: route.query })
