@@ -306,11 +306,6 @@
         </div>
       </div>
 
-      <p class="section-label">Stock inicial</p>
-      <StockAdjuster v-model="form.stock" label="Unidades en stock"
-        hint="Puedes actualizar el stock después desde los detalles" input-id="np-stock" :max-stock="MAX_STOCK"
-        :error="errors.stock" @validate="validateStock" />
-
       <div class="spacer--sm"></div>
     </div>
 
@@ -331,7 +326,6 @@ import { DEFAULT_PRESET } from '../stores/discounts.js'
 import { useDtoSelector } from '../composables/useDtoSelector.js'
 import { useProductFieldValidation, sanitizeInteger, sanitizeOrigin } from '../composables/useProductFieldValidation.js'
 import TopBar from '../components/layout/TopBar.vue'
-import StockAdjuster from '../components/ui/StockAdjuster.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -515,7 +509,7 @@ const {
 
 const {
   errors,
-  validateCost, validateVatRate, validateMargin, validatePrice, validateUnitsPerBox, validateStock, validateMinStock,
+  validateCost, validateVatRate, validateMargin, validatePrice, validateUnitsPerBox, validateMinStock,
   validateNumericFields, hasNumericErrors,
   MAX_STOCK, MAX_UNITS_BOX, MAX_PRICE, MAX_VAT, MAX_MARGIN,
 } = useProductFieldValidation(form)
@@ -676,7 +670,7 @@ const save = () => {
   validateNumericFields()
   requiredErrors.sku = (!batchContext && !form.sku) ? 'Requerido' : null
   requiredErrors.name = !form.name ? 'Requerido' : null
-  requiredErrors.bid = !form.bid ? 'Seleccioná una marca' : null
+  requiredErrors.bid = !form.bid ? 'Selecciona una marca' : null
   if (requiredErrors.sku || requiredErrors.name || requiredErrors.bid) return
   if (hasNumericErrors.value) return
   if (expiryYearError.value) return

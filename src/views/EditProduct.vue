@@ -249,10 +249,6 @@
         </div>
       </div>
 
-      <p class="section-label">Actualizar stock</p>
-      <StockAdjuster v-model="form.stock" label="Unidades actuales" :max="form.minStock || form.unitsPerBox || 0" :show-bar="true"
-        input-id="ep-stock" :max-stock="MAX_STOCK" :error="errors.stock" @validate="validateStock" />
-
       <div class="spacer--sm"></div>
     </div>
 
@@ -276,7 +272,6 @@ import { detailPathWithQuery, resolveAlertBack } from '../composables/useAlertNa
 import { useProductFieldValidation, sanitizeInteger, sanitizeOrigin } from '../composables/useProductFieldValidation.js'
 import TopBar from '../components/layout/TopBar.vue'
 import StockBadge from '../components/ui/StockBadge.vue'
-import StockAdjuster from '../components/ui/StockAdjuster.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -322,7 +317,7 @@ const {
 
 const {
   errors,
-  validateCost, validateVatRate, validateMargin, validatePrice, validateUnitsPerBox, validateStock, validateMinStock,
+  validateCost, validateVatRate, validateMargin, validatePrice, validateUnitsPerBox, validateMinStock,
   validateNumericFields, hasNumericErrors,
   MAX_STOCK, MAX_UNITS_BOX, MAX_PRICE, MAX_VAT, MAX_MARGIN,
 } = useProductFieldValidation(form)

@@ -23,7 +23,7 @@
         <div class="sheet__body">
 
           <template v-if="isCloneMode && batchFoldersMeta.length > 0">
-            <div class="sheet__section-label" id="batch-selector-label">Seleccioná el lote</div>
+            <div class="sheet__section-label" id="batch-selector-label">Selecciona el lote</div>
             <div class="sheet__batch-list" role="listbox" aria-labelledby="batch-selector-label">
               <button v-for="batch in batchFoldersMeta" :key="batch.batchNumber" class="sheet__batch-option"
                 :class="{ 'sheet__batch-option--active': selectedOption === batch.batchNumber }" role="option"
