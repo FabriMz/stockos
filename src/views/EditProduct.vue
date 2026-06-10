@@ -109,25 +109,13 @@
               </select>
             </div>
           </div>
-        </div>
-        <div v-if="isBoxMode" class="form-row">
-          <div class="form-group">
+          <div v-if="isBoxMode" class="form-group">
             <label class="form-label" for="ep-box-count">Cantidad de cajas</label>
             <input class="form-input" id="ep-box-count" name="ep-box-count" type="number"
               :value="form.boxCount" placeholder="Ej. 2" inputmode="numeric" min="1" :max="MAX_STOCK" step="1"
               @input="e => { const v = sanitizeInteger(e.target.value, MAX_STOCK); form.boxCount = v === '' ? '' : Number(v); e.target.value = v }" />
           </div>
-          <div class="form-group">
-            <label class="form-label" for="ep-units-per-box">Uds. por caja</label>
-            <input class="form-input" :class="{ 'form-input--error': errors.unitsPerBox }" id="ep-units-per-box"
-              name="ep-units-per-box" type="number" :value="form.unitsPerBox" inputmode="numeric" min="1"
-              :max="MAX_UNITS_BOX" step="1" @blur="validateUnitsPerBox"
-              @input="e => { const v = sanitizeInteger(e.target.value, MAX_UNITS_BOX); form.unitsPerBox = v === '' ? '' : Number(v); e.target.value = v; validateUnitsPerBox() }" />
-            <span v-if="errors.unitsPerBox" class="form-hint form-hint--error" role="alert">{{ errors.unitsPerBox }}</span>
-          </div>
-        </div>
-        <div v-if="!isBoxMode" class="form-row form-row--half">
-          <div class="form-group">
+          <div v-if="!isBoxMode" class="form-group">
             <label class="form-label" for="ep-min-stock">Stock inicial</label>
             <input
               class="form-input"
@@ -145,6 +133,16 @@
               @blur="validateMinStock"
             />
             <span v-if="errors.minStock" class="form-hint form-hint--error" role="alert">{{ errors.minStock }}</span>
+          </div>
+        </div>
+        <div v-if="isBoxMode" class="form-row form-row--half">
+          <div class="form-group">
+            <label class="form-label" for="ep-units-per-box">Uds. por caja</label>
+            <input class="form-input" :class="{ 'form-input--error': errors.unitsPerBox }" id="ep-units-per-box"
+              name="ep-units-per-box" type="number" :value="form.unitsPerBox" inputmode="numeric" min="1"
+              :max="MAX_UNITS_BOX" step="1" @blur="validateUnitsPerBox"
+              @input="e => { const v = sanitizeInteger(e.target.value, MAX_UNITS_BOX); form.unitsPerBox = v === '' ? '' : Number(v); e.target.value = v; validateUnitsPerBox() }" />
+            <span v-if="errors.unitsPerBox" class="form-hint form-hint--error" role="alert">{{ errors.unitsPerBox }}</span>
           </div>
         </div>
       </div>
