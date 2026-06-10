@@ -45,7 +45,7 @@
   &__list {
     @include flex-col;
     border-radius: $radius-xl;
-    overflow     : scroll-y;
+    overflow-y   : auto;
     width        : 100%;
   }
 

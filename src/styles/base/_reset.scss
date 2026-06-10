@@ -44,19 +44,11 @@ a {
   text-decoration: none;
 }
 
-  // ─── PHONE SHELL (solo en desarrollo) ────────────────────────────────────────
-.phone-shell {
-  display        : flex;
-  align-items    : center;
-  justify-content: center;
-  min-height     : 100dvh;
-  background     : $color-neumorph-base;
-
-  &__frame {
-    width      : 100%;
-    height     : 100dvh;
-    overflow   : hidden;
-    position   : relative;
-    flex-shrink: 0;
-  }
+  // ─── PHONE SHELL ─────────────────────────────────────────────────────────────
+.phone-shell__frame {
+  width      : 100%;
+  height     : 100dvh;
+  overflow   : hidden;
+  position   : relative;
+  flex-shrink: 0;
 }
