@@ -111,7 +111,7 @@
   }
 
   &__crumb {
-    font-family: $font-body;
+    font-family: $font-display;
     font-size  : $font-size-xs;
     font-weight: $font-weight-medium;
     color      : $color-text-secondary;
@@ -177,7 +177,7 @@
       flex: 1;
       background: transparent;
       border: none;
-      font-family: $font-body;
+      font-family: $font-display;
       font-size: $font-size-base;
       color: $color-text-primary;
       outline: none;
@@ -269,7 +269,7 @@
   border-radius: $radius-md;
   background: $color-primary;
   color: $color-text-on-primary;
-  font-family: $font-body;
+  font-family: $font-display;
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   box-shadow: 3px 3px 8px rgba(192, 57, 43, 0.35), -1px -1px 4px rgba(255,255,255,0.4);

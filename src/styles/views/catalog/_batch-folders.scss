@@ -1,6 +1,6 @@
 @use '../../abstracts' as *;
 
-// ─── BRAND & BATCH PANELS ─────────────────────────────────────────────────────
+  // ─── BRAND & BATCH PANELS ─────────────────────────────────────────────────────
 .batch-panel,
 #panel-brands {
   display       : flex;
@@ -8,7 +8,7 @@
   height        : 100%;
 }
 
-// ─── BATCH FOLDERS ────────────────────────────────────────────────────────────
+  // ─── BATCH FOLDERS ────────────────────────────────────────────────────────────
 .batch-folder-list {
   @include flex-col;
   margin-bottom: $spacing-3;
@@ -88,7 +88,7 @@
     flex         : 1;
     height       : $btn-height-sm;
     border-radius: $radius-md;
-    font-family  : $font-body;
+    font-family  : $font-display;
     font-size    : $font-size-sm;
     font-weight  : $font-weight-medium;
     color        : $color-text-secondary;
@@ -112,13 +112,13 @@
       box-shadow: none;
 
       &:active {
-        box-shadow: inset 2px 2px 5px rgba(0,0,0,0.18), inset -1px -1px 3px rgba(255,255,255,0.12);
+        box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.18), inset -1px -1px 3px rgba(255, 255, 255, 0.12);
       }
     }
   }
 }
 
-// ─── BATCH EMPTY STATE ────────────────────────────────────────────────────────
+  // ─── BATCH EMPTY STATE ────────────────────────────────────────────────────────
 .batch-empty {
   @include flex-col($spacing-2, center, center);
   flex      : 1;
@@ -144,10 +144,11 @@
     max-width  : 240px;
   }
 }
-// ─── BATCH GROUP SEPARATOR ────────────────────────────────────────────────────
+
+  // ─── BATCH GROUP SEPARATOR ────────────────────────────────────────────────────
 .batch-group-sep {
   @include flex-between;
-  margin   : $spacing-3 $spacing-5 $spacing-2;
+  margin    : $spacing-3 $spacing-5 $spacing-2;
   background: $color-bg-tertiary;
   min-height: 32px;
   position  : relative;
@@ -169,13 +170,11 @@
     margin          : 0 $spacing-3;
     align-self      : center;
     margin-bottom   : 1px;
-    background-image: repeating-linear-gradient(
-      to right,
-      rgba(255, 220, 190, 0.18) 0,
-      rgba(255, 220, 190, 0.18) 2px,
-      transparent 2px,
-      transparent 7px
-    );
+    background-image: repeating-linear-gradient(to right,
+        rgba(255, 220, 190, 0.18) 0,
+        rgba(255, 220, 190, 0.18) 2px,
+        transparent 2px,
+        transparent 7px);
   }
 
   &__sort-btn {
@@ -211,7 +210,7 @@
   }
 }
 
-// ─── BATCH SORT POPOVER ───────────────────────────────────────────────────────
+  // ─── BATCH SORT POPOVER ───────────────────────────────────────────────────────
 .batch-sort-popover {
   position     : absolute;
   top          : calc(100% - $spacing-1);
@@ -228,7 +227,7 @@
     @include flex-row($spacing-2, center);
     width      : 100%;
     padding    : $spacing-3 $spacing-4;
-    font-family: $font-body;
+    font-family: $font-display;
     font-size  : $font-size-sm;
     font-weight: $font-weight-medium;
     color      : $color-text-secondary;
@@ -243,7 +242,7 @@
       flex-shrink: 0;
     }
 
-    & + & {
+    &+& {
       border-top: $border;
     }
 
@@ -258,7 +257,7 @@
   }
 }
 
-// ─── FADE TRANSITION (popover) ────────────────────────────────────────────────
+  // ─── FADE TRANSITION (popover) ────────────────────────────────────────────────
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity $transition-fast;

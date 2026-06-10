@@ -1,9 +1,9 @@
 @use '../../abstracts' as *;
 
-// ─── CATALOG ACTION BAR ───────────────────────────────────────────────────────
+  // ─── CATALOG ACTION BAR ───────────────────────────────────────────────────────
 .catalog-action-bar {
   @include flex-row($spacing-2, center, stretch);
-  margin : $spacing-4 $spacing-5;
+  margin     : $spacing-4 $spacing-5;
   flex-shrink: 0;
 
   &__btn {
@@ -11,7 +11,7 @@
     flex         : 1;
     height       : $btn-height-sm;
     border-radius: $radius-md;
-    font-family  : $font-body;
+    font-family  : $font-display;
     font-size    : $font-size-sm;
     font-weight  : $font-weight-medium;
     color        : $color-text-secondary;

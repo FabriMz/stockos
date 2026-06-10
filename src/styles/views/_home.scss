@@ -2,17 +2,17 @@
 
 .home {
   &__quick-actions {
-    display: grid;
+    display              : grid;
     grid-template-columns: 1fr 1fr;
-    gap: $spacing-2;
-    padding: 0 $spacing-4;
+    gap                  : $spacing-2;
+    padding              : 0 $spacing-4;
   }
 
   &__action-btn {
     @include card-base;
     @include flex-col($spacing-1, flex-start);
-    padding: $spacing-3 $spacing-4;
-    cursor: pointer;
+    padding   : $spacing-3 $spacing-4;
+    cursor    : pointer;
     transition: box-shadow $transition-fast;
     text-align: left;
 
@@ -25,9 +25,9 @@
     }
 
     span {
-      font-size: $font-size-base;
+      font-size  : $font-size-base;
       font-weight: $font-weight-medium;
-      color: $color-text-primary;
+      color      : $color-text-primary;
     }
 
     small {
@@ -38,24 +38,24 @@
 
   &__empty {
     @include font-mono($font-size-sm);
-    color: $color-text-tertiary;
-    padding: $spacing-4 $spacing-5;
+    color     : $color-text-tertiary;
+    padding   : $spacing-4 $spacing-5;
     text-align: center;
   }
 
   &__venc-btn {
     @include flex-col($spacing-1, center);
-    width: calc(100% - #{$spacing-4 * 2});
-    margin: $spacing-3 $spacing-4 $spacing-2;
-    padding: $spacing-4;
+    width        : calc(100% - #{$spacing-4 * 2});
+    margin       : $spacing-3 $spacing-4 $spacing-2;
+    padding      : $spacing-4;
     border-radius: $radius-md;
-    background: $color-neumorph-base;
-    box-shadow: $shadow-neumorph-raised;
-    color: $color-expiry-text;
-    font-size: $font-size-base;
-    font-weight: $font-weight-medium;
-    cursor: pointer;
-    transition: box-shadow $transition-fast;
+    background   : $color-neumorph-base;
+    box-shadow   : $shadow-neumorph-raised;
+    color        : $color-expiry-text;
+    font-size    : $font-size-base;
+    font-weight  : $font-weight-medium;
+    cursor       : pointer;
+    transition   : box-shadow $transition-fast;
 
     &:active {
       box-shadow: $shadow-neumorph-pressed;
@@ -63,17 +63,17 @@
 
     i {
       font-size: $icon-lg;
-      color: $color-expiry;
+      color    : $color-expiry;
     }
 
     small {
       @include font-mono($font-size-xs);
       font-weight: $font-weight-regular;
-      opacity: 0.85;
+      opacity    : 0.85;
     }
   }
 
-  // ─── Alert list ────────────────────────────────────────────────────────────
+    // ─── Alert list ────────────────────────────────────────────────────────────
 
   &__alert-list {
     display       : flex;
@@ -82,7 +82,7 @@
     padding       : 0 $spacing-4;
   }
 
-  // ─── Alert items ───────────────────────────────────────────────────────────
+    // ─── Alert items ───────────────────────────────────────────────────────────
 
   &__alert-item {
     display        : flex;
@@ -106,7 +106,7 @@
     gap        : 12px;
   }
 
-  // ─── Ícono neumorph inset ──────────────────────────────────────────────────
+    // ─── Ícono neumorph inset ──────────────────────────────────────────────────
 
   &__alert-icon {
     width        : 36px;
@@ -115,18 +115,28 @@
     background   : $color-neumorph-base;
     box-shadow   : inset 2px 2px 5px #C8C5BF, inset -2px -2px 5px #FFFFFF;
     @include flex-center;
-    flex-shrink  : 0;
+    flex-shrink: 0;
 
-    i { font-size: 16px; }
+    i {
+      font-size: 16px;
+    }
 
-    &--out i    { color: #C04030; }
-    &--low i    { color: #A07010; }
-    &--expiry i { color: $color-expiry; }
+    &--out i {
+      color: #C04030;
+    }
+
+    &--low i {
+      color: #A07010;
+    }
+
+    &--expiry i {
+      color: $color-expiry;
+    }
   }
 
   &__alert-info {
     @include flex-col($spacing-1);
-    flex    : 1;
+    flex     : 1;
     min-width: 0;
   }
 
@@ -137,22 +147,22 @@
   }
 
   &__alert-name {
-    font-size: 12px;
-    color    : #A09080;
+    font-size : 12px;
+    color     : #A09080;
     margin-top: 2px;
     @include truncate;
   }
 
   &__alert-right {
-    display        : flex;
-    flex-direction : row;
-    align-items    : center;
-    flex-shrink    : 0;
-    gap            : $spacing-2;
+    display       : flex;
+    flex-direction: row;
+    align-items   : center;
+    flex-shrink   : 0;
+    gap           : $spacing-2;
 
     .badge {
-      min-width  : 62px;
-      text-align : center;
+      min-width      : 62px;
+      text-align     : center;
       justify-content: center;
     }
   }
@@ -166,15 +176,25 @@
     text-align    : right;
     flex-shrink   : 0;
 
-    &--zero { color: $color-text-tertiary; }
+    &--zero {
+      color: $color-text-tertiary;
+    }
   }
 
-  &__alert-item--out   &__alert-count:not(&__alert-count--zero) { color: #C04030; }
-  &__alert-item--low   &__alert-count:not(&__alert-count--zero) { color: #A07010; }
-  &__alert-item--expiry &__alert-count:not(&__alert-count--zero) { color: $color-expiry; }
+  &__alert-item--out &__alert-count:not(&__alert-count--zero) {
+    color: #C04030;
+  }
+
+  &__alert-item--low &__alert-count:not(&__alert-count--zero) {
+    color: #A07010;
+  }
+
+  &__alert-item--expiry &__alert-count:not(&__alert-count--zero) {
+    color: $color-expiry;
+  }
 
 
-  // ─── Product search ────────────────────────────────────────────────────────
+    // ─── Product search ────────────────────────────────────────────────────────
 
   &__search-dropdown {
     flex-shrink: 0;
@@ -182,15 +202,24 @@
   }
 
   &__search-results {
-    list-style  : none;
-    background  : $color-neumorph-base;
-    overflow    : hidden;
-    max-height  : 220px;
-    overflow-y  : auto;
+    list-style: none;
+    background: $color-neumorph-base;
+    overflow  : hidden;
+    max-height: 220px;
+    overflow-y: auto;
 
-    &::-webkit-scrollbar { width: 3px; }
-    &::-webkit-scrollbar-thumb { background: $color-neumorph-dark; border-radius: $radius-full; }
-    &::-webkit-scrollbar-track { background: transparent; }
+    &::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background   : $color-neumorph-dark;
+      border-radius: $radius-full;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
   }
 
   &__search-result {
@@ -198,7 +227,9 @@
     padding: $spacing-3 $spacing-4;
     cursor : pointer;
 
-    &:active { box-shadow: $shadow-neumorph-inset; }
+    &:active {
+      box-shadow: $shadow-neumorph-inset;
+    }
 
     &__name {
       font-size  : $font-size-base;
@@ -218,78 +249,84 @@
 
   &__search-empty {
     @include font-mono($font-size-sm);
-    color      : $color-text-tertiary;
-    text-align : center;
-    padding    : $spacing-4 $spacing-4;
+    color     : $color-text-tertiary;
+    text-align: center;
+    padding   : $spacing-4 $spacing-4;
   }
 
-  // ─── CTA ───────────────────────────────────────────────────────────────────
+    // ─── CTA ───────────────────────────────────────────────────────────────────
 
   &__cta {
-    display    : flex;
+    display       : flex;
     flex-direction: row;
-    align-items: center;
-    gap        : $spacing-3;
-    padding    : $spacing-2 $spacing-5 0;
+    align-items   : center;
+    gap           : $spacing-3;
+    padding       : $spacing-2 $spacing-5 0;
 
-    .btn { flex: 1; width: auto; }
+    .btn {
+      flex : 1;
+      width: auto;
+    }
   }
 
-  // ─── Company edit overlay ──────────────────────────────────────────────────
+    // ─── Company edit overlay ──────────────────────────────────────────────────
 
   &__company-edit-overlay {
-    position  : fixed;
-    inset     : 0;
-    background: rgba(200, 196, 188, 0.70);
-    z-index   : 200;
-    display   : flex;
+    position       : fixed;
+    inset          : 0;
+    background     : rgba(200, 196, 188, 0.70);
+    z-index        : 200;
+    display        : flex;
     align-items    : center;
     justify-content: center;
-    padding   : $spacing-5;
+    padding        : $spacing-5;
   }
 
   &__company-edit-box {
-    background   : $color-neumorph-base;
-    box-shadow   : $shadow-neumorph-raised;
-    border-radius: $radius-xl;
-    padding      : $spacing-7;
-    width        : 100%;
-    max-width    : 320px;
-    display      : flex;
+    background    : $color-neumorph-base;
+    box-shadow    : $shadow-neumorph-raised;
+    border-radius : $radius-xl;
+    padding       : $spacing-7;
+    width         : 100%;
+    max-width     : 320px;
+    display       : flex;
     flex-direction: column;
-    gap          : $spacing-4;
+    gap           : $spacing-4;
   }
 
   &__company-edit-label {
-    font-family: $font-body;
+    font-family: $font-display;
     font-size  : $font-size-sm;
     font-weight: $font-weight-medium;
     color      : $color-text-secondary;
   }
 
-  &__company-edit-input { @include input-base; }
+  &__company-edit-input {
+    @include input-base;
+  }
 
   &__company-edit-actions {
     display: flex;
     gap    : $spacing-3;
 
-    .btn { flex: 1; }
+    .btn {
+      flex: 1;
+    }
   }
-  // ─── Layout padding (match reference 22px lateral) ─────────────────────────
+
+    // ─── Layout padding (match reference 22px lateral) ─────────────────────────
 
   .section-label {
-    margin        : 0 0 10px;
-    padding       : 0 22px;
-    border-bottom : none;
+    margin       : 0 0 10px;
+    padding      : 0 22px;
+    border-bottom: none;
   }
 
 
-  // ─── Scroll area padding ─────────────────────────────────────────────────────
+    // ─── Scroll area padding ─────────────────────────────────────────────────────
 
   .scroll-content {
     padding-top   : 10px;
     padding-bottom: 16px;
   }
-
-
 }

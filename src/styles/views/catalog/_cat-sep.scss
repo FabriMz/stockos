@@ -34,13 +34,11 @@
     margin          : 0 $spacing-3;
     align-self      : center;
     margin-bottom   : 1px;
-    background-image: repeating-linear-gradient(
-      to right,
-      rgba(255, 220, 190, 0.18) 0,
-      rgba(255, 220, 190, 0.18) 2px,
-      transparent 2px,
-      transparent 7px
-    );
+    background-image: repeating-linear-gradient(to right,
+        rgba(255, 220, 190, 0.18) 0,
+        rgba(255, 220, 190, 0.18) 2px,
+        transparent 2px,
+        transparent 7px);
   }
 
   &__cat-gear-btn {
@@ -87,7 +85,7 @@
     background    : $color-bg-primary;
     color         : $color-text-primary;
     padding       : 0 $spacing-2;
-    font-family   : $font-mono;
+    font-family   : $font-display;
     font-size     : $font-size-xs;
     font-weight   : $font-weight-medium;
     letter-spacing: $letter-spacing-widest;
@@ -109,7 +107,9 @@
     margin-left  : $spacing-2;
     transition   : background $transition-fast, box-shadow $transition-fast;
 
-    i { font-size: $icon-sm; }
+    i {
+      font-size: $icon-sm;
+    }
 
     &:active {
       background: $color-success-border;
@@ -162,7 +162,7 @@
 
   &__migrate-dest-header {
     @include flex-between;
-    align-items: center;
+    align-items  : center;
     margin-bottom: $spacing-1;
   }
 
@@ -183,8 +183,8 @@
     }
 
     &:active {
-      color      : $color-primary-900;
-      background : $color-primary-50;
+      color     : $color-primary-900;
+      background: $color-primary-50;
     }
   }
 
@@ -195,8 +195,8 @@
 
   &__migrate-dest-empty {
     @include flex-center;
-    padding      : $spacing-5;
-    color        : $color-text-tertiary;
+    padding: $spacing-5;
+    color  : $color-text-tertiary;
     @include font-mono($font-size-sm);
     text-align   : center;
     border       : $border;
@@ -218,14 +218,14 @@
     padding    : $spacing-4;
     background : $color-bg-primary;
     border     : none;
-    font-family: $font-body;
+    font-family: $font-display;
     font-size  : $font-size-base;
     color      : $color-text-primary;
     cursor     : pointer;
     text-align : left;
     transition : background $transition-fast;
 
-    & + & {
+    &+& {
       border-top: $border;
     }
 

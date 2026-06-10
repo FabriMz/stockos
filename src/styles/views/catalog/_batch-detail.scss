@@ -1,6 +1,6 @@
 @use '../../abstracts' as *;
 
-// ─── BATCH DETAIL ─────────────────────────────────────────────────────────────
+  // ─── BATCH DETAIL ─────────────────────────────────────────────────────────────
 .batch-detail {
   &__header {
     @include flex-row($spacing-3);
@@ -43,7 +43,7 @@
   }
 
   &__badge {
-    align-self: center;
+    align-self : center;
     flex-shrink: 0;
   }
 
@@ -57,7 +57,7 @@
     flex         : 1;
     height       : $btn-height-sm;
     border-radius: $radius-md;
-    font-family  : $font-body;
+    font-family  : $font-display;
     font-size    : $font-size-sm;
     font-weight  : $font-weight-medium;
     color        : $color-text-secondary;
@@ -81,13 +81,13 @@
       box-shadow: none;
 
       &:active {
-        box-shadow: inset 2px 2px 5px rgba(0,0,0,0.18), inset -1px -1px 3px rgba(255,255,255,0.12);
+        box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.18), inset -1px -1px 3px rgba(255, 255, 255, 0.12);
       }
     }
   }
 }
 
-// ─── BATCH ITEM LIST ──────────────────────────────────────────────────────────
+  // ─── BATCH ITEM LIST ──────────────────────────────────────────────────────────
 .batch-item-list {
   @include flex-col;
 }

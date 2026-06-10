@@ -1,8 +1,6 @@
 @use '../abstracts' as *;
 
 .font-display { font-family: $font-display; }
-.font-body    { font-family: $font-body; }
-.font-mono    { font-family: $font-mono; }
 
 .text-xs   { font-size: $font-size-xs; }
 .text-sm   { font-size: $font-size-sm; }

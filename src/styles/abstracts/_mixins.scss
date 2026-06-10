@@ -46,13 +46,13 @@
 }
 
 @mixin font-mono($size: $font-size-base, $weight: $font-weight-regular) {
-  font-family: $font-mono;
+  font-family: $font-display;
   font-size: $size;
   font-weight: $weight;
 }
 
 @mixin font-label {
-  font-family: $font-mono;
+  font-family: $font-display;
   font-size: $font-size-xs;
   font-weight: $font-weight-medium;
   letter-spacing: $letter-spacing-wider;
@@ -160,7 +160,7 @@
   border-radius: $radius-md;
   border: none;
   background: $color-neumorph-base;
-  font-family: $font-body;
+  font-family: $font-display;
   font-size: $font-size-base;
   color: $color-text-primary;
   color-scheme: light;

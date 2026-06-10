@@ -3,31 +3,24 @@
 
   // ─── BRAND COLORS ────────────────────────────────────────────────────────────
 $color-primary: #c0392b;
-$color-cream  : #c8b8b0;
 $color-salmon : #d45a4a;
-$color-copper : #8c3020;
+  // $color-cream y $color-copper: sin uso activo. Descomentar si se incorporan a la UI.
+  // $color-cream : #c8b8b0;
+  // $color-copper: #8c3020;
 
   // ─── DERIVED BRAND TINTS ─────────────────────────────────────────────────────
 $color-primary-50 : rgba(192, 57, 43, 0.08);
 $color-primary-100: rgba(192, 57, 43, 0.14);
 $color-primary-200: rgba(192, 57, 43, 0.22);
-$color-primary-700: #a03020;
-$color-primary-900: #c0392b;
-
-$color-cream-50 : #edeae4;
-$color-cream-100: #e5e2dc;
-$color-cream-200: #dedad2;
-$color-cream-300: #e8e4dc;
+  // $color-primary-700: sin uso directo (solo como referencia interna de danger-text).
+  // $color-primary-900: alias de $color-primary, eliminado.
 
 $color-salmon-50 : rgba(212, 90, 74, 0.08);
 $color-salmon-100: rgba(212, 90, 74, 0.14);
 $color-salmon-700: #b04838;
-$color-salmon-900: #d45a4a;
+  // $color-salmon-900: alias de $color-salmon, eliminado.
 
-$color-copper-50 : rgba(140, 48, 32, 0.08);
-$color-copper-100: rgba(140, 48, 32, 0.14);
-$color-copper-700: #6e2016;
-$color-copper-900: #c0392b;
+  // Familia copper y cream: sin uso activo, eliminada.
 
   // ─── SEMANTIC COLORS ─────────────────────────────────────────────────────────
   // Peligro / Sin stock
@@ -42,7 +35,7 @@ $color-warning-bg    : rgba(176, 94, 8, 0.07);
 $color-warning-text  : #8c4a06;
 $color-warning-border: rgba(176, 94, 8, 0.18);
 
-  // Acento / Destacado
+  // Acento / Destacado (alias semántico sobre salmon)
 $color-accent     : $color-salmon;
 $color-accent-bg  : $color-salmon-50;
 $color-accent-text: $color-salmon-700;
@@ -54,29 +47,35 @@ $color-success-text  : #155234;
 $color-success-border: rgba(26, 110, 66, 0.18);
 
   // Vencimiento
-$color-expiry       : #6b38a8;
-$color-expiry-bg    : rgba(107, 56, 168, 0.07);
-$color-expiry-text  : #4e2880;
-$color-expiry-border: rgba(107, 56, 168, 0.18);
+$color-expiry     : #6b38a8;
+$color-expiry-bg  : rgba(107, 56, 168, 0.07);
+$color-expiry-text: #4e2880;
+  // $color-expiry-border: sin uso, eliminado.
 
   // ─── BASE NEUMÓRFICA ─────────────────────────────────────────────────────────
   // Todo el sistema comparte un único fondo base. Cards, nav, screen: mismo color.
-$color-neumorph-base   : #e8e4dc;
-$color-neumorph-light  : #f4f1eb;   // highlight (arriba-izquierda)
-$color-neumorph-dark   : #ccc8c0;   // sombra    (abajo-derecha)
-$color-neumorph-inset-l: #C8C5BF;   // inset dark  (para hundidos)
-$color-neumorph-inset-s: #FFFFFF;   // inset light (para hundidos)
+$color-neumorph-base : #e8e4dc;
+$color-neumorph-light: #f4f1eb;  // highlight (arriba-izquierda)
+$color-neumorph-dark : #ccc8c0;  // sombra    (abajo-derecha)
+  // inset-l/s se usan solo para construir las sombras debajo; no se exponen directamente.
+$color-neumorph-inset-l: #C8C5BF;
+$color-neumorph-inset-s: #FFFFFF;
 
   // Sombras neumórficas
-$shadow-neumorph-raised : 4px 4px 10px $color-neumorph-dark, -4px -4px 10px $color-neumorph-light;
-$shadow-neumorph-inset  : inset 2px 2px 6px $color-neumorph-inset-l, inset -2px -2px 6px $color-neumorph-inset-s;
-$shadow-neumorph-flat   : 2px 2px 6px $color-neumorph-dark, -2px -2px 6px $color-neumorph-light;
+$shadow-neumorph-raised: 4px 4px 10px $color-neumorph-dark,
+-4px -4px 10px $color-neumorph-light;
+$shadow-neumorph-inset: inset 2px 2px 6px $color-neumorph-inset-l,
+inset -2px -2px 6px $color-neumorph-inset-s;
+$shadow-neumorph-flat: 2px 2px 6px $color-neumorph-dark,
+-2px -2px 6px $color-neumorph-light;
 $shadow-neumorph-pressed: inset 1px 1px 4px $color-neumorph-inset-l, inset -1px -1px 4px $color-neumorph-inset-s;
 
-  // ─── SUPERFICIES (light/neumorph mode) ───────────────────────────────────────
-$color-bg-primary  : $color-neumorph-base;   // cards, topbar, nav → mismo fondo
+                                             // ─── SUPERFICIES ─────────────────────────────────────────────────────────────
+                                             // Tokens semánticos aunque hoy apunten al mismo valor: permiten diferenciar
+                                             // jerarquía visual sin tocar los componentes si el tema cambia.
+$color-bg-primary   : $color-neumorph-base;  // cards, topbar, nav
 $color-bg-secondary: $color-neumorph-base;   // sheets, secondary surfaces
-$color-bg-tertiary : $color-neumorph-base;   // screen background
+$color-bg-tertiary  : $color-neumorph-base;  // screen background
 
 $color-border       : rgba(0, 0, 0, 0.06);
 $color-border-strong: rgba(0, 0, 0, 0.10);
@@ -87,9 +86,9 @@ $color-text-tertiary  : #9c8e87;
 $color-text-on-primary: #ffffff;
 
   // ─── TIPOGRAFÍA ──────────────────────────────────────────────────────────────
+  // Una sola familia tipográfica. Si se diversifica, solo cambia aquí.
+  // Si se diferencian (ej: DM Mono para mono), solo hay que cambiar aquí.
 $font-display: 'Barlow', sans-serif;
-$font-body   : 'Barlow', sans-serif;
-$font-mono   : 'Barlow', sans-serif;
 
 $font-size-2xs : 9px;
 $font-size-xs  : 10px;
@@ -100,24 +99,23 @@ $font-size-lg  : 15px;
 $font-size-xl  : 17px;
 $font-size-2xl : 19px;
 $font-size-3xl : 22px;
-$font-size-4xl : 26px;
-$font-size-5xl : 32px;
+  // $font-size-4xl (26px) y $font-size-5xl (32px): sin uso, eliminados.
 
 $font-weight-regular : 400;
 $font-weight-medium  : 500;
 $font-weight-semibold: 600;
 $font-weight-bold    : 700;
 
-$letter-spacing-tight : -0.01em;
-$letter-spacing-normal: 0;
+$letter-spacing-tight: -0.01em;
+  // $letter-spacing-normal: 0 — sin uso, eliminado (usar el valor literal si se necesita).
 $letter-spacing-wide  : 0.04em;
 $letter-spacing-wider : 0.08em;
 $letter-spacing-widest: 0.1em;
 
-$line-height-tight  : 1.1;
-$line-height-snug   : 1.3;
-$line-height-normal : 1.5;
-$line-height-relaxed: 1.6;
+  // $line-height-tight (1.1): sin uso, eliminado.
+$line-height-snug  : 1.3;
+$line-height-normal: 1.5;
+  // $line-height-relaxed (1.6): sin uso, eliminado.
 
   // ─── ESPACIADO (base 4px) ────────────────────────────────────────────────────
 $spacing-0 : 0;
@@ -142,11 +140,10 @@ $radius-3xl : 18px;
 $radius-full: 9999px;
 
   // ─── BORDES ──────────────────────────────────────────────────────────────────
-  // En neumorfismo los bordes se reemplazan por sombras; se mantienen mínimos
-$border-width   : 1px;
-$border-width-md: 1px;
-$border         : 1px solid $color-border;
-$border-strong  : 1px solid $color-border-strong;
+  // $border-width-md era idéntico a $border-width (ambos 1px), consolidado en uno.
+$border-width : 1px;
+$border       : 1px solid $color-border;
+$border-strong: 1px solid $color-border-strong;
 
   // ─── ÍCONOS ──────────────────────────────────────────────────────────────────
 $icon-xs : 14px;
@@ -176,7 +173,7 @@ $stock-bar-width  : 68px;
 $stripe-width     : 3px;
 
   // ─── SOMBRAS ─────────────────────────────────────────────────────────────────
-  // Las sombras neumorph son las primarias; estas se usan solo donde corresponde
+  // Las sombras neumorph son las primarias; estos alias se usan donde corresponde.
 $shadow-sm: $shadow-neumorph-flat;
 $shadow-md: $shadow-neumorph-raised;
 $shadow-lg: 6px 6px 14px $color-neumorph-dark, -6px -6px 14px $color-neumorph-light;
@@ -184,12 +181,12 @@ $shadow-lg: 6px 6px 14px $color-neumorph-dark, -6px -6px 14px $color-neumorph-li
   // ─── TRANSICIONES ────────────────────────────────────────────────────────────
 $transition-fast  : 0.1s ease;
 $transition-normal: 0.2s ease;
-$transition-slow  : 0.3s ease;
+  // $transition-slow (0.3s): sin uso, eliminado.
 
   // ─── Z-INDEX ─────────────────────────────────────────────────────────────────
-$z-base   : 0;
-$z-topbar : 100;
+  // $z-base: 0 — sin uso, eliminado (usar 0 literal).
+  // $z-topbar y $z-nav son iguales (100); se unifican bajo $z-nav.
 $z-nav    : 100;
 $z-overlay: 150;
-$z-modal  : 200;
-$z-toast  : 300;
+  // $z-modal: sin uso, eliminado.
+$z-toast: 300;

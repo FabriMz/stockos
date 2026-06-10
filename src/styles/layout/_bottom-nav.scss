@@ -40,7 +40,7 @@
     }
 
     span {
-      font-family: $font-body;
+      font-family: $font-display;
       font-size  : 10px;
       color      : #B8A898;
       transition : color $transition-fast;
@@ -151,7 +151,7 @@
   }
 
   &__action-label {
-    font-family: $font-body;
+    font-family: $font-display;
     font-size  : $font-size-sm + 1;
     font-weight: $font-weight-medium;
     color      : $color-text-primary;

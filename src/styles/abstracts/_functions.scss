@@ -2,6 +2,11 @@
 @use 'sass:color';
 @use 'variables' as *;
 
+// Nota: rem(), tint() y shade() están definidas pero sin uso activo en el proyecto.
+// Se mantienen porque son utilidades de bajo costo que evitan reimplementarlas
+// cuando se necesiten. Si el proyecto crece hacia rem-based layout o generación
+// dinámica de tints, ya están disponibles.
+
 // Convertir px a rem (base 16px)
 @function rem($px) {
   @return math.div($px, 16px) * 1rem;

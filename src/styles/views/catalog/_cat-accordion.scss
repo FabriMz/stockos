@@ -1,6 +1,6 @@
 @use '../../abstracts' as *;
 
-// ─── CAT ACCORDION (ProductCatalog) ───────────────────────────────────────────
+  // ─── CAT ACCORDION (ProductCatalog) ───────────────────────────────────────────
 .cat-accordion {
   border-radius: $radius-md;
   border       : none;
@@ -9,7 +9,7 @@
   background   : $color-bg-primary;
   box-shadow   : $shadow-neumorph-raised;
 
-  & + & {
+  &+& {
     margin-top: $spacing-1;
   }
 
@@ -41,13 +41,11 @@
     flex            : 1;
     height          : 1px;
     min-width       : $spacing-3;
-    background-image: repeating-linear-gradient(
-      to right,
-      rgba(255, 220, 190, 0.18) 0,
-      rgba(255, 220, 190, 0.18) 2px,
-      transparent 2px,
-      transparent 7px
-    );
+    background-image: repeating-linear-gradient(to right,
+        rgba(255, 220, 190, 0.18) 0,
+        rgba(255, 220, 190, 0.18) 2px,
+        transparent 2px,
+        transparent 7px);
   }
 
   &__count {
@@ -62,7 +60,7 @@
     flex-shrink  : 0;
   }
 
-  // gear del CatalogCatSep en variant icon-only
+    // gear del CatalogCatSep en variant icon-only
   .catalog__cat-gear-btn {
     flex-shrink: 0;
   }
@@ -128,7 +126,7 @@
     }
 
     span {
-      font-family: $font-body;
+      font-family: $font-display;
       font-size  : $font-size-sm;
       font-weight: $font-weight-medium;
       color      : $color-text-primary;
@@ -139,6 +137,7 @@
     }
 
     &--active {
+
       i,
       span {
         color: $color-primary-900;
@@ -146,6 +145,7 @@
     }
 
     &--danger {
+
       i,
       span {
         color: $color-danger-text;
@@ -166,13 +166,13 @@
 }
 
 .cat-sep-rename-overlay {
-  position        : fixed;
-  z-index         : $z-overlay;
-  display         : flex;
-  align-items     : center;
-  gap             : $spacing-2;
-  background      : $color-bg-primary;
-  padding         : 0 $spacing-3;
+  position   : fixed;
+  z-index    : $z-overlay;
+  display    : flex;
+  align-items: center;
+  gap        : $spacing-2;
+  background : $color-bg-primary;
+  padding    : 0 $spacing-3;
 
   &__input {
     flex     : 1;
@@ -194,7 +194,9 @@
     box-shadow   : $shadow-neumorph-raised;
     transition   : background $transition-fast, box-shadow $transition-fast;
 
-    i { font-size: $icon-sm; }
+    i {
+      font-size: $icon-sm;
+    }
 
     &:active {
       background: $color-success-border;

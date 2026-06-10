@@ -196,7 +196,7 @@
     font-size: $font-size-xl + 10px;
     font-weight: $font-weight-medium;
     color: $color-text-primary;
-    font-family: $font-body;
+    font-family: $font-display;
     line-height: 1;
     padding: 0;
     outline: none;
@@ -239,7 +239,7 @@
     font-size: $font-size-xl;
     color: $color-text-primary;
     cursor: pointer;
-    font-family: $font-mono;
+    font-family: $font-display;
     transition: box-shadow $transition-fast;
     flex-shrink: 0;
 
