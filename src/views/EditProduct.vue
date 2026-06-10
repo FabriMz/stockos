@@ -113,7 +113,7 @@
             <label class="form-label" for="ep-units-per-box">Uds. por caja</label>
             <input class="form-input" :class="{ 'form-input--error': errors.unitsPerBox }" id="ep-units-per-box"
               name="ep-units-per-box" type="number" :value="form.unitsPerBox" inputmode="numeric" min="1"
-              :max="MAX_UNITS_BOX" step="1" @blur="validateUnitsPerBox"
+              :max="MAX_UNITS_BOX" step="1" :disabled="minStockManual && !!form.minStock" @blur="validateUnitsPerBox"
               @input="e => { const v = sanitizeInteger(e.target.value, MAX_UNITS_BOX); form.unitsPerBox = v === '' ? '' : Number(v); e.target.value = v; minStockManual.value = false; validateUnitsPerBox() }" />
             <span v-if="errors.unitsPerBox" class="form-hint form-hint--error" role="alert">{{ errors.unitsPerBox
             }}</span>

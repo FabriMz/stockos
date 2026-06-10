@@ -164,6 +164,7 @@
             <label class="form-label" for="np-box-count">Cantidad de cajas</label>
             <input class="form-input" id="np-box-count" name="np-box-count" type="number"
               :value="form.boxCount" placeholder="Ej. 2" inputmode="numeric" min="1" :max="MAX_STOCK" step="1"
+              :disabled="!!form.minStock"
               @input="e => { const v = sanitizeInteger(e.target.value, MAX_STOCK); form.boxCount = v === '' ? '' : Number(v); e.target.value = v }" />
           </div>
         </div>
