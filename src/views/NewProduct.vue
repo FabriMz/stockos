@@ -161,35 +161,39 @@
             </div>
           </div>
           <div class="form-group">
+            <label class="form-label" for="np-box-count">Cantidad de cajas</label>
+            <input class="form-input" id="np-box-count" name="np-box-count" type="number"
+              :value="form.boxCount" placeholder="Ej. 2" inputmode="numeric" min="1" :max="MAX_STOCK" step="1"
+              @input="e => { const v = sanitizeInteger(e.target.value, MAX_STOCK); form.boxCount = v === '' ? '' : Number(v); e.target.value = v }" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
             <label class="form-label" for="np-udscaja">Uds. por caja</label>
             <input class="form-input" :class="{ 'form-input--error': errors.unitsPerBox }" id="np-udscaja"
               name="np-udscaja" type="number" :value="form.unitsPerBox" placeholder="Ej. 12" inputmode="numeric" min="1"
               :max="MAX_UNITS_BOX" step="1" @blur="validateUnitsPerBox"
-              @input="e => { const v = sanitizeInteger(e.target.value, MAX_UNITS_BOX); form.unitsPerBox = v === '' ? '' : Number(v); e.target.value = v; minStockManual.value = false; validateUnitsPerBox() }" />
-            <span v-if="errors.unitsPerBox" class="form-hint form-hint--error" role="alert">{{ errors.unitsPerBox
-              }}</span>
+              @input="e => { const v = sanitizeInteger(e.target.value, MAX_UNITS_BOX); form.unitsPerBox = v === '' ? '' : Number(v); e.target.value = v; validateUnitsPerBox() }" />
+            <span v-if="errors.unitsPerBox" class="form-hint form-hint--error" role="alert">{{ errors.unitsPerBox }}</span>
           </div>
-        </div>
-        <div class="form-row form-row--half">
           <div class="form-group">
             <label class="form-label" for="np-min-stock">Stock mínimo</label>
             <input
               class="form-input"
-              :class="{ 'form-input--error': errors.minStock, 'form-input--auto': !minStockManual && form.unitsPerBox > 0 }"
+              :class="{ 'form-input--error': errors.minStock }"
               id="np-min-stock"
               name="np-min-stock"
               type="number"
               :value="form.minStock"
-              :placeholder="form.unitsPerBox > 0 ? String(form.unitsPerBox) : 'Ej. 5'"
+              placeholder="Ej. 5"
               inputmode="numeric"
               min="1"
               :max="MAX_STOCK"
               step="1"
-              @input="e => { const v = sanitizeInteger(e.target.value, MAX_STOCK); form.minStock = v === '' ? '' : Number(v); e.target.value = v; minStockManual.value = v !== ''; validateMinStock() }"
+              @input="e => { const v = sanitizeInteger(e.target.value, MAX_STOCK); form.minStock = v === '' ? '' : Number(v); e.target.value = v; validateMinStock() }"
               @blur="validateMinStock"
             />
             <span v-if="errors.minStock" class="form-hint form-hint--error" role="alert">{{ errors.minStock }}</span>
-            <span v-else-if="!minStockManual && form.unitsPerBox > 0" class="form-hint">Calculado de uds. por caja</span>
             <span v-else class="form-hint">Avisar cuando baje de este número</span>
           </div>
         </div>
@@ -335,7 +339,6 @@ const batchContext = route.query.batchNumber || null
 
 const sizeQty = ref('')
 const sizeUnit = ref('gr')
-const minStockManual = ref(false)
 
 const form = reactive({
   sku: '', name: '', bid: route.query.bid || '', origin: '', size: '',
@@ -344,13 +347,7 @@ const form = reactive({
   ic: 'ti-box', bg: '#F0EAE4', col: '#791132', img: '',
   minStock: '', alertDays: 30,
   priceCurrency: 'UYU',
-})
-
-watch(() => form.unitsPerBox, (val) => {
-  // Solo auto-completar si el usuario no lo modificó manualmente
-  if (!minStockManual.value) {
-    form.minStock = (val && Number(val) > 0) ? Number(val) : ''
-  }
+  boxCount: '',
 })
 
 watch([sizeQty, sizeUnit], ([qty, unit]) => {
