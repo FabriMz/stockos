@@ -126,27 +126,25 @@
             <span v-if="errors.unitsPerBox" class="form-hint form-hint--error" role="alert">{{ errors.unitsPerBox }}</span>
           </div>
         </div>
-        <div class="form-row form-row--half">
+        <div v-if="!isBoxMode" class="form-row form-row--half">
           <div class="form-group">
-            <label class="form-label" for="ep-min-stock">Stock mínimo</label>
+            <label class="form-label" for="ep-min-stock">Stock inicial</label>
             <input
               class="form-input"
-              :class="{ 'form-input--error': errors.minStock, 'form-input--auto': !minStockManual && form.unitsPerBox > 0 }"
+              :class="{ 'form-input--error': errors.minStock }"
               id="ep-min-stock"
               name="ep-min-stock"
               type="number"
               :value="form.minStock"
-              :placeholder="form.unitsPerBox > 0 ? String(form.unitsPerBox) : 'Ej. 5'"
+              placeholder="Ej. 5"
               inputmode="numeric"
               min="1"
               :max="MAX_STOCK"
               step="1"
-              @input="e => { const v = sanitizeInteger(e.target.value, MAX_STOCK); form.minStock = v === '' ? '' : Number(v); e.target.value = v; minStockManual.value = v !== ''; validateMinStock() }"
+              @input="e => { const v = sanitizeInteger(e.target.value, MAX_STOCK); form.minStock = v === '' ? '' : Number(v); e.target.value = v; validateMinStock() }"
               @blur="validateMinStock"
             />
             <span v-if="errors.minStock" class="form-hint form-hint--error" role="alert">{{ errors.minStock }}</span>
-            <span v-else-if="!minStockManual && form.unitsPerBox > 0" class="form-hint">Calculado de uds. por caja</span>
-            <span v-else class="form-hint">Avisar cuando baje de este número</span>
           </div>
         </div>
       </div>
@@ -292,7 +290,6 @@ const backLabel = computed(() => alertBack.value?.label ?? 'Detalle')
 const SIZE_UNITS = ['gr', 'Kg', 'mg', 'oz', 'lb', 'ml', 'Lt', 'cl', 'fl oz', 'cm', 'm', 'ud']
 const sizeQty = ref('')
 const sizeUnit = ref('gr')
-const minStockManual = ref(false)
 const isBoxMode = computed(() => Number(form.unitsPerBox) > 0)
 
 function parseSizeString(raw) {
@@ -311,6 +308,7 @@ const form = reactive({
   alertDays: 30,
   img: '',
   priceCurrency: 'USD',
+  minStock: '',
 })
 
 watch([sizeQty, sizeUnit], ([qty, unit]) => {
@@ -392,17 +390,11 @@ function onResetDiscount() {
 }
 
 // ─── Cargar producto al editar ────────────────────────────────────────────────
-watch(() => form.unitsPerBox, (val) => {
-  if (!minStockManual.value) {
-    form.minStock = (val && Number(val) > 0) ? Number(val) : ''
-  }
-})
-
 watch(product, p => {
   if (!p) return
   Object.assign(form, {
-    name: p.name, size: p.size, unitsPerBox: p.unitsPerBox,
-    boxCount: (p.unitsPerBox > 0 && p.stock > 0) ? Math.floor(p.stock / p.unitsPerBox) : 0,
+    name: p.name, size: p.size, unitsPerBox: p.unitsPerBox ?? 0,
+    boxCount: p.boxCount ?? 0,
     cost: p.cost, vatRate: p.vatRate ?? '', margin: p.margin ?? '', price: p.price,
     discount: p.discount || DEFAULT_PRESET,
     stock: p.stock, expiry: p.expiry || '', batch: p.batch || '',
@@ -410,7 +402,7 @@ watch(product, p => {
     alertDays: p.alertDays || 30,
     img: p.img || '',
     priceCurrency: p.priceCurrency || 'USD',
-    minStock: p.minStock || p.unitsPerBox || '',
+    minStock: p.minStock || '',
   })
   const parsed = parseSizeString(p.size)
   sizeQty.value = parsed.qty
