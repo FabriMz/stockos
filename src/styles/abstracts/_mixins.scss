@@ -181,4 +181,11 @@
     color: $color-text-secondary;
     box-shadow: $shadow-neumorph-pressed;
   }
+
+  &:disabled {
+    color: $color-text-tertiary;
+    box-shadow: $shadow-neumorph-pressed;
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }

@@ -172,7 +172,7 @@
             <label class="form-label" for="np-udscaja">Uds. por caja</label>
             <input class="form-input" :class="{ 'form-input--error': errors.unitsPerBox }" id="np-udscaja"
               name="np-udscaja" type="number" :value="form.unitsPerBox" placeholder="Ej. 12" inputmode="numeric" min="1"
-              :max="MAX_UNITS_BOX" step="1" @blur="validateUnitsPerBox"
+              :max="MAX_UNITS_BOX" step="1" :disabled="!form.boxCount" @blur="validateUnitsPerBox"
               @input="e => { const v = sanitizeInteger(e.target.value, MAX_UNITS_BOX); form.unitsPerBox = v === '' ? '' : Number(v); e.target.value = v; validateUnitsPerBox() }" />
             <span v-if="errors.unitsPerBox" class="form-hint form-hint--error" role="alert">{{ errors.unitsPerBox }}</span>
           </div>
@@ -190,6 +190,7 @@
               min="1"
               :max="MAX_STOCK"
               step="1"
+              :disabled="!!form.boxCount"
               @input="e => { const v = sanitizeInteger(e.target.value, MAX_STOCK); form.minStock = v === '' ? '' : Number(v); e.target.value = v; validateMinStock() }"
               @blur="validateMinStock"
             />
