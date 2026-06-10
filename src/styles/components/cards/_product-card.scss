@@ -200,23 +200,7 @@
   }
 
   &__action-btn {
-    @include flex-row($spacing-1, center, center);
-    flex         : 1;
-    height       : $btn-height-sm;
-    border-radius: $radius-md;
-    font-family  : $font-display;
-    font-size    : $font-size-sm;
-    font-weight  : $font-weight-medium;
-    color        : $color-text-secondary;
-    background   : $color-neumorph-base;
-    border       : none;
-    cursor       : pointer;
-    box-shadow   : $shadow-neumorph-raised;
-    transition   : box-shadow $transition-fast;
-
-    i { font-size: $icon-sm; }
-
-    &:active { box-shadow: $shadow-neumorph-pressed; }
+    @include action-btn-base($shadow-neumorph-raised);
 
     &--edit {
       color     : $color-danger-text;

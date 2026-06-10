@@ -63,11 +63,11 @@ $color-neumorph-inset-s: #FFFFFF;
 
   // Sombras neumórficas
 $shadow-neumorph-raised: 4px 4px 10px $color-neumorph-dark,
--4px -4px 10px $color-neumorph-light;
+  -4px -4px 10px $color-neumorph-light;
 $shadow-neumorph-inset: inset 2px 2px 6px $color-neumorph-inset-l,
-inset -2px -2px 6px $color-neumorph-inset-s;
+  inset -2px -2px 6px $color-neumorph-inset-s;
 $shadow-neumorph-flat: 2px 2px 6px $color-neumorph-dark,
--2px -2px 6px $color-neumorph-light;
+  -2px -2px 6px $color-neumorph-light;
 $shadow-neumorph-pressed: inset 1px 1px 4px $color-neumorph-inset-l, inset -1px -1px 4px $color-neumorph-inset-s;
 
                                              // ─── SUPERFICIES ─────────────────────────────────────────────────────────────
@@ -177,6 +177,14 @@ $stripe-width     : 3px;
 $shadow-sm: $shadow-neumorph-flat;
 $shadow-md: $shadow-neumorph-raised;
 $shadow-lg: 6px 6px 14px $color-neumorph-dark, -6px -6px 14px $color-neumorph-light;
+
+  // Sombra coloreada del botón primario (color-primary tint)
+$shadow-primary-raised: 3px 3px 8px rgba(192, 57, 43, 0.35),
+-1px -1px 4px rgba(255, 255, 255, 0.4);
+$shadow-primary-pressed: inset 2px 2px 5px rgba(0, 0, 0, 0.25), inset -1px -1px 3px rgba(255, 255, 255, 0.15);
+
+  // Sombra pressed para fondos de color (danger-bg, etc.)
+$shadow-neumorph-pressed-danger: inset 2px 2px 5px rgba(0, 0, 0, 0.18), inset -1px -1px 3px rgba(255, 255, 255, 0.12);
 
   // ─── TRANSICIONES ────────────────────────────────────────────────────────────
 $transition-fast  : 0.1s ease;

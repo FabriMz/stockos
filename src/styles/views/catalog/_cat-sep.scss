@@ -34,11 +34,7 @@
     margin          : 0 $spacing-3;
     align-self      : center;
     margin-bottom   : 1px;
-    background-image: repeating-linear-gradient(to right,
-        rgba(255, 220, 190, 0.18) 0,
-        rgba(255, 220, 190, 0.18) 2px,
-        transparent 2px,
-        transparent 7px);
+    @include dots-separator;
   }
 
   &__cat-gear-btn {

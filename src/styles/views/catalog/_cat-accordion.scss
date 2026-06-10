@@ -41,11 +41,7 @@
     flex            : 1;
     height          : 1px;
     min-width       : $spacing-3;
-    background-image: repeating-linear-gradient(to right,
-        rgba(255, 220, 190, 0.18) 0,
-        rgba(255, 220, 190, 0.18) 2px,
-        transparent 2px,
-        transparent 7px);
+    @include dots-separator;
   }
 
   &__count {

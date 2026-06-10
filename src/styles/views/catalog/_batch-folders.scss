@@ -84,27 +84,7 @@
   }
 
   &__action-btn {
-    @include flex-row($spacing-1, center, center);
-    flex         : 1;
-    height       : $btn-height-sm;
-    border-radius: $radius-md;
-    font-family  : $font-display;
-    font-size    : $font-size-sm;
-    font-weight  : $font-weight-medium;
-    color        : $color-text-secondary;
-    background   : $color-neumorph-base;
-    box-shadow   : $shadow-neumorph-flat;
-    border       : none;
-    cursor       : pointer;
-    transition   : box-shadow $transition-fast;
-
-    i {
-      font-size: $icon-sm;
-    }
-
-    &:active {
-      box-shadow: $shadow-neumorph-pressed;
-    }
+    @include action-btn-base;
 
     &--danger {
       color     : $color-danger-text;
@@ -112,7 +92,7 @@
       box-shadow: none;
 
       &:active {
-        box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.18), inset -1px -1px 3px rgba(255, 255, 255, 0.12);
+        box-shadow: $shadow-neumorph-pressed-danger;
       }
     }
   }
@@ -170,11 +150,7 @@
     margin          : 0 $spacing-3;
     align-self      : center;
     margin-bottom   : 1px;
-    background-image: repeating-linear-gradient(to right,
-        rgba(255, 220, 190, 0.18) 0,
-        rgba(255, 220, 190, 0.18) 2px,
-        transparent 2px,
-        transparent 7px);
+    @include dots-separator;
   }
 
   &__sort-btn {

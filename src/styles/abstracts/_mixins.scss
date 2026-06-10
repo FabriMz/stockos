@@ -189,3 +189,39 @@
     cursor: not-allowed;
   }
 }
+// ─── BOTÓN DE ACCIÓN (barra inferior de cards/panels) ────────────────────────
+@mixin action-btn-base($shadow: $shadow-neumorph-flat) {
+  @include flex-row($spacing-1, center, center);
+  flex         : 1;
+  height       : $btn-height-sm;
+  border-radius: $radius-md;
+  font-family  : $font-display;
+  font-size    : $font-size-sm;
+  font-weight  : $font-weight-medium;
+  color        : $color-text-secondary;
+  background   : $color-neumorph-base;
+  box-shadow   : $shadow;
+  border       : none;
+  cursor       : pointer;
+  transition   : box-shadow $transition-fast;
+
+  i {
+    font-size: $icon-sm;
+  }
+
+  &:active {
+    box-shadow: $shadow-neumorph-pressed;
+  }
+}
+
+// ─── SEPARADOR PUNTEADO (línea horizontal decorativa) ────────────────────────
+// Usado en cat-sep, batch-folders, cat-accordion.
+@mixin dots-separator {
+  background-image: repeating-linear-gradient(
+    to right,
+    rgba(255, 220, 190, 0.18) 0,
+    rgba(255, 220, 190, 0.18) 2px,
+    transparent 2px,
+    transparent 7px
+  );
+}
