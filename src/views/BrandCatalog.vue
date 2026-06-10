@@ -478,11 +478,11 @@
               <span v-if="migrateNewCatError" class="settings-sheet__edit-error" role="alert">{{ migrateNewCatError
               }}</span>
               <div class="settings-sheet__item-actions">
-                <button class="settings-sheet__confirm-btn" aria-label="Confirmar" @click="handleMigrateCreateCat">
-                  <i class="ti ti-check" aria-hidden="true"></i>
-                </button>
                 <button class="settings-sheet__cancel-btn" aria-label="Cancelar" @click="cancelMigrateCreateCat">
                   <i class="ti ti-x" aria-hidden="true"></i>
+                </button>
+                <button class="settings-sheet__confirm-btn" aria-label="Confirmar" @click="handleMigrateCreateCat">
+                  <i class="ti ti-check" aria-hidden="true"></i>
                 </button>
               </div>
             </div>
@@ -539,11 +539,11 @@
                 unbrandedNewBrandError
               }}</span>
               <div class="settings-sheet__item-actions">
-                <button class="settings-sheet__confirm-btn" aria-label="Confirmar" @click="handleUnbrandedCreateBrand">
-                  <i class="ti ti-check" aria-hidden="true"></i>
-                </button>
                 <button class="settings-sheet__cancel-btn" aria-label="Cancelar" @click="cancelUnbrandedCreateBrand">
                   <i class="ti ti-x" aria-hidden="true"></i>
+                </button>
+                <button class="settings-sheet__confirm-btn" aria-label="Confirmar" @click="handleUnbrandedCreateBrand">
+                  <i class="ti ti-check" aria-hidden="true"></i>
                 </button>
               </div>
             </div>
@@ -613,12 +613,12 @@
                   <span v-if="settingsEditError" class="settings-sheet__edit-error" role="alert">{{ settingsEditError
                   }}</span>
                   <div class="settings-sheet__item-actions">
+                    <button class="settings-sheet__cancel-btn" aria-label="Cancelar" @click="cancelSettingsEdit">
+                      <i class="ti ti-x" aria-hidden="true"></i>
+                    </button>
                     <button class="settings-sheet__confirm-btn" aria-label="Confirmar"
                       @click="confirmSettingsCatRename(cat.id)">
                       <i class="ti ti-check" aria-hidden="true"></i>
-                    </button>
-                    <button class="settings-sheet__cancel-btn" aria-label="Cancelar" @click="cancelSettingsEdit">
-                      <i class="ti ti-x" aria-hidden="true"></i>
                     </button>
                   </div>
                 </template>
@@ -656,11 +656,11 @@
                 <span v-if="settingsNewCatError" class="settings-sheet__edit-error" role="alert">{{ settingsNewCatError
                 }}</span>
                 <div class="settings-sheet__item-actions">
-                  <button class="settings-sheet__confirm-btn" aria-label="Confirmar" @click="confirmSettingsCreateCat">
-                    <i class="ti ti-check" aria-hidden="true"></i>
-                  </button>
                   <button class="settings-sheet__cancel-btn" aria-label="Cancelar" @click="cancelSettingsCreateCat">
                     <i class="ti ti-x" aria-hidden="true"></i>
+                  </button>
+                  <button class="settings-sheet__confirm-btn" aria-label="Confirmar" @click="confirmSettingsCreateCat">
+                    <i class="ti ti-check" aria-hidden="true"></i>
                   </button>
                 </div>
               </div>
@@ -686,12 +686,12 @@
                   <span v-if="settingsEditError" class="settings-sheet__edit-error" role="alert">{{ settingsEditError
                   }}</span>
                   <div class="settings-sheet__item-actions">
+                    <button class="settings-sheet__cancel-btn" aria-label="Cancelar" @click="cancelSettingsEdit">
+                      <i class="ti ti-x" aria-hidden="true"></i>
+                    </button>
                     <button class="settings-sheet__confirm-btn" aria-label="Confirmar"
                       @click="confirmSettingsBrandRename(brand.id)">
                       <i class="ti ti-check" aria-hidden="true"></i>
-                    </button>
-                    <button class="settings-sheet__cancel-btn" aria-label="Cancelar" @click="cancelSettingsEdit">
-                      <i class="ti ti-x" aria-hidden="true"></i>
                     </button>
                   </div>
                 </template>
@@ -731,12 +731,12 @@
                   settingsNewBrandError
                 }}</span>
                 <div class="settings-sheet__item-actions">
+                  <button class="settings-sheet__cancel-btn" aria-label="Cancelar" @click="cancelSettingsCreateBrand">
+                    <i class="ti ti-x" aria-hidden="true"></i>
+                  </button>
                   <button class="settings-sheet__confirm-btn" aria-label="Confirmar"
                     @click="confirmSettingsCreateBrand">
                     <i class="ti ti-check" aria-hidden="true"></i>
-                  </button>
-                  <button class="settings-sheet__cancel-btn" aria-label="Cancelar" @click="cancelSettingsCreateBrand">
-                    <i class="ti ti-x" aria-hidden="true"></i>
                   </button>
                 </div>
               </div>
@@ -790,12 +790,12 @@
                   <span v-if="batchSettingsEditError" class="settings-sheet__edit-error" role="alert">{{
                     batchSettingsEditError }}</span>
                   <div class="settings-sheet__item-actions">
+                    <button class="settings-sheet__cancel-btn" aria-label="Cancelar" @click="cancelBatchSettingsEdit">
+                      <i class="ti ti-x" aria-hidden="true"></i>
+                    </button>
                     <button class="settings-sheet__confirm-btn" aria-label="Confirmar"
                       @click="confirmBatchSettingsRename(folder.batchNumber)">
                       <i class="ti ti-check" aria-hidden="true"></i>
-                    </button>
-                    <button class="settings-sheet__cancel-btn" aria-label="Cancelar" @click="cancelBatchSettingsEdit">
-                      <i class="ti ti-x" aria-hidden="true"></i>
                     </button>
                   </div>
                 </template>
