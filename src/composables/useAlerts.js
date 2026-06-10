@@ -11,9 +11,17 @@ import { parseExpiry } from '../utils/alerts.js'
 export function useAlerts(products, brands) {
 
   // ─── Predicados y helpers ───────────────────────────────────────────────────
-  const pct          = p => Math.round((p.stock / p.max) * 100)
+  const pct          = p => {
+    const threshold = p.minStock || p.unitsPerBox || 0
+    return threshold > 0 ? Math.round((p.stock / threshold) * 100) : 100
+  }
   const isOutOfStock = p => p.stock === 0
-  const isLowStock   = p => p.stock > 0 && pct(p) < 25
+  const isLowStock   = p => {
+    if (p.stock <= 0) return false
+    const threshold = p.minStock || p.unitsPerBox || 0
+    if (!threshold) return false
+    return p.stock < threshold
+  }
   const isExpiring   = p => !!p.expiry
   const hasAlert     = p => isOutOfStock(p) || isLowStock(p) || isExpiring(p)
   const stockColor   = p => isOutOfStock(p) ? '#791132' : isLowStock(p) ? '#90542f' : '#2D8A5F'

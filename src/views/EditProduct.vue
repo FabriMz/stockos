@@ -114,9 +114,32 @@
             <input class="form-input" :class="{ 'form-input--error': errors.unitsPerBox }" id="ep-units-per-box"
               name="ep-units-per-box" type="number" :value="form.unitsPerBox" inputmode="numeric" min="1"
               :max="MAX_UNITS_BOX" step="1" @blur="validateUnitsPerBox"
-              @input="e => { const v = sanitizeInteger(e.target.value, MAX_UNITS_BOX); form.unitsPerBox = v === '' ? '' : Number(v); e.target.value = v; validateUnitsPerBox() }" />
+              @input="e => { const v = sanitizeInteger(e.target.value, MAX_UNITS_BOX); form.unitsPerBox = v === '' ? '' : Number(v); e.target.value = v; minStockManual.value = false; validateUnitsPerBox() }" />
             <span v-if="errors.unitsPerBox" class="form-hint form-hint--error" role="alert">{{ errors.unitsPerBox
             }}</span>
+          </div>
+        </div>
+        <div class="form-row form-row--half">
+          <div class="form-group">
+            <label class="form-label" for="ep-min-stock">Stock mínimo</label>
+            <input
+              class="form-input"
+              :class="{ 'form-input--error': errors.minStock, 'form-input--auto': !minStockManual && form.unitsPerBox > 0 }"
+              id="ep-min-stock"
+              name="ep-min-stock"
+              type="number"
+              :value="form.minStock"
+              :placeholder="form.unitsPerBox > 0 ? String(form.unitsPerBox) : 'Ej. 5'"
+              inputmode="numeric"
+              min="1"
+              :max="MAX_STOCK"
+              step="1"
+              @input="e => { const v = sanitizeInteger(e.target.value, MAX_STOCK); form.minStock = v === '' ? '' : Number(v); e.target.value = v; minStockManual.value = v !== ''; validateMinStock() }"
+              @blur="validateMinStock"
+            />
+            <span v-if="errors.minStock" class="form-hint form-hint--error" role="alert">{{ errors.minStock }}</span>
+            <span v-else-if="!minStockManual && form.unitsPerBox > 0" class="form-hint">Calculado de uds. por caja</span>
+            <span v-else class="form-hint">Avisar cuando baje de este número</span>
           </div>
         </div>
       </div>
@@ -227,7 +250,7 @@
       </div>
 
       <p class="section-label">Actualizar stock</p>
-      <StockAdjuster v-model="form.stock" label="Unidades actuales" :max="product.max" :show-bar="true"
+      <StockAdjuster v-model="form.stock" label="Unidades actuales" :max="form.minStock || form.unitsPerBox || 0" :show-bar="true"
         input-id="ep-stock" :max-stock="MAX_STOCK" :error="errors.stock" @validate="validateStock" />
 
       <div class="spacer--sm"></div>
@@ -267,6 +290,7 @@ const backLabel = computed(() => alertBack.value?.label ?? 'Detalle')
 const SIZE_UNITS = ['gr', 'Kg', 'mg', 'oz', 'lb', 'ml', 'Lt', 'cl', 'fl oz', 'cm', 'm', 'ud']
 const sizeQty = ref('')
 const sizeUnit = ref('gr')
+const minStockManual = ref(false)
 
 function parseSizeString(raw) {
   if (!raw) return { qty: '', unit: 'gr' }
@@ -298,7 +322,7 @@ const {
 
 const {
   errors,
-  validateCost, validateVatRate, validateMargin, validatePrice, validateUnitsPerBox, validateStock,
+  validateCost, validateVatRate, validateMargin, validatePrice, validateUnitsPerBox, validateStock, validateMinStock,
   validateNumericFields, hasNumericErrors,
   MAX_STOCK, MAX_UNITS_BOX, MAX_PRICE, MAX_VAT, MAX_MARGIN,
 } = useProductFieldValidation(form)
@@ -365,6 +389,12 @@ function onResetDiscount() {
 }
 
 // ─── Cargar producto al editar ────────────────────────────────────────────────
+watch(() => form.unitsPerBox, (val) => {
+  if (!minStockManual.value) {
+    form.minStock = (val && Number(val) > 0) ? Number(val) : ''
+  }
+})
+
 watch(product, p => {
   if (!p) return
   Object.assign(form, {
@@ -376,6 +406,7 @@ watch(product, p => {
     alertDays: p.alertDays || 30,
     img: p.img || '',
     priceCurrency: p.priceCurrency || 'USD',
+    minStock: p.minStock || p.unitsPerBox || '',
   })
   const parsed = parseSizeString(p.size)
   sizeQty.value = parsed.qty

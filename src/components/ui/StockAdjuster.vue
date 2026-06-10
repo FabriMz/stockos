@@ -45,7 +45,7 @@
       </div>
       <div class="stock-nums">
         <span>{{ modelValue }} uds.</span>
-        <span>cap. {{ max }} uds.</span>
+        <span>mín. {{ max }} uds.</span>
       </div>
     </template>
 

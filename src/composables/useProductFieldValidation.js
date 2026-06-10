@@ -15,6 +15,7 @@ export function useProductFieldValidation(form) {
     price:       null,
     unitsPerBox: null,
     stock:       null,
+    minStock:    null,
   })
 
   // ─── Validadores individuales ───────────────────────────────────────────────
@@ -78,6 +79,16 @@ export function useProductFieldValidation(form) {
     errors.stock = null
   }
 
+  function validateMinStock() {
+    const v = form.minStock
+    if (v === '' || v === null || v === undefined) { errors.minStock = null; return }
+    if (typeof v !== 'number' || isNaN(v))         { errors.minStock = 'Ingresá un número entero'; return }
+    if (!Number.isInteger(v))                      { errors.minStock = 'Solo números enteros'; return }
+    if (v < 1)                                     { errors.minStock = 'Mínimo 1 unidad'; return }
+    if (v > MAX_STOCK)                             { errors.minStock = `Máximo ${MAX_STOCK.toLocaleString()} uds.`; return }
+    errors.minStock = null
+  }
+
   // ─── Validar todo ──────────────────────────────────────────────────────────
 
   function validateNumericFields() {
@@ -87,6 +98,7 @@ export function useProductFieldValidation(form) {
     validatePrice()
     validateUnitsPerBox()
     validateStock()
+    validateMinStock()
   }
 
   const hasNumericErrors = computed(() =>
@@ -101,6 +113,7 @@ export function useProductFieldValidation(form) {
     validatePrice,
     validateUnitsPerBox,
     validateStock,
+    validateMinStock,
     validateNumericFields,
     hasNumericErrors,
     MAX_STOCK,
