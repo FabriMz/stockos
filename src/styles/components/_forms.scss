@@ -58,13 +58,23 @@
 }
 
 .form-hint {
-  @include font-mono($font-size-xs);
+  @include font-mono($font-size-sm + 1);
   color: $color-text-tertiary;
   display: block;
   width: 100%;
 
   &--error {
     color: $color-danger-text;
+  }
+
+  &--block {
+  text-align: right;
+    line-height: 1.5;
+
+    strong {
+      color: $color-text-secondary;
+      font-weight: 600;
+    }
   }
 }
 

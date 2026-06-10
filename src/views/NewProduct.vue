@@ -178,7 +178,7 @@
             <span v-if="errors.unitsPerBox" class="form-hint form-hint--error" role="alert">{{ errors.unitsPerBox }}</span>
           </div>
           <div class="form-group">
-            <label class="form-label" for="np-min-stock">Stock mínimo</label>
+            <label class="form-label" for="np-min-stock">Stock inicial</label>
             <input
               class="form-input"
               :class="{ 'form-input--error': errors.minStock }"
@@ -196,9 +196,9 @@
               @blur="validateMinStock"
             />
             <span v-if="errors.minStock" class="form-hint form-hint--error" role="alert">{{ errors.minStock }}</span>
-            <span v-else class="form-hint">Avisar cuando baje de este número</span>
           </div>
         </div>
+        <p class="form-hint form-hint--block">Si tienes productos sin cajas, ingrésalos en <strong>Stock inicial</strong>.</p>
       </div>
 
       <p class="section-label">Precios</p>
