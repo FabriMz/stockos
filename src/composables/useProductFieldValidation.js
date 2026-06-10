@@ -62,7 +62,11 @@ export function useProductFieldValidation(form) {
 
   function validateUnitsPerBox() {
     const v = form.unitsPerBox
-    if (v === '' || v === null || v === undefined) { errors.unitsPerBox = null; return }
+    const hasBoxCount = form.boxCount !== '' && form.boxCount !== null && form.boxCount !== undefined && Number(form.boxCount) > 0
+    if (v === '' || v === null || v === undefined) {
+      errors.unitsPerBox = hasBoxCount ? 'Requerido cuando hay cantidad de cajas' : null
+      return
+    }
     if (typeof v !== 'number' || isNaN(v))         { errors.unitsPerBox = 'Ingresá un número entero'; return }
     if (!Number.isInteger(v))                      { errors.unitsPerBox = 'Solo números enteros'; return }
     if (v < 1)                                     { errors.unitsPerBox = 'Mínimo 1 unidad'; return }
