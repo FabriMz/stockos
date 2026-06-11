@@ -111,6 +111,57 @@
         <p v-if="product.unitsPerBox" class="detail__reorder-hint">
           Mín. reposición: 1 caja = {{ product.unitsPerBox }} uds.
         </p>
+
+        <div class="detail__exit">
+          <span class="detail__exit__label">Registrar salida</span>
+          <div class="detail__exit__controls" role="group" aria-label="Registrar salida de stock">
+            <button
+              class="detail__exit__btn"
+              @click="decrementExit"
+              :disabled="exitQty <= 1"
+              aria-label="Restar unidad a la salida"
+            >−</button>
+            <input
+              id="detail-exit-qty"
+              name="detail-exit-qty"
+              type="number"
+              class="detail__exit__input"
+              v-model.number="exitQty"
+              min="1"
+              :max="product.stock"
+              step="1"
+              inputmode="numeric"
+              aria-label="Cantidad a descontar"
+              @keydown="onExitKeyDown"
+              @input="onExitInput"
+              @blur="onExitBlur"
+            />
+            <button
+              class="detail__exit__btn"
+              @click="incrementExit"
+              :disabled="exitQty >= product.stock"
+              aria-label="Sumar unidad a la salida"
+            >+</button>
+            <button
+              class="detail__exit__confirm btn btn--primary btn--sm"
+              @click="confirmExit"
+              :disabled="product.stock === 0 || exitQty < 1"
+              aria-label="Confirmar salida de stock"
+            >
+              <i class="ti ti-minus" aria-hidden="true"></i>
+              Descontar
+            </button>
+          </div>
+          <p v-if="product.stock === 0" class="detail__exit__hint detail__exit__hint--out" role="alert">
+            Sin stock disponible
+          </p>
+          <p v-else-if="exitQty >= product.stock" class="detail__exit__hint detail__exit__hint--warn" role="status">
+            Quedarán 0 uds. en stock
+          </p>
+          <p v-else class="detail__exit__hint" role="status">
+            Quedarán {{ product.stock - exitQty }} uds. en stock
+          </p>
+        </div>
       </div>
 
       <div class="spacer--xs"></div>
@@ -141,7 +192,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useProductsStore } from '../stores/products.js'
 import { useCurrencyStore } from '../stores/currency.js'
@@ -207,6 +258,55 @@ const fillClass = computed(() => {
   if (pct.value < 25) return 'stock-bar__fill--low'
   return 'stock-bar__fill--ok'
 })
+
+// ─── Salida de stock ──────────────────────────────────────────────────────────
+const exitQty = ref(1)
+
+// Resetear exitQty si el producto cambia o el stock baja por debajo del valor actual
+watch(() => product.value?.stock, (stock) => {
+  if (stock != null && exitQty.value > stock) {
+    exitQty.value = Math.max(1, stock)
+  }
+})
+
+const BLOCKED_EXIT_KEYS = ['e', 'E', '+', '-', ',', '.']
+
+function onExitKeyDown(e) {
+  if (BLOCKED_EXIT_KEYS.includes(e.key)) e.preventDefault()
+}
+
+function onExitInput(e) {
+  const raw = e.target.value.replace(/[^0-9]/g, '')
+  if (raw === '') { exitQty.value = 1; e.target.value = 1; return }
+  const val = parseInt(raw, 10)
+  if (!isNaN(val)) {
+    const clamped = Math.min(Math.max(1, val), product.value?.stock ?? 1)
+    exitQty.value = clamped
+    e.target.value = clamped
+  }
+}
+
+function onExitBlur(e) {
+  if (!e.target.value || Number(e.target.value) < 1) {
+    exitQty.value = 1
+    e.target.value = 1
+  }
+}
+
+function incrementExit() {
+  const max = product.value?.stock ?? 0
+  if (exitQty.value < max) exitQty.value++
+}
+
+function decrementExit() {
+  if (exitQty.value > 1) exitQty.value--
+}
+
+function confirmExit() {
+  if (!product.value || product.value.stock === 0) return
+  store.registerExit(product.value.id, exitQty.value)
+  exitQty.value = 1
+}
 
 const pvpDiscountLabel = computed(() => {
   const raw = product.value?.discount

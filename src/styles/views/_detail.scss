@@ -184,6 +184,80 @@
     color: $color-text-secondary;
   }
 
+  &__exit {
+    margin-top: $spacing-5;
+    padding-top: $spacing-4;
+    border-top: $border;
+
+    &__label {
+      @include font-mono($font-size-xs, $font-weight-medium);
+      letter-spacing: $letter-spacing-wider;
+      text-transform: uppercase;
+      color: $color-text-secondary;
+      display: block;
+      margin-bottom: $spacing-3;
+    }
+
+    &__controls {
+      @include flex-row($spacing-2, center);
+    }
+
+    &__btn {
+      @include flex-center;
+      width        : 32px;
+      height       : 32px;
+      flex-shrink  : 0;
+      border-radius: $radius-md;
+      border       : $border-strong;
+      background   : $color-neumorph-base;
+      box-shadow   : $shadow-neumorph-flat;
+      font-size    : $font-size-lg;
+      color        : $color-text-primary;
+      cursor       : pointer;
+      transition   : filter $transition-fast, box-shadow $transition-fast;
+
+      &:disabled {
+        opacity: 0.35;
+        cursor : not-allowed;
+      }
+
+      &:not(:disabled):active {
+        box-shadow: $shadow-neumorph-pressed;
+        filter    : brightness(0.95);
+      }
+    }
+
+    &__input {
+      width        : 48px;
+      height       : 32px;
+      text-align   : center;
+      border-radius: $radius-md;
+      border       : $border-strong;
+      background   : $color-neumorph-base;
+      box-shadow   : $shadow-neumorph-inset;
+      @include font-mono($font-size-base, $font-weight-medium);
+      color        : $color-text-primary;
+      padding      : 0 $spacing-1;
+
+      &::-webkit-inner-spin-button,
+      &::-webkit-outer-spin-button { -webkit-appearance: none; }
+      appearance: textfield;
+    }
+
+    &__confirm {
+      margin-left: auto;
+    }
+
+    &__hint {
+      @include font-mono($font-size-sm);
+      color      : $color-text-secondary;
+      margin-top : $spacing-2;
+
+      &--warn { color: $color-warning; }
+      &--out  { color: $color-danger;  }
+    }
+  }
+
   &__actions {
     @include flex-row($spacing-3);
     margin: $spacing-4 $spacing-5;
