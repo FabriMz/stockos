@@ -98,23 +98,21 @@
 
       <div class="spacer--xs"></div>
 
-      <div class="detail__section">
-        <div class="detail__section-title">Stock actual</div>
-        <div class="stock-bar stock-bar--full" role="progressbar" :aria-valuenow="pct" aria-valuemin="0"
-          aria-valuemax="100">
-          <div class="stock-bar__fill" :class="fillClass" :style="{ width: pct + '%' }"></div>
+      <div class="detail__section detail__section--stock">
+        <div class="detail__stock-row" role="region" aria-label="Stock actual">
+          <div>
+            <div class="detail__section-title">Stock actual</div>
+            <div class="detail__stock-qty" :class="stockQtyClass">{{ product.stock }} uds.</div>
+          </div>
+          <div class="detail__stock-meta" v-if="product.max || product.unitsPerBox">
+            <span v-if="product.max">máx. {{ product.max }} uds.</span>
+            <span v-if="product.unitsPerBox">mín. {{ product.unitsPerBox }} uds.</span>
+          </div>
         </div>
-        <div class="stock-nums">
-          <span>{{ product.stock }} uds. en stock</span>
-          <span>cap. {{ product.max }} uds.</span>
-        </div>
-        <p v-if="product.unitsPerBox" class="detail__reorder-hint">
-          Mín. reposición: 1 caja = {{ product.unitsPerBox }} uds.
-        </p>
 
-        <div class="detail__exit">
-          <span class="detail__exit__label">Registrar salida</span>
-          <div class="detail__exit__controls" role="group" aria-label="Registrar salida de stock">
+        <div class="detail__exit" role="region" aria-label="Registrar salida de stock">
+          <span class="detail__exit__label">Salida</span>
+          <div class="detail__exit__controls" role="group" aria-label="Cantidad a descontar">
             <button
               class="detail__exit__btn"
               @click="decrementExit"
@@ -252,6 +250,13 @@ const fillClass = computed(() => {
   if (product.value.stock === 0) return 'stock-bar__fill--out'
   if (pct.value < 25) return 'stock-bar__fill--low'
   return 'stock-bar__fill--ok'
+})
+
+const stockQtyClass = computed(() => {
+  if (!product.value) return ''
+  if (product.value.stock === 0) return 'detail__stock-qty--out'
+  if (pct.value < 25) return 'detail__stock-qty--low'
+  return 'detail__stock-qty--ok'
 })
 
 // ─── Salida de stock ──────────────────────────────────────────────────────────

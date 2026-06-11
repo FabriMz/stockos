@@ -3,8 +3,8 @@
 .detail {
   &__header {
     @include card-base;
-    margin: $spacing-4 $spacing-5 0;
-    padding: $spacing-5;
+    margin    : $spacing-4 $spacing-5 0;
+    padding   : $spacing-5;
     text-align: center;
   }
 
@@ -17,7 +17,9 @@
   &__icon {
     @include icon-box($spacing-9 + 18px, $radius-2xl);
 
-    i { font-size: $icon-3xl; }
+    i {
+      font-size: $icon-3xl;
+    }
 
     &-img {
       width        : 100%;
@@ -28,9 +30,9 @@
     }
 
     &-discount {
-      position     : absolute;
-      top          : -8px;
-      right        : -20px;
+      position: absolute;
+      top     : -8px;
+      right   : -20px;
       @include font-mono($font-size-xs);
       padding      : 2px 7px;
       border-radius: $radius-full;
@@ -42,16 +44,16 @@
   }
 
   &__name {
-    font-size: $font-size-lg;
-    font-weight: $font-weight-medium;
-    color: $color-text-primary;
-    line-height: $line-height-snug;
+    font-size    : $font-size-lg;
+    font-weight  : $font-weight-medium;
+    color        : $color-text-primary;
+    line-height  : $line-height-snug;
     margin-bottom: $spacing-1;
   }
 
   &__sku {
     @include font-mono($font-size-sm);
-    color: $color-text-secondary;
+    color        : $color-text-secondary;
     margin-bottom: $spacing-2;
   }
 
@@ -62,13 +64,13 @@
 
   &__row {
     @include flex-between;
-    padding: $spacing-2 0;
+    padding   : $spacing-2 0;
     border-top: $border;
   }
 
   &__row-label {
     font-size: $font-size-base;
-    color: $color-text-secondary;
+    color    : $color-text-secondary;
   }
 
   &__row-value {
@@ -82,7 +84,7 @@
 
   &__section {
     @include card-base;
-    margin: $spacing-2 $spacing-5 0;
+    margin : $spacing-2 $spacing-5 0;
     padding: $spacing-4;
   }
 
@@ -95,22 +97,22 @@
     @include font-mono($font-size-xs, $font-weight-medium);
     letter-spacing: $letter-spacing-wider;
     text-transform: uppercase;
-    color: $color-text-secondary;
-    margin-bottom: $spacing-2;
+    color         : $color-text-secondary;
+    margin-bottom : $spacing-2;
   }
 
   &__currency-pill {
     @include flex-row($spacing-1, center);
-    background: $color-bg-secondary;
-    border: $border-width solid $color-border-strong;
+    background   : $color-bg-secondary;
+    border       : $border-width solid $color-border-strong;
     border-radius: $radius-full;
-    padding: $spacing-1 $spacing-3 $spacing-1 $spacing-2;
-    cursor: pointer;
-    transition: filter $transition-fast;
+    padding      : $spacing-1 $spacing-3 $spacing-1 $spacing-2;
+    cursor       : pointer;
+    transition   : filter $transition-fast;
 
     i {
       font-size: $icon-sm;
-      color: $color-text-secondary;
+      color    : $color-text-secondary;
     }
 
     span {
@@ -124,9 +126,9 @@
   }
 
   &__prices {
-    display: grid;
+    display              : grid;
     grid-template-columns: 1fr 1fr;
-    gap: $spacing-2;
+    gap                  : $spacing-2;
 
     &--secondary {
       margin-top: $spacing-2;
@@ -134,11 +136,11 @@
   }
 
   &__price-col {
-    text-align: center;
-    padding: $spacing-3;
+    text-align   : center;
+    padding      : $spacing-3;
     border-radius: $radius-md;
-    background: $color-neumorph-base;
-    box-shadow: $shadow-neumorph-raised;
+    background   : $color-neumorph-base;
+    box-shadow   : $shadow-neumorph-raised;
   }
 
   &__saved-currency {
@@ -146,11 +148,11 @@
     margin-top: $spacing-4;
 
     &__dot {
-      width: 4px;
-      height: 4px;
+      width        : 4px;
+      height       : 4px;
       border-radius: $radius-full;
-      background: $color-text-secondary;
-      flex-shrink: 0;
+      background   : $color-text-secondary;
+      flex-shrink  : 0;
     }
 
     &__text {
@@ -159,14 +161,14 @@
 
       strong {
         font-weight: $font-weight-medium;
-        color: $color-text-primary;
+        color      : $color-text-primary;
       }
     }
   }
 
   &__price-label {
     @include font-mono($font-size-sm);
-    color: $color-text-secondary;
+    color        : $color-text-secondary;
     margin-bottom: $spacing-2;
   }
 
@@ -179,27 +181,62 @@
     }
   }
 
-  &__reorder-hint {
-    @include font-mono($font-size-sm + 1);
-    color: $color-text-secondary;
+  &__section--stock {
+    padding : 0;
+    overflow: hidden;
+  }
+
+  &__stock-row {
+    @include flex-between;
+    padding: $spacing-4;
+
+    .detail__section-title {
+      margin-bottom: $spacing-1;
+    }
+  }
+
+  &__stock-qty {
+    @include font-display($font-size-2xl, $font-weight-bold);
+    line-height: 1;
+
+    &--ok {
+      color: $color-success;
+    }
+
+    &--low {
+      color: $color-warning;
+    }
+
+    &--out {
+      color: $color-danger;
+    }
+  }
+
+  &__stock-meta {
+    @include flex-col($spacing-1, flex-end, flex-start);
+    @include font-mono($font-size-sm);
+    color     : $color-text-secondary;
+    text-align: right;
   }
 
   &__exit {
-    margin-top: $spacing-5;
-    padding-top: $spacing-4;
+    @include flex-row($spacing-2, center);
+    padding   : $spacing-4;
     border-top: $border;
+    flex-wrap : wrap;
+    gap       : $spacing-2;
 
     &__label {
       @include font-mono($font-size-xs, $font-weight-medium);
       letter-spacing: $letter-spacing-wider;
       text-transform: uppercase;
-      color: $color-text-secondary;
-      display: block;
-      margin-bottom: $spacing-3;
+      color         : $color-text-secondary;
+      flex-shrink   : 0;
     }
 
     &__controls {
       @include flex-row($spacing-2, center);
+      margin-left: auto;
     }
 
     &__btn {
@@ -207,14 +244,14 @@
       width        : 32px;
       height       : 32px;
       flex-shrink  : 0;
-      border-radius: $radius-md;
-      border       : $border-strong;
+      border-radius: $radius-full;
+      border       : none;
       background   : $color-neumorph-base;
-      box-shadow   : $shadow-neumorph-flat;
+      box-shadow   : $shadow-neumorph-raised;
       font-size    : $font-size-lg;
       color        : $color-text-primary;
       cursor       : pointer;
-      transition   : filter $transition-fast, box-shadow $transition-fast;
+      transition   : box-shadow $transition-fast, filter $transition-fast;
 
       &:disabled {
         opacity: 0.35;
@@ -228,33 +265,42 @@
     }
 
     &__input {
-      width        : 48px;
-      height       : 32px;
+      width        : 40px;
+      height       : 28px;
       text-align   : center;
       border-radius: $radius-md;
       border       : $border-strong;
       background   : $color-neumorph-base;
       box-shadow   : $shadow-neumorph-inset;
       @include font-mono($font-size-base, $font-weight-medium);
-      color        : $color-text-primary;
-      padding      : 0 $spacing-1;
+      color  : $color-text-primary;
+      padding: 0 $spacing-1;
 
       &::-webkit-inner-spin-button,
-      &::-webkit-outer-spin-button { -webkit-appearance: none; }
+      &::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+      }
+
       appearance: textfield;
     }
 
     &__confirm {
-      margin-left: auto;
+      flex-shrink: 0;
     }
 
     &__hint {
       @include font-mono($font-size-sm);
-      color      : $color-text-secondary;
-      margin-top : $spacing-2;
+      color     : $color-text-secondary;
+      width     : 100%;
+      margin-top: -$spacing-1;
 
-      &--warn { color: $color-warning; }
-      &--out  { color: $color-danger;  }
+      &--warn {
+        color: $color-warning;
+      }
+
+      &--out {
+        color: $color-danger;
+      }
     }
   }
 
@@ -263,7 +309,7 @@
     margin: $spacing-4 $spacing-5;
 
     .btn {
-      flex: 1;
+      flex  : 1;
       height: $btn-height-md;
     }
   }
