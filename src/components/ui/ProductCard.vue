@@ -29,13 +29,13 @@
             <span v-if="product.stock === 0" class="badge badge--out">
               <i class="ti ti-ban" aria-hidden="true"></i>Sin stock
             </span>
-            <span v-else-if="store.pct(product) < 25" class="badge badge--low">
+            <span v-else-if="store.isLowStock(product)" class="badge badge--low">
               <i class="ti ti-alert-circle" aria-hidden="true"></i>Stock bajo
             </span>
             <span v-if="product.expiry" class="badge badge--expiry">
               <i class="ti ti-clock" aria-hidden="true"></i>Por vencer
             </span>
-            <span v-if="product.stock > 0 && store.pct(product) >= 25 && !product.expiry" class="badge badge--ok">
+            <span v-if="product.stock > 0 && !store.isLowStock(product) && !product.expiry" class="badge badge--ok">
               <i class="ti ti-circle-check" aria-hidden="true"></i>En stock
             </span>
           </template>
@@ -155,7 +155,7 @@ const displayStock = computed(() => props.product.stock)
 
 const stripeClass = computed(() => {
   if (props.product.stock === 0) return 'product-card__stripe--out'
-  if (store.pct(props.product) < 25) return 'product-card__stripe--low'
+  if (store.isLowStock(props.product)) return 'product-card__stripe--low'
   return 'product-card__stripe--ok'
 })
 </script>

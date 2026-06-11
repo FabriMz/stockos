@@ -267,8 +267,6 @@ const margenCalc = computed(() => {
   return (((price - cost) / price) * 100).toFixed(0)
 })
 
-const pct = computed(() => product.value ? store.pct(product.value) : 0)
-
 const displayStock = computed(() => product.value?.stock ?? 0)
 
 function goEdit() {
@@ -296,14 +294,14 @@ const formattedExpiry = computed(() => {
 const fillClass = computed(() => {
   if (!product.value) return ''
   if (product.value.stock === 0) return 'stock-bar__fill--out'
-  if (pct.value < 25) return 'stock-bar__fill--low'
+  if (store.isLowStock(product.value)) return 'stock-bar__fill--low'
   return 'stock-bar__fill--ok'
 })
 
 const stockQtyClass = computed(() => {
   if (!product.value) return ''
   if (product.value.stock === 0) return 'detail__stock-qty--out'
-  if (pct.value < 25) return 'detail__stock-qty--low'
+  if (store.isLowStock(product.value)) return 'detail__stock-qty--low'
   return 'detail__stock-qty--ok'
 })
 
