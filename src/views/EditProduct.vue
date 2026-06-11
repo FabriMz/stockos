@@ -288,7 +288,7 @@ const backLabel = computed(() => alertBack.value?.label ?? 'Detalle')
 const SIZE_UNITS = ['gr', 'Kg', 'mg', 'oz', 'lb', 'ml', 'Lt', 'cl', 'fl oz', 'cm', 'm', 'ud']
 const sizeQty = ref('')
 const sizeUnit = ref('gr')
-const isBoxMode = computed(() => Number(form.unitsPerBox) > 0)
+const isBoxMode = ref(false)
 
 function parseSizeString(raw) {
   if (!raw) return { qty: '', unit: 'gr' }
@@ -402,6 +402,7 @@ watch(product, p => {
     priceCurrency: p.priceCurrency || 'USD',
     minStock: p.minStock || '',
   })
+  isBoxMode.value = Number(p.unitsPerBox) > 0
   const parsed = parseSizeString(p.size)
   sizeQty.value = parsed.qty
   sizeUnit.value = parsed.unit

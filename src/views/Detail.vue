@@ -205,7 +205,8 @@
             Stock al máximo
           </p>
           <p v-else class="detail__exit__hint" role="status">
-            Quedarán {{ product.stock + entryQty }} uds. en stock
+            <template v-if="maxEntry !== null">Puedes agregar {{ maxEntry }} más al stock</template>
+            <template v-else>Quedarán {{ product.stock + entryQty }} uds. en stock</template>
           </p>
         </div>
       </div>
