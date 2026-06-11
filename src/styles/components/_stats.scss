@@ -9,7 +9,7 @@
 }
 
 .stat-card {
-  border-radius: 20px;
+  border-radius: $radius-3xl + 2;
   padding      : 16px 14px 14px;
   background   : $color-neumorph-base;
   box-shadow   : 5px 5px 12px #C8C5BF, -5px -5px 12px #FFFFFF;
@@ -30,7 +30,7 @@
     font-weight   : $font-weight-medium;
     letter-spacing: 0.7px;
     text-transform: uppercase;
-    color         : #9A8A7E;
+    color         : $color-text-tertiary;
     margin-bottom : 8px;
   }
 
@@ -46,7 +46,7 @@
 
   &__sub {
     font-size : 12px;
-    color     : #A09080;
+    color     : $color-text-secondary;
     margin-top: 5px;
   }
 

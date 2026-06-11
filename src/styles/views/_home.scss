@@ -122,11 +122,11 @@
     }
 
     &--out i {
-      color: #C04030;
+      color: $color-danger;
     }
 
     &--low i {
-      color: #A07010;
+      color: $color-warning;
     }
 
     &--expiry i {
@@ -148,7 +148,7 @@
 
   &__alert-name {
     font-size : 12px;
-    color     : #A09080;
+    color     : $color-text-secondary;
     margin-top: 2px;
     @include truncate;
   }
@@ -182,11 +182,11 @@
   }
 
   &__alert-item--out &__alert-count:not(&__alert-count--zero) {
-    color: #C04030;
+    color: $color-danger;
   }
 
   &__alert-item--low &__alert-count:not(&__alert-count--zero) {
-    color: #A07010;
+    color: $color-warning;
   }
 
   &__alert-item--expiry &__alert-count:not(&__alert-count--zero) {

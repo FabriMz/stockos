@@ -34,7 +34,7 @@
 
       i {
         font-size : $icon-lg;
-        color     : #B8A898;
+        color     : $color-text-tertiary;
         transition: color $transition-fast;
       }
     }
@@ -42,7 +42,7 @@
     span {
       font-family: $font-display;
       font-size  : 10px;
-      color      : #B8A898;
+      color      : $color-text-tertiary;
       transition : color $transition-fast;
     }
 
