@@ -26,7 +26,7 @@
       height       : 44px;
       border-radius: 14px;
       background   : $color-neumorph-base;
-      box-shadow   : 4px 4px 10px #C8C5BF, -4px -4px 10px #FFFFFF;
+      box-shadow   : $shadow-neumorph-raised;
       display      : flex;
       align-items  : center;
       justify-content: center;
@@ -78,7 +78,7 @@
       height         : 52px;
       border-radius  : $radius-full;
       background     : $color-neumorph-base;
-      box-shadow     : 5px 5px 12px #C8C5BF, -5px -5px 12px #FFFFFF;
+      box-shadow     : $shadow-neumorph-raised;
       position       : relative;
       transition     : box-shadow $transition-fast, transform 0.2s ease;
 

@@ -12,7 +12,7 @@
   border-radius: $radius-3xl + 2;
   padding      : 16px 14px 14px;
   background   : $color-neumorph-base;
-  box-shadow   : 5px 5px 12px #C8C5BF, -5px -5px 12px #FFFFFF;
+  box-shadow   : $shadow-neumorph-raised;
 
   &--full {
     grid-column: 1 / -1;

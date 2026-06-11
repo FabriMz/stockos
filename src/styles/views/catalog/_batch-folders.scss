@@ -35,12 +35,8 @@
   }
 
   &__icon {
-    width        : $product-icon-size;
-    height       : $product-icon-size;
-    border-radius: $radius-lg;
-    background   : $color-expiry-bg;
-    @include flex-center;
-    flex-shrink: 0;
+    @include icon-box($product-icon-size, $radius-lg);
+    background: $color-expiry-bg;
 
     i {
       font-size: $icon-md;
@@ -100,29 +96,8 @@
 
   // ─── BATCH EMPTY STATE ────────────────────────────────────────────────────────
 .batch-empty {
-  @include flex-col($spacing-2, center, center);
-  flex      : 1;
-  padding   : $spacing-5;
-  text-align: center;
-  height    : 100%;
-
-  i {
-    font-size: $icon-3xl;
-    color    : $color-border-strong;
-  }
-
-  p {
-    font-size  : $font-size-base;
-    font-weight: $font-weight-medium;
-    color      : $color-text-secondary;
-  }
-
-  span {
-    @include font-mono($font-size-sm);
-    color      : $color-text-tertiary;
-    line-height: $line-height-normal;
-    max-width  : 240px;
-  }
+  @include empty-state;
+  height: 100%;
 }
 
   // ─── BATCH GROUP SEPARATOR ────────────────────────────────────────────────────
@@ -154,16 +129,8 @@
   }
 
   &__sort-btn {
-    @include flex-center;
-    width        : 28px;
-    height       : 28px;
-    border-radius: $radius-sm;
-    background   : transparent;
-    border       : none;
-    color        : $color-text-tertiary;
-    cursor       : pointer;
-    flex-shrink  : 0;
-    transition   : background $transition-fast, color $transition-fast;
+    @include ghost-icon-btn;
+    flex-shrink: 0;
 
     i {
       font-size : $icon-sm;

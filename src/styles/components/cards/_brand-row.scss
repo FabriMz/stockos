@@ -33,13 +33,7 @@
   }
 
   &__icon {
-    width        : $brand-icon-size;
-    height       : $brand-icon-size;
-    border-radius: $radius-lg;
-    @include flex-center;
-    flex-shrink  : 0;
-    background   : $color-neumorph-base;
-    box-shadow   : $shadow-neumorph-inset;
+    @include icon-box;
 
     i {
       font-size: $icon-md;

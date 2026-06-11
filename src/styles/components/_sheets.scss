@@ -52,11 +52,7 @@
     padding: $spacing-3 $spacing-4;
 
     &-icon {
-      width: $avatar-size-md;
-      height: $avatar-size-md;
-      border-radius: $radius-md;
-      @include flex-center;
-      flex-shrink: 0;
+      @include icon-box($avatar-size-md, $radius-md);
 
       i { font-size: $icon-sm; }
     }

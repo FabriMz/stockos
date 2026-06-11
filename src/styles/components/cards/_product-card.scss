@@ -38,13 +38,7 @@
   }
 
   &__icon {
-    width        : $product-icon-size;
-    height       : $product-icon-size;
-    border-radius: $radius-md;
-    @include flex-center;
-    flex-shrink  : 0;
-    background   : $color-neumorph-base;
-    box-shadow   : $shadow-neumorph-inset;
+    @include icon-box($product-icon-size, $radius-md);
 
     i { font-size: $icon-md; }
 

@@ -10,12 +10,8 @@
   }
 
   &__icon {
-    width        : $product-icon-size;
-    height       : $product-icon-size;
-    border-radius: $radius-lg;
-    background   : $color-expiry-bg;
-    @include flex-center;
-    flex-shrink: 0;
+    @include icon-box($product-icon-size, $radius-lg);
+    background: $color-expiry-bg;
 
     i {
       font-size: $icon-md;
@@ -79,11 +75,7 @@
   border-bottom: $border;
 
   &__icon {
-    width        : $product-icon-size;
-    height       : $product-icon-size;
-    border-radius: $radius-lg;
-    @include flex-center;
-    flex-shrink: 0;
+    @include icon-box($product-icon-size, $radius-lg);
 
     i {
       font-size: $icon-md;

@@ -8,13 +8,7 @@
   padding: $spacing-4;
 
   &__icon {
-    width        : $brand-icon-size;
-    height       : $brand-icon-size;
-    border-radius: $radius-lg;
-    background   : $color-neumorph-base;
-    box-shadow   : inset 2px 2px 5px #C8C5BF, inset -2px -2px 5px #FFFFFF;
-    @include flex-center;
-    flex-shrink  : 0;
+    @include icon-box;
 
     i {
       font-size: $icon-md;

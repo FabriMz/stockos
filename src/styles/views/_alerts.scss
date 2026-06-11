@@ -59,28 +59,7 @@
   }
 
   &__empty {
-    @include flex-col($spacing-2, center, center);
-    flex      : 1;
-    padding   : $spacing-5;
-    text-align: center;
-
-    i {
-      font-size: $icon-3xl;
-      color    : $color-border-strong;
-    }
-
-    p {
-      font-size  : $font-size-base;
-      font-weight: $font-weight-medium;
-      color      : $color-text-secondary;
-    }
-
-    span {
-      @include font-mono($font-size-sm);
-      color      : $color-text-tertiary;
-      line-height: $line-height-normal;
-      max-width  : 240px;
-    }
+    @include empty-state;
   }
 }
 
@@ -125,14 +104,8 @@
   }
 
   &__icon {
-    width        : $brand-icon-size;
-    height       : $brand-icon-size;
-    border-radius: $radius-md;
-    @include flex-center;
-    flex-shrink  : 0;
-    margin       : $spacing-4 0 $spacing-4 $spacing-4;
-    background   : $color-neumorph-base;
-    box-shadow   : $shadow-neumorph-inset;
+    @include icon-box($brand-icon-size, $radius-md);
+    margin: $spacing-4 0 $spacing-4 $spacing-4;
 
     i {
       font-size: $icon-lg;

@@ -225,3 +225,62 @@
     transparent 7px
   );
 }
+
+// ─── ICON BOX (cuadro neumorph con ícono centrado) ────────────────────────────
+// Patrón: tamaño fijo + flex-center + background neumorph + sombra + flex-shrink:0.
+// $shadow: neumorph-inset (default, apariencia hundida) o neumorph-raised (elevado).
+@mixin icon-box($size: $brand-icon-size, $radius: $radius-lg, $shadow: $shadow-neumorph-inset) {
+  @include flex-center;
+  width        : $size;
+  height       : $size;
+  border-radius: $radius;
+  background   : $color-neumorph-base;
+  box-shadow   : $shadow;
+  flex-shrink  : 0;
+}
+
+// ─── GHOST ICON BTN (botón icono pequeño sin fondo) ───────────────────────────
+// Variante ligera del icon-btn: sin sombra, fondo transparente, 28px por defecto.
+// Para acciones secundarias inline (gear, nav, trash, confirm dentro de listas).
+@mixin ghost-icon-btn($size: 28px, $radius: $radius-sm) {
+  @include flex-center;
+  width        : $size;
+  height       : $size;
+  border-radius: $radius;
+  background   : transparent;
+  border       : none;
+  color        : $color-text-tertiary;
+  cursor       : pointer;
+  flex-shrink  : 0;
+  transition   : background $transition-fast, color $transition-fast;
+}
+
+// ─── EMPTY STATE (estado vacío con ícono + título + subtítulo) ────────────────
+// Layout para vistas/secciones sin contenido. Espera en el HTML:
+//   <i class="ti ti-*"></i>  →  ícono grande decorativo
+//   <p>Título</p>            →  mensaje principal
+//   <span>Detalle</span>     →  texto de apoyo (opcional)
+@mixin empty-state {
+  @include flex-col($spacing-2, center, center);
+  flex      : 1;
+  padding   : $spacing-5;
+  text-align: center;
+
+  i {
+    font-size: $icon-3xl;
+    color    : $color-border-strong;
+  }
+
+  p {
+    font-size  : $font-size-base;
+    font-weight: $font-weight-medium;
+    color      : $color-text-secondary;
+  }
+
+  span {
+    @include font-mono($font-size-sm);
+    color      : $color-text-tertiary;
+    line-height: $line-height-normal;
+    max-width  : 240px;
+  }
+}

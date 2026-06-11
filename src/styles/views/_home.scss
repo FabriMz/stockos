@@ -91,7 +91,7 @@
     padding        : 14px 16px;
     border-radius  : 18px;
     background     : $color-neumorph-base;
-    box-shadow     : 5px 5px 12px #C8C5BF, -5px -5px 12px #FFFFFF;
+    box-shadow     : $shadow-neumorph-raised;
     cursor         : pointer;
     transition     : box-shadow $transition-fast;
 
@@ -109,13 +109,7 @@
     // ─── Ícono neumorph inset ──────────────────────────────────────────────────
 
   &__alert-icon {
-    width        : 36px;
-    height       : 36px;
-    border-radius: 12px;
-    background   : $color-neumorph-base;
-    box-shadow   : inset 2px 2px 5px #C8C5BF, inset -2px -2px 5px #FFFFFF;
-    @include flex-center;
-    flex-shrink: 0;
+    @include icon-box(36px, 12px);
 
     i {
       font-size: 16px;

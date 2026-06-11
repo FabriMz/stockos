@@ -38,17 +38,8 @@
   }
 
   &__cat-gear-btn {
-    @include flex-center;
-    width        : 28px;
-    height       : 28px;
-    border-radius: $radius-sm;
-    background   : transparent;
-    border       : none;
-    color        : $color-text-tertiary;
-    cursor       : pointer;
-    flex-shrink  : 0;
-    margin-left  : $spacing-2;
-    transition   : background $transition-fast, color $transition-fast;
+    @include ghost-icon-btn;
+    margin-left: $spacing-2;
 
     i {
       font-size : $icon-sm;

@@ -42,7 +42,7 @@
     @include flex-between;
     width        : 100%;
     background   : $color-neumorph-base;
-    box-shadow   : 4px 4px 10px #C8C5BF, -4px -4px 10px #FFFFFF;
+    box-shadow   : $shadow-neumorph-raised;
     border-radius: $radius-xl;
     padding      : $spacing-4;
     cursor       : pointer;
@@ -68,13 +68,7 @@
   }
 
   &__item-icon {
-    width        : 34px;
-    height       : 34px;
-    border-radius: $radius-lg;
-    background   : $color-neumorph-base;
-    box-shadow   : $shadow-neumorph-inset;
-    @include flex-center;
-    flex-shrink: 0;
+    @include icon-box(34px, $radius-lg);
 
     i {
       font-size: $icon-md;
@@ -157,15 +151,7 @@
 
     // ─── BOTÓN CALENDARIO ────────────────────────────────────────────────────
   &__calendar-btn {
-    @include flex-center;
-    width        : 28px;
-    height       : 28px;
-    border-radius: $radius-sm;
-    background   : transparent;
-    border       : none;
-    cursor       : pointer;
-    color        : $color-text-tertiary;
-    transition   : background $transition-fast;
+    @include ghost-icon-btn;
 
     i {
       font-size: $icon-sm;
@@ -189,15 +175,8 @@
   }
 
   &__month-picker-nav {
-    @include flex-center;
-    width        : 28px;
-    height       : 28px;
-    border-radius: $radius-sm;
-    background   : transparent;
-    border       : none;
-    cursor       : pointer;
-    color        : $color-text-secondary;
-    transition   : background $transition-fast;
+    @include ghost-icon-btn;
+    color: $color-text-secondary;
 
     i {
       font-size: $icon-sm;
@@ -309,15 +288,7 @@
     // ─── BOTÓN TACHO ─────────────────────────────────────────────────────────
   &__trash-btn,
   &__edit-btn {
-    @include flex-center;
-    flex-shrink  : 0;
-    width        : 28px;
-    height       : 28px;
-    border-radius: $radius-sm;
-    background   : transparent;
-    border       : none;
-    cursor       : pointer;
-    transition   : background $transition-fast;
+    @include ghost-icon-btn;
 
     i {
       font-size: $icon-sm;

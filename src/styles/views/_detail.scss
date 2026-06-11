@@ -15,12 +15,7 @@
   }
 
   &__icon {
-    width        : $spacing-9 + 18px;
-    height       : $spacing-9 + 18px;
-    border-radius: $radius-2xl;
-    @include flex-center;
-    background   : $color-neumorph-base;
-    box-shadow   : $shadow-neumorph-inset;
+    @include icon-box($spacing-9 + 18px, $radius-2xl);
 
     i { font-size: $icon-3xl; }
 
@@ -143,7 +138,7 @@
     padding: $spacing-3;
     border-radius: $radius-md;
     background: $color-neumorph-base;
-    box-shadow: 5px 5px 12px #C8C5BF, -5px -5px 12px #FFFFFF;
+    box-shadow: $shadow-neumorph-raised;
   }
 
   &__saved-currency {
