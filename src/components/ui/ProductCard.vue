@@ -151,12 +151,7 @@ const pvpFinalPrice = computed(() => {
   return price * (1 - pvpDiscount.value / 100)
 })
 
-const displayStock = computed(() => {
-  const boxes = Number(props.product.boxCount)
-  const units = Number(props.product.unitsPerBox)
-  if (boxes > 0 && units > 0) return boxes * units
-  return props.product.stock
-})
+const displayStock = computed(() => props.product.stock)
 
 const stripeClass = computed(() => {
   if (props.product.stock === 0) return 'product-card__stripe--out'

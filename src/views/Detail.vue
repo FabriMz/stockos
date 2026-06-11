@@ -223,12 +223,7 @@ const margenCalc = computed(() => {
 
 const pct = computed(() => product.value ? store.pct(product.value) : 0)
 
-const displayStock = computed(() => {
-  const boxes = Number(product.value?.boxCount)
-  const units = Number(product.value?.unitsPerBox)
-  if (boxes > 0 && units > 0) return boxes * units
-  return product.value?.stock ?? 0
-})
+const displayStock = computed(() => product.value?.stock ?? 0)
 
 function goEdit() {
   router.push({ path: `/product/${product.value.id}/edit`, query: route.query })
