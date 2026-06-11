@@ -189,10 +189,6 @@
   &__stock-row {
     @include flex-between;
     padding: $spacing-4;
-
-    .detail__section-title {
-      margin-bottom: $spacing-1;
-    }
   }
 
   &__stock-qty {
