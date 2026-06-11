@@ -160,6 +160,54 @@
             Quedarán {{ product.stock - exitQty }} uds. en stock
           </p>
         </div>
+
+        <div class="detail__exit detail__exit--entry" role="region" aria-label="Registrar entrada de stock">
+          <span class="detail__exit__label">Entrada</span>
+          <div class="detail__exit__controls" role="group" aria-label="Cantidad a agregar">
+            <button
+              class="detail__exit__btn"
+              @click="decrementEntry"
+              :disabled="entryQty <= 1"
+              aria-label="Restar unidad a la entrada"
+            >−</button>
+            <input
+              id="detail-entry-qty"
+              name="detail-entry-qty"
+              type="number"
+              class="detail__exit__input"
+              v-model.number="entryQty"
+              min="1"
+              :max="maxEntry ?? undefined"
+              step="1"
+              inputmode="numeric"
+              aria-label="Cantidad a agregar"
+              @keydown="onEntryKeyDown"
+              @input="onEntryInput"
+              @blur="onEntryBlur"
+            />
+            <button
+              class="detail__exit__btn"
+              @click="incrementEntry"
+              :disabled="maxEntry !== null && entryQty >= maxEntry"
+              aria-label="Sumar unidad a la entrada"
+            >+</button>
+            <button
+              class="detail__exit__confirm btn btn--primary btn--sm"
+              @click="confirmEntry"
+              :disabled="maxEntry === 0 || entryQty < 1"
+              aria-label="Confirmar entrada de stock"
+            >
+              <i class="ti ti-plus" aria-hidden="true"></i>
+              Agregar
+            </button>
+          </div>
+          <p v-if="maxEntry === 0" class="detail__exit__hint detail__exit__hint--out" role="alert">
+            Stock al máximo
+          </p>
+          <p v-else class="detail__exit__hint" role="status">
+            Quedarán {{ product.stock + entryQty }} uds. en stock
+          </p>
+        </div>
       </div>
 
       <div class="spacer--xs"></div>
@@ -306,6 +354,63 @@ function confirmExit() {
   if (!product.value || product.value.stock === 0) return
   store.registerExit(product.value.id, exitQty.value)
   exitQty.value = 1
+}
+
+// ─── Entrada de stock ────────────────────────────────────────────────────────────────────────────────
+const entryQty = ref(1)
+
+// maxEntry: null = sin techo (stock inicial libre); 0 = ya está al máximo; N = puede reponer hasta N
+const maxEntry = computed(() => {
+  if (!product.value) return null
+  const isBoxMode = Number(product.value.unitsPerBox) > 0
+  if (!isBoxMode) return null
+  const maxStock = Number(product.value.boxCount) * Number(product.value.unitsPerBox)
+  return Math.max(0, maxStock - product.value.stock)
+})
+
+watch(() => maxEntry.value, (max) => {
+  if (max !== null && entryQty.value > max) {
+    entryQty.value = Math.max(1, max)
+  }
+})
+
+function onEntryKeyDown(e) {
+  if (BLOCKED_EXIT_KEYS.includes(e.key)) e.preventDefault()
+}
+
+function onEntryInput(e) {
+  const raw = e.target.value.replace(/[^0-9]/g, '')
+  if (raw === '') { entryQty.value = 1; e.target.value = 1; return }
+  const val = parseInt(raw, 10)
+  if (!isNaN(val)) {
+    const max = maxEntry.value
+    const clamped = max !== null ? Math.min(Math.max(1, val), max) : Math.max(1, val)
+    entryQty.value = clamped
+    e.target.value = clamped
+  }
+}
+
+function onEntryBlur(e) {
+  if (!e.target.value || Number(e.target.value) < 1) {
+    entryQty.value = 1
+    e.target.value = 1
+  }
+}
+
+function incrementEntry() {
+  const max = maxEntry.value
+  if (max === null || entryQty.value < max) entryQty.value++
+}
+
+function decrementEntry() {
+  if (entryQty.value > 1) entryQty.value--
+}
+
+function confirmEntry() {
+  if (!product.value) return
+  if (maxEntry.value === 0) return
+  store.registerEntry(product.value.id, entryQty.value)
+  entryQty.value = 1
 }
 
 const pvpDiscountLabel = computed(() => {

@@ -268,6 +268,20 @@ export const useProductsStore = defineStore('products', () => {
     p.stock = Math.max(0, p.stock - amount)
   }
 
+  function registerEntry(id, qty) {
+    const p = products.value.find(p => p.id === Number(id))
+    if (!p) return
+    const amount = Number(qty)
+    if (isNaN(amount) || amount <= 0) return
+    const isBoxMode = Number(p.unitsPerBox) > 0
+    if (isBoxMode) {
+      const maxStock = Number(p.boxCount) * Number(p.unitsPerBox)
+      p.stock = Math.min(maxStock, p.stock + amount)
+    } else {
+      p.stock = p.stock + amount
+    }
+  }
+
   function addProduct(prod) {
     const newId = Math.max(0, ...products.value.map(p => p.id)) + 1
     const brand = brands.value.find(b => b.id === prod.bid)
@@ -617,7 +631,7 @@ export const useProductsStore = defineStore('products', () => {
     addBrand, deleteBrand, editBrandName, assignBrandToProducts, sortedBrands,
     pendingDeleteBrand, markDeleteBrand, undoDeleteBrand, confirmDeleteBrand,
     // Productos CRUD
-    updateStock, registerExit, addProduct, editProduct,
+    updateStock, registerExit, registerEntry, addProduct, editProduct,
     // Productos undo
     pendingDelete, markDelete, undoDelete, confirmDelete,
     // Lotes
