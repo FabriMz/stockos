@@ -361,19 +361,27 @@ function confirmExit() {
 // ─── Entrada de stock ────────────────────────────────────────────────────────────────────────────────
 const entryQty = ref(1)
 
-// maxEntry: null = sin techo (stock inicial libre); 0 = ya está al máximo; N = puede reponer hasta N
+// maxEntry: 0 = ya está al máximo; N = puede agregar hasta N
+const MAX_ENTRY_FALLBACK = 9999
 const maxEntry = computed(() => {
   if (!product.value) return null
   const isBoxMode = Number(product.value.unitsPerBox) > 0
-  if (!isBoxMode) return null
-  const maxStock = Number(product.value.boxCount) * Number(product.value.unitsPerBox)
+  if (isBoxMode) {
+    const maxStock = Number(product.value.boxCount) * Number(product.value.unitsPerBox)
+    return Math.max(0, maxStock - product.value.stock)
+  }
+  // Modo normal: respetar product.max si existe, sino hard cap
+  const maxStock = Number(product.value.max) > 0
+    ? Number(product.value.max)
+    : MAX_ENTRY_FALLBACK
   return Math.max(0, maxStock - product.value.stock)
 })
 
 watch(() => maxEntry.value, (max) => {
+  if (max === null) return
   if (max === 0) {
     entryQty.value = 0
-  } else if (max !== null && entryQty.value > max) {
+  } else if (entryQty.value > max) {
     entryQty.value = Math.max(1, max)
   }
 }, { immediate: true })

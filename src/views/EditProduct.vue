@@ -400,7 +400,7 @@ watch(product, p => {
     alertDays: p.alertDays || 30,
     img: p.img || '',
     priceCurrency: p.priceCurrency || 'USD',
-    minStock: p.minStock || '',
+    minStock: Number(p.unitsPerBox) > 0 ? (p.minStock || '') : (p.stock ?? ''),
   })
   isBoxMode.value = Number(p.unitsPerBox) > 0
   const parsed = parseSizeString(p.size)
@@ -575,7 +575,11 @@ const save = () => {
   validateNumericFields()
   if (hasNumericErrors.value) return
   if (form.category && form.bid) store.addCategoryToBrand(form.bid, form.category)
-  if (isBoxMode.value && form.boxCount && form.unitsPerBox) form.stock = Number(form.boxCount) * Number(form.unitsPerBox)
+  if (isBoxMode.value && form.boxCount && form.unitsPerBox) {
+    form.stock = Number(form.boxCount) * Number(form.unitsPerBox)
+  } else if (!isBoxMode.value && form.minStock !== '') {
+    form.stock = Number(form.minStock)
+  }
   store.editProduct(product.value.id, { ...form })
   store.setProductUpdated()
   router.push(detailPathWithQuery(product.value.id, route.query))

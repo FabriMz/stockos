@@ -278,7 +278,8 @@ export const useProductsStore = defineStore('products', () => {
       const maxStock = Number(p.boxCount) * Number(p.unitsPerBox)
       p.stock = Math.min(maxStock, p.stock + amount)
     } else {
-      p.stock = p.stock + amount
+      const maxStock = Number(p.max) > 0 ? Number(p.max) : 9999
+      p.stock = Math.min(maxStock, p.stock + amount)
     }
   }
 
