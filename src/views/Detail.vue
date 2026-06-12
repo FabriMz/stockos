@@ -116,7 +116,7 @@
             <button
               class="detail__exit__btn"
               @click="decrementExit"
-              :disabled="exitQty <= 1"
+              :disabled="exitQty <= 0"
               aria-label="Restar unidad a la salida"
             >−</button>
             <input
@@ -125,7 +125,7 @@
               type="number"
               class="detail__exit__input"
               v-model.number="exitQty"
-              min="1"
+              min="0"
               :max="product.stock"
               step="1"
               inputmode="numeric"
@@ -153,6 +153,9 @@
           <p v-if="product.stock === 0" class="detail__exit__hint detail__exit__hint--out" role="alert">
             Sin stock disponible
           </p>
+          <p v-else-if="exitQty === 0" class="detail__exit__hint" role="status">
+            Ingresa la salida
+          </p>
           <p v-else-if="exitQty >= product.stock" class="detail__exit__hint detail__exit__hint--warn" role="status">
             Quedarán 0 uds. en stock
           </p>
@@ -174,7 +177,7 @@
               id="detail-entry-qty"
               name="detail-entry-qty"
               type="number"
-              class="detail__exit__input"
+              :class="['detail__exit__input', { 'detail__exit__input--muted': maxEntry === 0 }]"
               v-model.number="entryQty"
               min="1"
               :max="maxEntry ?? undefined"
@@ -307,12 +310,12 @@ const stockQtyClass = computed(() => {
 })
 
 // ─── Salida de stock ──────────────────────────────────────────────────────────
-const exitQty = ref(1)
+const exitQty = ref(0)
 
 // Resetear exitQty si el producto cambia o el stock baja por debajo del valor actual
 watch(() => product.value?.stock, (stock) => {
   if (stock != null && exitQty.value > stock) {
-    exitQty.value = Math.max(1, stock)
+    exitQty.value = Math.max(0, stock)
   }
 })
 
@@ -324,19 +327,19 @@ function onExitKeyDown(e) {
 
 function onExitInput(e) {
   const raw = e.target.value.replace(/[^0-9]/g, '')
-  if (raw === '') { exitQty.value = 1; e.target.value = 1; return }
+  if (raw === '') { exitQty.value = 0; e.target.value = 0; return }
   const val = parseInt(raw, 10)
   if (!isNaN(val)) {
-    const clamped = Math.min(Math.max(1, val), product.value?.stock ?? 1)
+    const clamped = Math.min(Math.max(0, val), product.value?.stock ?? 0)
     exitQty.value = clamped
     e.target.value = clamped
   }
 }
 
 function onExitBlur(e) {
-  if (!e.target.value || Number(e.target.value) < 1) {
-    exitQty.value = 1
-    e.target.value = 1
+  if (!e.target.value || Number(e.target.value) < 0) {
+    exitQty.value = 0
+    e.target.value = 0
   }
 }
 
@@ -346,13 +349,13 @@ function incrementExit() {
 }
 
 function decrementExit() {
-  if (exitQty.value > 1) exitQty.value--
+  if (exitQty.value > 0) exitQty.value--
 }
 
 function confirmExit() {
   if (!product.value || product.value.stock === 0) return
   store.registerExit(product.value.id, exitQty.value)
-  exitQty.value = 1
+  exitQty.value = 0
 }
 
 // ─── Entrada de stock ────────────────────────────────────────────────────────────────────────────────
@@ -368,10 +371,12 @@ const maxEntry = computed(() => {
 })
 
 watch(() => maxEntry.value, (max) => {
-  if (max !== null && entryQty.value > max) {
+  if (max === 0) {
+    entryQty.value = 0
+  } else if (max !== null && entryQty.value > max) {
     entryQty.value = Math.max(1, max)
   }
-})
+}, { immediate: true })
 
 function onEntryKeyDown(e) {
   if (BLOCKED_EXIT_KEYS.includes(e.key)) e.preventDefault()

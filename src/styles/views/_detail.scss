@@ -282,6 +282,11 @@
       }
 
       appearance: textfield;
+
+      &--muted {
+        color  : $color-text-secondary;
+        opacity: 0.45;
+      }
     }
 
     &__confirm {
