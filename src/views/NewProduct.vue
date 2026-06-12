@@ -76,7 +76,7 @@
           <div class="form-group">
             <label class="form-label" for="np-name">Nombre del producto</label>
             <input class="form-input" :class="{ 'form-input--error': requiredErrors.name }" id="np-name" name="np-name"
-              type="text" v-model="form.name" placeholder="Ej. Pesto Alla Genovese 190gr" />
+              type="text" v-model="form.name" placeholder="Ej. Arroz" />
             <span v-if="requiredErrors.name" class="form-hint form-hint--error" role="alert">{{ requiredErrors.name
               }}</span>
           </div>
@@ -612,7 +612,7 @@ async function openScanner() {
   await nextTick()
 
   if (typeof BarcodeDetector === 'undefined') {
-    scannerError.value = 'Tu navegador no soporta el escáner. Usá Chrome en Android o Safari en iOS.'
+    scannerError.value = 'Tu navegador no soporta el escáner.'
     return
   }
 
